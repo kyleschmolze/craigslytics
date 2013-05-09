@@ -1,0 +1,31 @@
+<h1>Listing listings</h1>
+
+<table>
+  <tr>
+    <th>Latitude</th>
+    <th>Longitude</th>
+    <th>Bedrooms</th>
+    <th>Price</th>
+    <th>Address</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @listings.each do |listing| %>
+  <tr>
+    <td><%= listing.latitude %></td>
+    <td><%= listing.longitude %></td>
+    <td><%= listing.bedrooms %></td>
+    <td><%= listing.price %></td>
+    <td><%= listing.address %></td>
+    <td><%= link_to 'Show', listing %></td>
+    <td><%= link_to 'Edit', edit_listing_path(listing) %></td>
+    <td><%= link_to 'Destroy', listing, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Listing', new_listing_path %>
