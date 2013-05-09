@@ -1,4 +1,4 @@
-<%= form_for(@listing) do |f| %>
+<%= form_for(@listing, :html => {:class=>"form-inline"})  do |f| %>
   <% if @listing.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@listing.errors.count, "error") %> prohibited this listing from being saved:</h2>
@@ -11,27 +11,9 @@
     </div>
   <% end %>
 
-  <div class="field">
-    <%= f.label :latitude %><br />
-    <%= f.text_field :latitude %>
-  </div>
-  <div class="field">
-    <%= f.label :longitude %><br />
-    <%= f.text_field :longitude %>
-  </div>
-  <div class="field">
-    <%= f.label :bedrooms %><br />
-    <%= f.number_field :bedrooms %>
-  </div>
-  <div class="field">
-    <%= f.label :price %><br />
-    <%= f.number_field :price %>
-  </div>
-  <div class="field">
-    <%= f.label :address %><br />
     <%= f.text_field :address %>
-  </div>
-  <div class="actions">
-    <%= f.submit %>
-  </div>
+    <%= f.number_field :bedrooms %>
+    <%= f.number_field :price, placeholder:"price" %>
+  
+    <%= f.submit :class=>"btn"  %>
 <% end %>
