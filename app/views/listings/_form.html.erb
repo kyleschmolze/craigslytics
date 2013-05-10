@@ -11,9 +11,9 @@
     </div>
   <% end %>
 
-    <%= f.text_field :address %>
-    <%= f.number_field :bedrooms %>
-    <%= f.number_field :price, placeholder:"price" %>
+    <%= f.text_field :address, placeholder:"Address" %>
+    <%= f.number_field :bedrooms, placeholder:"Number of Bedrooms" %>
+    <%= f.number_field :price, placeholder:"Price" %>
   
-    <%= f.submit :class=>"btn"  %>
+    <%= f.submit "Analyze!", class: "btn btn-danger" %>
 <% end %>
