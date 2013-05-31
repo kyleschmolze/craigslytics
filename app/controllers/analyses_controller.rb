@@ -14,12 +14,19 @@ class AnalysesController < ApplicationController
   # GET /analyses/1.json
   def show
     @analysis = Analysis.find(params[:id])
-    @analytics = @analysis.get_analytics(2)
-    @results = @analysis.get_similar_listings(2)
 
     respond_to do |format|
       format.html # show.html.erb
       format.json { render json: @analysis }
+    end
+  end
+
+  def poll
+    @analysis = Analysis.find(params[:id])
+    if @analysis.processed
+      render text: '1'
+    else
+      render text: '0'
     end
   end
 
