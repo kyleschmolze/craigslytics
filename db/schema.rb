@@ -11,17 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-<<<<<<< HEAD
-ActiveRecord::Schema.define(:version => 20130531185919) do
-
-  create_table "listing_comparisons", :force => true do |t|
-    t.integer  "listing_1_id"
-    t.integer  "listing_2_id"
-    t.float    "score"
-    t.datetime "created_at",   :null => false
-    t.datetime "updated_at",   :null => false
-=======
-ActiveRecord::Schema.define(:version => 20130531193642) do
+ActiveRecord::Schema.define(:version => 20130531204701) do
 
   create_table "analyses", :force => true do |t|
     t.float    "latitude"
@@ -29,10 +19,23 @@ ActiveRecord::Schema.define(:version => 20130531193642) do
     t.integer  "bedrooms"
     t.integer  "price"
     t.string   "address"
-    t.datetime "created_at",                    :null => false
-    t.datetime "updated_at",                    :null => false
-    t.boolean  "processed",  :default => false
->>>>>>> 1789c0cc7c0fa3b1350db822cda47a467eef41c6
+    t.datetime "created_at",                       :null => false
+    t.datetime "updated_at",                       :null => false
+    t.boolean  "processed",     :default => false
+    t.integer  "average_price"
+  end
+
+  create_table "analyses_listings", :id => false, :force => true do |t|
+    t.integer "analysis_id"
+    t.integer "listing_id"
+  end
+
+  create_table "listing_comparisons", :force => true do |t|
+    t.integer  "listing_1_id"
+    t.integer  "listing_2_id"
+    t.float    "score"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
   end
 
   create_table "listings", :force => true do |t|
@@ -41,9 +44,8 @@ ActiveRecord::Schema.define(:version => 20130531193642) do
     t.integer  "bedrooms"
     t.integer  "price"
     t.string   "address"
-    t.datetime "created_at",  :null => false
-    t.datetime "updated_at",  :null => false
-    t.integer  "analysis_id"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
     t.text     "info"
   end
 

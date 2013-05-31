@@ -6,8 +6,6 @@
       <%= image_tag "http://maps.google.com/maps/api/staticmap?size=300x200&*=false&zoom=15&markers=#{@analysis.latitude}%2C#{@analysis.longitude}&sensor=true" %>
     </div>
     <div class="span3">
-      <p id="notice"><%= notice %></p>
-
       <p>
         <b>Latitude:</b>
         <%= @analysis.latitude %>
@@ -17,30 +15,22 @@
         <b>Longitude:</b>
         <%= @analysis.longitude %>
       </p>
-
       <p>
         <b>Bedrooms:</b>
         <%= @analysis.bedrooms %>
       </p>
-
       <p>
         <b>Price:</b>
         <%= @analysis.price %>
       </p>
-
       <p>
         <b>Address:</b>
         <%= @analysis.address %>
       </p>
-
-      <p>
-        <b>Processed:</b>
-        <%= @analysis.processed %>
-      </p>
     </div>
   </div>
   <br>
-  <h4><%= @analytics %></h4>
+  <h4><%= "On #{DateTime.now.strftime("%a, %b %d %Y at %I:%M%p")}, there were #{@analysis.listings.count} similar listings in a #{Analysis::RADIUS} mile radius. The average price of the listings was $#{@analysis.average_price}. You can view some of the lisitings in the table below." %></h4>
   <br>
   <div class="row-fluid">
     <div class="span12 center">
@@ -53,14 +43,12 @@
           </tr>
         </thead>
         <tbody>
-          <% if @results.present? %>
-            <% for listing in @results do %>
-              <tr>
-                <td><%=listing["heading"]%></td>
-                <td>$<%=listing["price"]%></td>
-                <td><a href=<%=listing["external_url"]%> target="_blank">Click Here</a></td>
-              <tr>
-            <% end %>
+          <% for listing in @analysis.listings do %>
+            <tr>
+              <td><%=listing["info"]["heading"]%></td>
+              <td>$<%=listing["price"]%></td>
+              <td><a href=<%=listing["external_url"]%> target="_blank">Click Here</a></td>
+            <tr>
           <% end %>
         </tbody>
       </table>
@@ -78,5 +66,5 @@
 <% end %>
 
 
-  <%= link_to 'Edit', edit_analysis_path(@analysis) %> |
-  <%= link_to 'Back', analyses_path %>
+<%= link_to 'Edit', edit_analysis_path(@analysis) %> |
+<%= link_to 'Back', analyses_path %>
