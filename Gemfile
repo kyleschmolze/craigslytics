@@ -7,6 +7,7 @@ gem "less-rails"
 gem 'geocoder'
 gem 'resque', :require => "resque/server"
 gem 'redis', ">= 2.0", "< 3.0.0"
+gem 'hirefire-resource'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
