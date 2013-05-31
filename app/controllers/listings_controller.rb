@@ -14,8 +14,8 @@ class ListingsController < ApplicationController
   # GET /listings/:id.json
   def show
     @listing = Listing.find(params[:id])
-    @analytics = @listing.get_analytics(50)
-    @results = @listing.get_similar_listings(50)
+    @analytics = @listing.get_analytics(2)
+    @results = @listing.get_similar_listings(2)
 
     respond_to do |format|
       format.html # show.html.erb
@@ -46,7 +46,7 @@ class ListingsController < ApplicationController
 
     respond_to do |format|
       if @listing.save
-        format.html { redirect_to @listing, notice: 'Listing was successfully created.' }
+        format.html { redirect_to @listing, notice: 'Analysis was successful.' }
         format.json { render json: @listing, status: :created, location: @listing }
       else
         format.html { render action: "new" }
