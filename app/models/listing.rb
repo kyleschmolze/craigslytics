@@ -55,18 +55,27 @@ class Listing < ActiveRecord::Base
     # WEIGHTS
     address_weight    = 1 
     bedrooms_weight   = 1 
-    latitude_weight  = 1
-    longitude_weight = 1
+    latitude_weight   = 1
+    longitude_weight  = 1
     price_weight      = 1
 
     diff_squared = (address_weight * (self.address == a_listing.address ? 1 : 0))    + 
                    (bedrooms_weight * (self.bedrooms - a_listing.bedrooms)**2)       + 
-                   (latitude_weight * (self.latitude - a_listing.latitude)**2)    +
-                   (longitude_weight * (self.longitude - a_listing.longitude)**2) +
+                   (latitude_weight * (self.latitude - a_listing.latitude)**2)       +
+                   (longitude_weight * (self.longitude - a_listing.longitude)**2)    +
                    (price_weight * (self.price - a_listing.price)**2) 
     
-    ListingComparison.new({:listing_1_id=>self.id, :listing_2_id=>a_listing.id, :score=>diff_squared})
+    ListingComparison.create({:listing_1_id=>self.id, :listing_2_id=>a_listing.id, :score=>diff_squared})
 
   end
+
+  def self.generate_all_comparisons()
+    Listing.all.each do |i|
+      Listing.all.each do |j|
+        i.create_comparison_with(j)
+      end
+    end
+  end
+
 
 end
