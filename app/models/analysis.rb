@@ -6,6 +6,8 @@ class Analysis < ActiveRecord::Base
   geocoded_by :address   # can also be an IP address
   after_validation :geocode          # auto-fetch coordinates
 
+  after_create :enqueue
+
   def get_similar_listings(radius)
     url = URI.parse("http://search.3taps.com")
     params = "?rpp=100&lat=#{self.latitude}&long=#{self.longitude}&radius=#{radius}mi&category=RHFR&retvals=price,heading,external_url&annotations={bedrooms:#{self.bedrooms}br}&source=CRAIG&sort=price&auth_token=166bb56dcaeba0c3c860981fd50917cd"
@@ -52,5 +54,17 @@ class Analysis < ActiveRecord::Base
     else
       return "Not enough data for analysis"
     end
+  end
+
+  @queue = :analysis
+
+  def enqueue
+    Resque.enqueue Analysis, self.id
+  end
+  
+  def self.perform(analysis_id)
+    p "Processing analysis #{analysis_id}"
+    analysis = Analysis.find analysis_id
+    analysis.update_column :processed, true
   end
 end

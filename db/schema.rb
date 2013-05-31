@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130531152152) do
+ActiveRecord::Schema.define(:version => 20130531193642) do
 
   create_table "analyses", :force => true do |t|
     t.float    "latitude"
@@ -19,8 +19,9 @@ ActiveRecord::Schema.define(:version => 20130531152152) do
     t.integer  "bedrooms"
     t.integer  "price"
     t.string   "address"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",                    :null => false
+    t.datetime "updated_at",                    :null => false
+    t.boolean  "processed",  :default => false
   end
 
   create_table "listings", :force => true do |t|
