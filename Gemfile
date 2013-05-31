@@ -5,9 +5,15 @@ gem 'twitter-bootstrap-rails'
 gem "therubyracer"
 gem "less-rails"
 gem 'geocoder'
+gem 'resque', :require => "resque/server"
+gem 'redis', ">= 2.0", "< 3.0.0"
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
+
+group :production do
+  gem 'pg'
+end
 
 group :development do
   gem 'sqlite3'

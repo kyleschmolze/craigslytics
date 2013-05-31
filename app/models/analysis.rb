@@ -9,6 +9,7 @@ class Analysis < ActiveRecord::Base
 
   RADIUS = '2'
   API_KEY = '166bb56dcaeba0c3c860981fd50917cd'
+  after_create :enqueue
 
   def analyze_and_store
     url = URI.parse("http://search.3taps.com")
@@ -46,5 +47,17 @@ class Analysis < ActiveRecord::Base
       end
       self.average_price = total_price/num_matches
     end
+  end
+
+  @queue = :analysis
+
+  def enqueue
+    Resque.enqueue Analysis, self.id
+  end
+  
+  def self.perform(analysis_id)
+    p "Processing analysis #{analysis_id}"
+    analysis = Analysis.find analysis_id
+    analysis.update_column :processed, true
   end
 end
