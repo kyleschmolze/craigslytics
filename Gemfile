@@ -5,11 +5,19 @@ gem 'twitter-bootstrap-rails'
 gem "therubyracer"
 gem "less-rails"
 gem 'geocoder'
+gem 'resque', :require => "resque/server"
+gem 'redis', ">= 2.0", "< 3.0.0"
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
-gem 'sqlite3'
+group :production do
+  gem 'pg'
+end
+
+group :development do
+  gem 'sqlite3'
+end
 
 
 # Gems used only for assets and not required

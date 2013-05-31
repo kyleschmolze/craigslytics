@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  listing_1_id: 1
+  listing_2_id: 1
+  score: 1.5
+
+two:
+  listing_1_id: 1
+  listing_2_id: 1
+  score: 1.5
