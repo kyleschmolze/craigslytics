@@ -44,11 +44,29 @@ class Listing < ActiveRecord::Base
           total_price += posting["price"].to_i
         end
       end
-      return "On #{DateTime.now.strftime("%a, %b %d %Y at %I:%M%p")}, there were #{num_matches} similar listings in a #{radius} mile radius. The average price of the listings was $#{total_price/num_matches}. You can view some of the lisitings in the table below."
+      return "On #{DateTime.now.strftime("%a, %b %d %Y at %I:%M%p")}, there were #{num_matches} similar listings in a #{radius} mile radius. The average price of the listings was $#{total_price/num_matches}. You can view some of the listings in the table below."
     else
       return "Not enough data for analysis"
     end
   end
 
+  def create_comparison_with(a_listing)
+    
+    # WEIGHTS
+    address_weight    = 1 
+    bedrooms_weight   = 1 
+    latitude_weight  = 1
+    longitude_weight = 1
+    price_weight      = 1
+
+    diff_squared = (address_weight * (self.address == a_listing.address ? 1 : 0))    + 
+                   (bedrooms_weight * (self.bedrooms - a_listing.bedrooms)**2)       + 
+                   (latitude_weight * (self.latitude - a_listing.latitude)**2)    +
+                   (longitude_weight * (self.longitude - a_listing.longitude)**2) +
+                   (price_weight * (self.price - a_listing.price)**2) 
+    
+    ListingComparison.new({:listing_1_id=>self.id, :listing_2_id=>a_listing.id, :score=>diff_squared})
+
+  end
 
 end

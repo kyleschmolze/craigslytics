@@ -11,7 +11,15 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130509144852) do
+ActiveRecord::Schema.define(:version => 20130531185919) do
+
+  create_table "listing_comparisons", :force => true do |t|
+    t.integer  "listing_1_id"
+    t.integer  "listing_2_id"
+    t.float    "score"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
+  end
 
   create_table "listings", :force => true do |t|
     t.float    "latitude"
