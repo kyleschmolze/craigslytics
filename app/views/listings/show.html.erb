@@ -45,12 +45,14 @@
         </tr>
       </thead>
       <tbody>
-        <% for listing in @results do %>
-          <tr>
-            <td><%=listing["heading"]%></td>
-            <td>$<%=listing["price"]%></td>
-            <td><a href=<%=listing["external_url"]%> target="_blank">Click Here</a></td>
-          <tr>
+        <% if @results.present? %>
+          <% for listing in @results do %>
+            <tr>
+              <td><%=listing["heading"]%></td>
+              <td>$<%=listing["price"]%></td>
+              <td><a href=<%=listing["external_url"]%> target="_blank">Click Here</a></td>
+            <tr>
+          <% end %>
         <% end %>
       </tbody>
     </table>

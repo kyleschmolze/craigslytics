@@ -27,7 +27,7 @@ class Listing < ActiveRecord::Base
     response = JSON.parse(res.body)
     anchor = response["anchor"]
     num_matches = response["num_matches"]
-    return "Not enough data for analysis" if num_matches == 0
+    return "Not enough data for analysis" if (num_matches == 0 or num_matches == nil)
     num_pages = 1
     num_pages = num_matches/100 if num_matches > 100
     total_price = 0
