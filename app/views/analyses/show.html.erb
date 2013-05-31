@@ -1,70 +1,82 @@
 <h4>Your address was geocoded to:</h4>
 <br>
-<div class="row-fluid">
-  <div class="span3">
-    <%= image_tag "http://maps.google.com/maps/api/staticmap?size=300x200&*=false&zoom=15&markers=#{@analysis.latitude}%2C#{@analysis.longitude}&sensor=true" %>
+<% if @analysis.processed %>
+  <div class="row-fluid">
+    <div class="span3">
+      <%= image_tag "http://maps.google.com/maps/api/staticmap?size=300x200&*=false&zoom=15&markers=#{@analysis.latitude}%2C#{@analysis.longitude}&sensor=true" %>
+    </div>
+    <div class="span3">
+      <p id="notice"><%= notice %></p>
+
+      <p>
+        <b>Latitude:</b>
+        <%= @analysis.latitude %>
+      </p>
+
+      <p>
+        <b>Longitude:</b>
+        <%= @analysis.longitude %>
+      </p>
+
+      <p>
+        <b>Bedrooms:</b>
+        <%= @analysis.bedrooms %>
+      </p>
+
+      <p>
+        <b>Price:</b>
+        <%= @analysis.price %>
+      </p>
+
+      <p>
+        <b>Address:</b>
+        <%= @analysis.address %>
+      </p>
+
+      <p>
+        <b>Processed:</b>
+        <%= @analysis.processed %>
+      </p>
+    </div>
   </div>
-  <div class="span3">
-    <p id="notice"><%= notice %></p>
-
-    <p>
-      <b>Latitude:</b>
-      <%= @analysis.latitude %>
-    </p>
-
-    <p>
-      <b>Longitude:</b>
-      <%= @analysis.longitude %>
-    </p>
-
-    <p>
-      <b>Bedrooms:</b>
-      <%= @analysis.bedrooms %>
-    </p>
-
-    <p>
-      <b>Price:</b>
-      <%= @analysis.price %>
-    </p>
-
-    <p>
-      <b>Address:</b>
-      <%= @analysis.address %>
-    </p>
-
-    <p>
-      <b>Processed:</b>
-      <%= @analysis.processed %>
-    </p>
-  </div>
-</div>
-<br>
-<h4><%= @analytics %></h4>
-<br>
-<div class="row-fluid">
-  <div class="span12 center">
-    <table class="table table-striped">
-      <thead>
-        <tr>
-          <th>Header</th>
-          <th>Price</th>
-          <th>Link to Listing</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% if @results.present? %>
-          <% for listing in @results do %>
-            <tr>
-              <td><%=listing["heading"]%></td>
-              <td>$<%=listing["price"]%></td>
-              <td><a href=<%=listing["external_url"]%> target="_blank">Click Here</a></td>
-            <tr>
+  <br>
+  <h4><%= @analytics %></h4>
+  <br>
+  <div class="row-fluid">
+    <div class="span12 center">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Header</th>
+            <th>Price</th>
+            <th>Link to Listing</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if @results.present? %>
+            <% for listing in @results do %>
+              <tr>
+                <td><%=listing["heading"]%></td>
+                <td>$<%=listing["price"]%></td>
+                <td><a href=<%=listing["external_url"]%> target="_blank">Click Here</a></td>
+              <tr>
+            <% end %>
           <% end %>
-        <% end %>
-      </tbody>
-    </table>
+        </tbody>
+      </table>
+    </div>
   </div>
-</div>
+<% else %>
+  Loading...<br><br>
+  <script>
+    $(function() {
+      App.Helpers.poll("<%= poll_analysis_path(@analysis) %>", function() {
+        location.reload();
+      })
+    })
+  </script>
+<% end %>
 
-<%= link_to 'Edit', edit_analysis_path(@analysis) %> |
-<%= link_to 'Back', analyses_path %>
+
+  <%= link_to 'Edit', edit_analysis_path(@analysis) %> |
+  <%= link_to 'Back', analyses_path %>

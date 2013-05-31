@@ -21,6 +21,15 @@ class AnalysesController < ApplicationController
     end
   end
 
+  def poll
+    @analysis = Analysis.find(params[:id])
+    if @analysis.processed
+      render text: '1'
+    else
+      render text: '0'
+    end
+  end
+
   # GET /analyses/new
   # GET /analyses/new.json
   def new
