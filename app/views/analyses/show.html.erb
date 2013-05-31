@@ -1,0 +1,30 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Latitude:</b>
+  <%= @analysis.latitude %>
+</p>
+
+<p>
+  <b>Longitude:</b>
+  <%= @analysis.longitude %>
+</p>
+
+<p>
+  <b>Bedrooms:</b>
+  <%= @analysis.bedrooms %>
+</p>
+
+<p>
+  <b>Price:</b>
+  <%= @analysis.price %>
+</p>
+
+<p>
+  <b>Address:</b>
+  <%= @analysis.address %>
+</p>
+
+
+<%= link_to 'Edit', edit_analysis_path(@analysis) %> |
+<%= link_to 'Back', analyses_path %>

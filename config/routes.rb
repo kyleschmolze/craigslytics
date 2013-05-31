@@ -1,4 +1,7 @@
 Craigslytics::Application.routes.draw do
+  resources :analyses
+
+
   resources :listings
 
   # The priority is based upon order of creation:

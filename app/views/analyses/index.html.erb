@@ -1,0 +1,31 @@
+<h1>Listing analyses</h1>
+
+<table>
+  <tr>
+    <th>Latitude</th>
+    <th>Longitude</th>
+    <th>Bedrooms</th>
+    <th>Price</th>
+    <th>Address</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @analyses.each do |analysis| %>
+  <tr>
+    <td><%= analysis.latitude %></td>
+    <td><%= analysis.longitude %></td>
+    <td><%= analysis.bedrooms %></td>
+    <td><%= analysis.price %></td>
+    <td><%= analysis.address %></td>
+    <td><%= link_to 'Show', analysis %></td>
+    <td><%= link_to 'Edit', edit_analysis_path(analysis) %></td>
+    <td><%= link_to 'Destroy', analysis, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Analysis', new_analysis_path %>
