@@ -56,8 +56,9 @@ class Analysis < ActiveRecord::Base
   end
   
   def self.perform(analysis_id)
-    p "Processing analysis #{analysis_id}"
     analysis = Analysis.find analysis_id
-    analysis.update_column :processed, true
+    analysis.analyze_and_store
+    analysis.processed = true
+    analysis.save!
   end
 end
