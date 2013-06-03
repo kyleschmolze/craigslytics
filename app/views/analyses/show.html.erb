@@ -2,7 +2,11 @@
 <br>
 <div class="row-fluid">
   <div class="span3">
-    <%= image_tag "http://maps.google.com/maps/api/staticmap?size=300x200&*=false&zoom=15&markers=#{@analysis.latitude}%2C#{@analysis.longitude}&sensor=true" %>
+    <% markers = "center=#{@analysis.latitude},#{@analysis.longitude}&markers=color:red|#{@analysis.latitude}|#{@analysis.longitude}&markers=color:blue" %>
+    <% for listing in @analysis.listings %>
+      <% markers += "|#{@listing.latitude}|#{@listing.longitude}" %>
+    <% end %>
+    <%= image_tag "http://maps.google.com/maps/api/staticmap?size=300x200&*=false&zoom=15&#{markers}&sensor=true" %>
   </div>
   <div class="span3">
     <p>
