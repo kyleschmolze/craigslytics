@@ -1,20 +1,23 @@
-<h1>Listing listing_comparisons</h1>
+<h1>Input Weights to Find the Best Results</h1>
+<br>
 <%= form_tag listing_comparisons_path, method: "GET" do %>
   <div class="row-fluid">
     <div class="span4">
       address weight<br> <%= number_field_tag "options[address_weight]", @address_weight%><br>
-    bedrooms weight<br> <%= number_field_tag "options[bedrooms_weight]", @bedrooms_weight%><br>
-  </div>
-  <div class="span4">
-    location weight<br> <%= number_field_tag "options[location_weight]", @location_weight%><br>
-    price weight<br> <%= number_field_tag "options[price_weight]", @price_weight %><br>
-  </div>
-  <div class="span4">
-    cutoff<br> <%= number_field_tag "options[cutoff]", @cutoff %><br>
-    <%= submit_tag "GO!", class: "btn" %>
-  </div>
+      bedrooms weight<br> <%= number_field_tag "options[bedrooms_weight]", @bedrooms_weight%><br>
+    </div>
+    <div class="span4">
+      location weight<br> <%= number_field_tag "options[location_weight]", @location_weight%><br>
+      price weight<br> <%= number_field_tag "options[price_weight]", @price_weight %><br>
+    </div>
+    <div class="span4">
+      cutoff<br> <%= number_field_tag "options[cutoff]", @cutoff %><br>
+      <%= submit_tag "GO!", class: "btn" %>
+    </div>
   <% end %>
-
+</div>
+  <div>
+  <h3>Identified as Duplicates</h3>
   <table class="table">
     <tr>
       <th>address</th>
@@ -22,24 +25,68 @@
       <th>location</th>
       <th>price</th>
       <th>total</th>
-      <th></th>
+      <th>duplicate?</th>
       <th></th>
     </tr>
 
+
+
     <% @listing_comparisons.each do |listing_comparison| %>
+      <% if listing_comparison.score <= @cutoff.to_f %> 
+        <% if listing_comparison.duplicate > 0 %> 
+          <tr class="success">
+          <% elsif listing_comparison.duplicate < 0 %>
+            <tr class="error">
+            <% end %>
+            <td><%= listing_comparison.address_score %></td>
+            <td><%= listing_comparison.bedrooms_score %></td>
+            <td><%= listing_comparison.location_score %></td>
+            <td><%= listing_comparison.price_score %></td>
+            <td><%= listing_comparison.score %></td>
+            <td><%= listing_comparison.duplicate %></td>
+            <td><%= link_to 'Show', listing_comparison %></td>
+
+          </tr>
+        <% end %>
+      <% end %>
+
+    </table>
+
+    <br>
+    <br>
+
+    <h3>Identified as Non-Duplicates</h3>
+    <table class="table">
       <tr>
-        <td><%= listing_comparison.address_score %></td>
-        <td><%= listing_comparison.bedrooms_score %></td>
-        <td><%= listing_comparison.location_score %></td>
-        <td><%= listing_comparison.price_score %></td>
-        <td><%= listing_comparison.score %></td>
-        <td><%= select_tag(:duplicate, options_for_select([['yes', 1], ['no', -1]]), prompt: '--')%></td>
-        <td><%= link_to 'Show', listing_comparison %></td>
-
+        <th>address</th>
+        <th>bedrooms</th>
+        <th>location</th>
+        <th>price</th>
+        <th>total</th>
+        <th>duplicate?</th>
+        <th></th>
       </tr>
-    <% end %>
-  </table>
 
-  <br />
+      <% @listing_comparisons.each do |listing_comparison| %>
+        <% if listing_comparison.score > @cutoff.to_f %>
+          <% if listing_comparison.duplicate > 0 %> 
+            <tr class="success">
+            <% elsif listing_comparison.duplicate < 0 %>
+              <tr class="error">
+              <% end %>
+                <td><%= listing_comparison.address_score %></td>
+                <td><%= listing_comparison.bedrooms_score %></td>
+                <td><%= listing_comparison.location_score %></td>
+                <td><%= listing_comparison.price_score %></td>
+                <td><%= listing_comparison.score %></td>
+                <td><%= listing_comparison.duplicate %></td>
+                <td><%= link_to 'Show', listing_comparison %></td>
 
-  <%= link_to 'New Listing comparison', new_listing_comparison_path %>
+              </tr>
+            </div>
+          <% end %>
+        <% end %>
+      </table>
+      <br />
+
+      <%= link_to 'New Listing comparison', new_listing_comparison_path %>

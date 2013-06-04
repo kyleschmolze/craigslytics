@@ -7,7 +7,7 @@ class Analysis < ActiveRecord::Base
   after_validation :geocode          # auto-fetch coordinates
   has_and_belongs_to_many :listings 
 
-  RADIUS = '2'
+  RADIUS = '1'
   API_KEY = '166bb56dcaeba0c3c860981fd50917cd'
   after_create :enqueue
 

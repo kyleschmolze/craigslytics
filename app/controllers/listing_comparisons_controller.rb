@@ -9,8 +9,8 @@ class ListingComparisonsController < ApplicationController
       @location_weight =  params[:options][:location_weight]
       @price_weight =  params[:options][:price_weight]
       @cutoff =  params[:options][:cutoff]
+      Listing.generate_all_comparisons(params[:options])
     end
-    Listing.generate_all_comparisons(params[:options])
 
     @listing_comparisons = ListingComparison.order(:score).all
 
@@ -23,7 +23,11 @@ class ListingComparisonsController < ApplicationController
   # GET /listing_comparisons/1
   # GET /listing_comparisons/1.json
   def show
+
     @listing_comparison = ListingComparison.find(params[:id])
+  
+    @l1 = @listing_comparison.listing_1
+    @l2 = @listing_comparison.listing_2
 
     respond_to do |format|
       format.html # show.html.erb
@@ -34,10 +38,13 @@ class ListingComparisonsController < ApplicationController
   # PUT /listing_comparisons/1
   # PUT /listing_comparisons/1.json
   def update
+    p 1
     @listing_comparison = ListingComparison.find(params[:id])
+    p 2
 
     respond_to do |format|
       if @listing_comparison.update_attributes(params[:listing_comparison])
+        p 3
         format.html { redirect_to @listing_comparison, notice: 'Listing comparison was successfully updated.' }
         format.json { head :no_content }
       else

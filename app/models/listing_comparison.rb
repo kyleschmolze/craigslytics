@@ -1,5 +1,9 @@
 class ListingComparison < ActiveRecord::Base
   attr_accessible :listing_1_id, :listing_2_id, :score, :duplicate, :address_score, :bedrooms_score, :location_score, :price_score
+  
+belongs_to :listing_1, :class_name => "Listing"
+belongs_to :listing_2, :class_name => "Listing"
+
 
   validates_presence_of :listing_1_id, :listing_2_id, :score
 

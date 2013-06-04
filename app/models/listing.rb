@@ -19,7 +19,7 @@ class Listing < ActiveRecord::Base
     end
 
 
-    address_score = (address_weight * (self.address == a_listing.address ? 1 : 0))
+    address_score = (address_weight * (self.address == a_listing.address ? 0 : 1))
     bedrooms_score = (bedrooms_weight * (self.bedrooms - a_listing.bedrooms)**2)
     location_score = location_weight * (((self.latitude - a_listing.latitude)**2) + 
                                         ((self.longitude - a_listing.longitude)**2) **0.5)
