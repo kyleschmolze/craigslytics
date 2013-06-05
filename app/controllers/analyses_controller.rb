@@ -37,7 +37,7 @@ class AnalysesController < ApplicationController
     @body_class = 'homepage-body'
 
     respond_to do |format|
-      format.html # new.html.erb
+      format.html { render layout: 'home' }
       format.json { render json: @analysis }
     end
   end
