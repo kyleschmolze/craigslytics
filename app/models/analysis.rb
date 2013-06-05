@@ -238,7 +238,7 @@ class Analysis < ActiveRecord::Base
   def pictures_first_third
     images = []
     for listing in self.listings.where("price > ? AND price <= ?", self.listing_min-1, self.listing_first_third) do 
-      images << listing.info["images"].first["full"] if listing.info["images"].present?
+      images << listing.info["images"].sample["full"] if listing.info["images"].present?
     end
     return images.uniq {|i| i.gsub(/https?:\/\//, '').gsub(/^.*\//, '') }
   end
@@ -246,7 +246,7 @@ class Analysis < ActiveRecord::Base
   def pictures_second_third
     images = []
     for listing in self.listings.where("price > ? AND price <= ?", self.listing_first_third, self.listing_second_third) do 
-      images << listing.info["images"].first["full"] if listing.info["images"].present?
+      images << listing.info["images"].sample["full"] if listing.info["images"].present?
     end
     return images.uniq {|i| i.gsub(/https?:\/\//, '').gsub(/^.*\//, '') }
   end
@@ -254,7 +254,7 @@ class Analysis < ActiveRecord::Base
   def pictures_third_third
     images = []
     for listing in self.listings.where("price > ? AND price <= ?", self.listing_second_third, self.listing_max) do
-      images << listing.info["images"].first["full"] if listing.info["images"].present?
+      images << listing.info["images"].sample["full"] if listing.info["images"].present?
     end
     return images.uniq {|i| i.gsub(/https?:\/\//, '').gsub(/^.*\//, '') }
   end
