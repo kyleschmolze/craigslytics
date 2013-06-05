@@ -29,6 +29,22 @@ class Analysis < ActiveRecord::Base
     return max + (max % GRAPH_INCR_LARGE)
   end
 
+  def adjust_min_smart(min, incr)
+    return min - (min % incr)
+  end
+
+  def adjust_max_smart(max, incr)
+    return max + (max % incr)
+  end
+
+  def determine_incr(min, max)
+    incr = 50
+    while (max-min)/incr > 14
+      incr += 50
+    end
+    return incr
+  end
+
   def listing_min
     return self.listings.first.price
   end
