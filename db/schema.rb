@@ -37,7 +37,6 @@ ActiveRecord::Schema.define(:version => 20130603200920) do
     t.datetime "created_at",                    :null => false
     t.datetime "updated_at",                    :null => false
     t.integer  "duplicate",      :default => 0
-    t.float    "bedroom_score"
     t.float    "address_score"
     t.float    "bedrooms_score"
     t.float    "location_score"

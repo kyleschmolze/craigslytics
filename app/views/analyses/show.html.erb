@@ -226,29 +226,41 @@
   function drawChart() {
     var data_all = google.visualization.arrayToDataTable([
         ['Price', 'Listings'],
-        <% (@analysis.adjust_min_large(@analysis.listing_min)..@analysis.adjust_max_large(@analysis.listing_max)).step(Analysis::GRAPH_INCR_LARGE) do |i| %>
-        ["<%= "$#{i} - $#{i+Analysis::GRAPH_INCR_LARGE-1}" %>", <%= @analysis.listings.where("price >= ? AND price < ?", i, i+Analysis::GRAPH_INCR_LARGE).count %>],
+        <% min = @analysis.listing_min %>
+        <% max = @analysis.listing_max %>
+        <% incr = @analysis.determine_incr(min, max) %>
+        <% (@analysis.adjust_min_smart(min, incr)..@analysis.adjust_max_smart(max, incr)).step(incr) do |i| %>
+        ["<%= "$#{i} - $#{i+incr-1}" %>", <%= @analysis.listings.where("price >= ? AND price < ?", i, i+incr).count %>],
         <% end %>
         ]);
 
     var data_first_third = google.visualization.arrayToDataTable([
         ['Price', 'Listings'],
-        <% (@analysis.adjust_min_small(@analysis.listing_min)..@analysis.adjust_max_small(@analysis.listing_first_third)).step(Analysis::GRAPH_INCR_SMALL) do |i| %>
-        ["<%= "$#{i} - $#{i+Analysis::GRAPH_INCR_SMALL-1}" %>", <%= @analysis.listings.where("price >= ? AND price < ?", i, i+Analysis::GRAPH_INCR_SMALL).count %>],
+        <% min = @analysis.listing_min %>
+        <% max = @analysis.listing_first_third %>
+        <% incr = @analysis.determine_incr(min, max) %>
+        <% (@analysis.adjust_min_smart(min, incr)..@analysis.adjust_max_smart(max, incr)).step(incr) do |i| %>
+        ["<%= "$#{i} - $#{i+incr-1}" %>", <%= @analysis.listings.where("price >= ? AND price < ?", i, i+incr).count %>],
         <% end %>
         ]);
 
     var data_second_third = google.visualization.arrayToDataTable([
         ['Price', 'Listings'],
-        <% (@analysis.adjust_min_small(@analysis.listing_first_third)..@analysis.adjust_max_small(@analysis.listing_second_third)).step(Analysis::GRAPH_INCR_SMALL) do |i| %>
-        ["<%= "$#{i} - $#{i+Analysis::GRAPH_INCR_SMALL-1}" %>", <%= @analysis.listings.where("price >= ? AND price < ?", i, i+Analysis::GRAPH_INCR_SMALL).count %>],
+        <% min = @analysis.listing_first_third %>
+        <% max = @analysis.listing_second_third %>
+        <% incr = @analysis.determine_incr(min, max) %>
+        <% (@analysis.adjust_min_smart(min, incr)..@analysis.adjust_max_smart(max, incr)).step(incr) do |i| %>
+        ["<%= "$#{i} - $#{i+incr-1}" %>", <%= @analysis.listings.where("price >= ? AND price < ?", i, i+incr).count %>],
         <% end %>
         ]);
 
     var data_third_third = google.visualization.arrayToDataTable([
         ['Price', 'Listings'],
-        <% (@analysis.adjust_min_small(@analysis.listing_second_third)..@analysis.adjust_max_small(@analysis.listing_max)+1).step(Analysis::GRAPH_INCR_SMALL) do |i| %>
-        ["<%= "$#{i} - $#{i+Analysis::GRAPH_INCR_SMALL-1}" %>", <%= @analysis.listings.where("price >= ? AND price < ?", i, i+Analysis::GRAPH_INCR_SMALL).count %>],
+        <% min = @analysis.listing_second_third %>
+        <% max = @analysis.listing_max %>
+        <% incr = @analysis.determine_incr(min, max) %>
+        <% (@analysis.adjust_min_smart(min, incr)..@analysis.adjust_max_smart(max, incr)+1).step(incr) do |i| %>
+        ["<%= "$#{i} - $#{i+incr-1}" %>", <%= @analysis.listings.where("price >= ? AND price < ?", i, i+incr).count %>],
         <% end %>
         ]);
 
