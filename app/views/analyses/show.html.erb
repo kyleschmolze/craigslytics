@@ -94,7 +94,7 @@
       <div class="span12" style="position:relative; margin:0 auto; overflow: scroll;">
         <ul style="position:relative; left:0; top:0; overflow-x:auto; white-space:nowrap">
           <% for image in @analysis.pictures_first_third do %>
-            <li style="display:inline; width:200px; height:200px"><img style="width:200px; height:200px" src="<%= image %>" alt="" /></li> 
+            <li style="display:inline; width:200px; height:200px"><img style="width:200px; height:200px" src="<%= image %>" alt="" onError="imgerror(this);" /></li> 
           <% end %>
         </ul>
       </div>
@@ -148,7 +148,7 @@
       <div class="span12" style="position:relative; margin:0 auto; overflow: scroll;">
         <ul style="position:relative; left:0; top:0; overflow-x:auto; white-space:nowrap">
           <% for image in @analysis.pictures_second_third do %>
-            <li style="display:inline; width:200px; height:200px"><img style="width:200px; height:200px" src="<%= image %>" alt="" /></li> 
+            <li style="display:inline; width:200px; height:200px"><img style="width:200px; height:200px" src="<%= image %>" alt="" onError="imgerror(this);" /></li> 
           <% end %>
         </ul>
       </div>
@@ -202,7 +202,7 @@
       <div class="span12" style="position:relative; margin:0 auto; overflow: scroll;">
         <ul style="position:relative; left:0; top:0; overflow-x:auto; white-space:nowrap">
           <% for image in @analysis.pictures_third_third do %>
-            <li style="display:inline; width:200px; height:200px"><img style="width:200px; height:200px" src="<%= image %>" alt="" /></li> 
+            <li style="display:inline; width:200px; height:200px"><img style="width:200px; height:200px" src="<%= image %>" alt="" onError="imgerror(this);" /></li> 
           <% end %>
         </ul>
       </div>
@@ -223,6 +223,10 @@
 <script type="text/javascript">
   google.load("visualization", "1", {packages:["corechart"]});
   google.setOnLoadCallback(drawChart);
+  function imgerror(element) {
+    $(element).parent().remove();
+  }
+
   function drawChart() {
     var data_all = google.visualization.arrayToDataTable([
         ['Price', 'Listings'],
