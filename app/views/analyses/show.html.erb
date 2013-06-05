@@ -145,8 +145,8 @@
       <div id="chart_div_second_third" style="height:400px"></div>
     </div>
     <div class="row-fluid">
-      <div class="span12" style="position:relative; margin:0 auto; overflow: scroll;">
-        <ul style="position:relative; left:0; top:0; overflow-x:auto; white-space:nowrap">
+      <div class="span12" style="position:relative; margin:0 auto; overflow: auto;">
+        <ul style="position:relative; left:0; top:0; white-space:nowrap">
           <% for image in @analysis.pictures_second_third do %>
             <li style="display:inline; width:200px; height:200px"><img style="width:200px; height:200px" src="<%= image %>" alt="" onError="imgerror(this);" /></li> 
           <% end %>
@@ -199,8 +199,8 @@
       <div id="chart_div_third_third" style="height:400px"></div>
     </div>
     <div class="row-fluid">
-      <div class="span12" style="position:relative; margin:0 auto; overflow: scroll;">
-        <ul style="position:relative; left:0; top:0; overflow-x:auto; white-space:nowrap">
+      <div class="span12" style="position:relative; margin:0 auto; overflow: auto;">
+        <ul style="position:relative; left:0; top:0; white-space:nowrap">
           <% for image in @analysis.pictures_third_third do %>
             <li style="display:inline; width:200px; height:200px"><img style="width:200px; height:200px" src="<%= image %>" alt="" onError="imgerror(this);" /></li> 
           <% end %>
