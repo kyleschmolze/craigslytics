@@ -1,58 +1,63 @@
-.analyze-bar {
-  background:#333;
-  .rounded-corners();
-  padding:3px;
-  display:inline-block;
-  text-align:left;
+.homepage-body {
+  background-color:#213661;
+  color:#fafafa;
 
-  .add-on {
-    padding:10px 9px 8px;
-    font-size:23px;
-    color:#555;
-    height:20px;
-    cursor:pointer;
+  .analyze-bar {
+    background:#333;
+    .rounded-corners();
+    padding:3px;
+    display:inline-block;
+    text-align:left;
+
+    .add-on {
+      padding:10px 9px 8px;
+      font-size:23px;
+      color:#555;
+      height:20px;
+      cursor:pointer;
+    }
+
+    .where {
+      width:300px;
+    }
+
+    .when-type {
+      width:122px;
+    }
+
+    form {
+      margin-bottom:0px;
+    }
+
+    input {
+      padding:9px 13px;
+      font-size:20px;
+      line-height:20px;
+    }
+
+    select {
+      font-size:20px;
+      height:40px;
+      line-height:40px;
+      color:#555;
+    }
+
+    button {
+      font-size:20px;
+      padding:10px 23px;
+      .rounded-corners(4px);
+    }
   }
 
-  .where {
-    width:300px;
+  .rounded-corners (@radius: 5px) {
+    border-radius: @radius;
+    -webkit-border-radius: @radius;
+    -moz-border-radius: @radius;
   }
 
-  .when-type {
-    width:122px;
+  .center { 
+    float:none; 
+    margin-left:auto; 
+    margin-right:auto; 
   }
-
-  form {
-    margin-bottom:0px;
-  }
-
-  input {
-    padding:9px 13px;
-    font-size:20px;
-    line-height:20px;
-  }
-
-  select {
-    font-size:20px;
-    height:40px;
-    line-height:40px;
-    color:#555;
-  }
-
-  button {
-    font-size:20px;
-    padding:10px 23px;
-    .rounded-corners(4px);
-  }
-}
-
-.rounded-corners (@radius: 5px) {
-  border-radius: @radius;
-  -webkit-border-radius: @radius;
-  -moz-border-radius: @radius;
-}
-
-.center { 
-  float:none; 
-  margin-left:auto; 
-  margin-right:auto; 
 }

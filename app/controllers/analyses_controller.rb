@@ -34,6 +34,7 @@ class AnalysesController < ApplicationController
   # GET /analyses/new.json
   def new
     @analysis = Analysis.new
+    @body_class = 'homepage-body'
 
     respond_to do |format|
       format.html # new.html.erb

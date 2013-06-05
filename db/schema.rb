@@ -21,8 +21,8 @@ ActiveRecord::Schema.define(:version => 20130603200920) do
     t.string   "address"
     t.datetime "created_at",                       :null => false
     t.datetime "updated_at",                       :null => false
-    t.integer  "average_price"
     t.boolean  "processed",     :default => false
+    t.integer  "average_price"
   end
 
   create_table "analyses_listings", :id => false, :force => true do |t|
@@ -37,7 +37,6 @@ ActiveRecord::Schema.define(:version => 20130603200920) do
     t.datetime "created_at",                    :null => false
     t.datetime "updated_at",                    :null => false
     t.integer  "duplicate",      :default => 0
-    t.float    "bedroom_score"
     t.float    "address_score"
     t.float    "bedrooms_score"
     t.float    "location_score"
