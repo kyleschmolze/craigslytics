@@ -1,0 +1,81 @@
+<p id="notice"><%= notice %></p>
+<h3>Are They The Same?</h3>
+
+<br>
+<div class="row-fluid">
+  <div class="span4">
+    <h4>Listing 1</h4>
+    <p>
+    <b>Latitude:</b>
+    <%= @l1.latitude %>
+    </p>
+
+    <p>
+    <b>Longitude:</b>
+    <%= @l1.longitude %>
+    </p>
+
+    <p>
+    <b>Bedrooms:</b>
+    <%= @l1.bedrooms %>
+    </p>
+
+    <p>
+    <b>Price:</b>
+    <%= @l1.price %>
+    </p>
+
+    <p>
+    <b>Address:</b>
+    <%= @l1.address %>
+    </p>
+
+    <p>
+    <b>Info:</b>
+    <%= link_to @l1.info["external_url"], @l1.info["external_url"] %>
+    </p>
+  </div>
+
+  <div class="span4">
+    <h4>Listing 2</h4>
+    <p>
+    <b>Latitude:</b>
+    <%= @l2.latitude %>
+    </p>
+
+    <p>
+    <b>Longitude:</b>
+    <%= @l2.longitude %>
+    </p>
+
+    <p>
+    <b>Bedrooms:</b>
+    <%= @l2.bedrooms %>
+    </p>
+
+    <p>
+    <b>Price:</b>
+    <%= @l2.price %>
+    </p>
+
+    <p>
+    <b>Address:</b>
+    <%= @l2.address %>
+    </p>
+
+    <p>
+    <b>Info:</b>
+    <%= link_to @l2.info["external_url"], @l2.info["external_url"] %>
+  </div>
+</div>
+<br>
+<div class="row-fluid">
+  <%= form_for @listing_comparison do |f| %>
+       <%= f.select(:duplicate, options_for_select([['--', 0], ['yes', 1], ['no', -1]], @listing_comparison.duplicate))%>
+       <div>
+       <%= submit_tag "save", class: "btn" %>
+     </div>
+     <% end %>
+</div>
+<br>
+<%= link_to 'Back', listing_comparisons_path %>
