@@ -1,0 +1,132 @@
+<h2 style="text-align:center"><%= "Listing Analysis" %></h2>
+<br>
+<% if @analysis.processed %>
+  <div class="row-fluid">
+    <div class="span6">
+      <h3>Your Listing:</h3>
+    </div>
+    <div class="span6"> 
+      <h3>Similar Listings Nearby:</h3>
+    </div>
+  </div>
+  <div class="row-fluid">
+    <div class="well span6">
+      <div class="row-fluid">
+        <div class="span12">
+          <h4> Your address was geocoded to:</h4>
+        </div>
+      </div>
+      <div class="row-fluid">
+        <div class="span12">
+          <%= image_tag @analysis.get_self_map %>
+        </div>
+      </div>
+      <br>
+      <div class="row-fluid">
+      <% if @analysis.price < @analysis.average_price %>
+        <div class="alert alert-success alert-block span12">
+          <p style="text-align:center"><b><%= "Your asking price of $#{@analysis.price} was #{(100 - ((@analysis.price * 100.0)/@analysis.average_price)).round(2)}% below the average market price!" %></b></p>
+      <% elsif @analysis.price > @analysis.average_price %>
+        <div class="alert alert-error alert-block span12">
+          <p style="text-align:center"><b><%= "Your asking price of $#{@analysis.price} was #{(100 - ((@analysis.price * 100.0)/@analysis.average_price)).round(2)}% above the average market price!" %></b></p>
+      <% else %>
+        <div class="alert alert-info alert-block span12">
+          <p style="text-align:center"><b><%= "Your asking price of $#{@analysis.price} was equal to the average market price!" %></b></p>
+      <% end %>
+      </div>
+    </div>
+
+    </div>
+    <div class="well span6">
+      <div class="row-fluid">
+        <div class="span12">
+          <% #"On #{DateTime.now.strftime("%a, %b %d %Y at %I:%M%p")}" %>
+          <h4><%= "There were #{@analysis.listings.count} similar listings in a #{Analysis::RADIUS} mile radius." %></h4>
+        </div>
+      </div>
+      <div class=row-fluid>
+        <div class="span12">
+        <%= image_tag @analysis.get_listings_map %>
+        </div>
+      </div>
+      <br>
+      <div class=row-fluid>
+        <% if @analysis.price > @analysis.average_price %>
+          <div class="alert alert-success alert-block span12">
+            <p style="text-align:center"><b><%= "The average asking price of the listings was $#{@analysis.average_price}." %></b></p>
+        <% elsif @analysis.price < @analysis.average_price %>
+          <div class="alert alert-error alert-block span12">
+            <p style="text-align:center"><b><%= "The average asking price of the listings was $#{@analysis.average_price}." %></b></p>
+        <% else %>
+          <div class="alert alert-info alert-block span12">
+            <p style="text-align:center"><b><%= "The average asking price of the listings was $#{@analysis.average_price}." %></b></p>
+        <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br>
+  <div class="row-fluid">
+    <div class="span6 offset3">
+      <div id="chart_div" style="height:600px"></div>
+    </div>
+  </div>
+  <div class="row-fluid">
+    <div class="span12">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Header</th>
+            <th>Price</th>
+            <th>Link to Listing</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% for listing in @analysis.listings.order("price") do %>
+            <tr>
+              <td><%=listing["info"]["heading"]%></td>
+              <td>$<%=listing["price"]%></td>
+              <td><a href=<%=listing["info"]["external_url"]%> target="_blank">Click Here</a></td>
+            <tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+<% else %>
+  Loading...<br><br>
+  <script>
+    $(function() {
+      App.Helpers.poll("<%= poll_analysis_path(@analysis) %>", function() {
+        location.reload();
+      })
+    })
+  </script>
+<% end %>
+
+
+<%= link_to 'Edit', edit_analysis_path(@analysis) %> |
+<%= link_to 'Back', analyses_path %>
+
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script type="text/javascript">
+  google.load("visualization", "1", {packages:["corechart"]});
+  google.setOnLoadCallback(drawChart);
+  function drawChart() {
+    var data = google.visualization.arrayToDataTable([
+        ['Price', 'Listings'],
+        <% (@analysis.listing_min-1..@analysis.listing_max).step(@analysis.listing_incr) do |i| %>
+        ["<%= "$#{i+1} - $#{i+@analysis.listing_incr}" %>", <%= @analysis.listings.where("price >= ? AND price <= ?", i, i+@analysis.listing_incr).count %>],
+        <% end %>
+        ]);
+
+    var options = {
+      title: 'Number of Listings by Price Range',
+      hAxis: {title: 'Number of Listings', showTextEvery: 1},
+      vAxis: {title: 'Price Range', showTextEvery: 1}
+    };
+
+    var chart = new google.visualization.BarChart(document.getElementById('chart_div'));
+    chart.draw(data, options);
+  }
+</script>
