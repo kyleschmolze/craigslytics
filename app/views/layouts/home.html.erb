@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true&libraries=visualization,drawing"></script>
-    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -36,46 +34,13 @@
     <!-- For all other devices -->
     <!-- Size should be 32 x 32 pixels -->
     <%= favicon_link_tag 'favicon.ico', :rel => 'shortcut icon' %>
-    <link href="//netdna.bootstrapcdn.com/font-awesome/3.1.1/css/font-awesome.css" rel="stylesheet">
-
   </head>
-  <body class='application-body <%= @body_class %>' data-spy="scroll" data-target="#analysis_navbar">
+  <body class='<%= @body_class %>'>
+    <%= image_tag 'wallpapers/serbia.jpg', class: 'wallpaper' %>
 
-    <div class="navbar navbar-fixed-top navbar-inverse" id="analysis_navbar">
-      <div class="navbar-inner">
-        <div class="container-fluid">
-          <a class="btn btn-navbar" data-target=".nav-collapse" data-toggle="collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </a>
-          <a class="brand" href="/">Rentalyzer</a>
-          <div class="container-fluid nav-collapse">
-            <ul class="nav">
-              <li>
-                <a href="#overview">overview</a>
-              </li>
-              <li>
-                <a href="#low">low</a>
-              </li>
-              <li>
-                <a href="#middle">middle</a>
-              </li>
-              <li>
-                <a href="#high">high</a>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="container-fluid">
-      <div class="row-fluid">
-        <div class="span12">
-          <%= yield %>
-        </div>
-      </div>
+    <div class="container">
+      <%= bootstrap_flash %>
+      <%= yield %>
     </div>
 
   </body>
