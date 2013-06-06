@@ -30,11 +30,22 @@ class AnalysesController < ApplicationController
     end
   end
 
+  # GET /analyses/home
+  # GET /analyses/home.json
+  def home
+    @analysis = Analysis.new
+    @body_class = 'homepage-body'
+
+    respond_to do |format|
+      format.html # home.html.erb
+      format.json { render json: @analysis }
+    end
+  end
+
   # GET /analyses/new
   # GET /analyses/new.json
   def new
-    @analysis = Analysis.new
-    @body_class = 'homepage-body'
+    @analysis = Analysis.new(params[:analysis])
 
     respond_to do |format|
       format.html # new.html.erb

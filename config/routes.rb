@@ -7,6 +7,6 @@ Craigslytics::Application.routes.draw do
     end
   end
 
-  root :to => 'analyses#new'
+  root :to => 'analyses#home'
   mount Resque::Server, :at => "/resque"
 end

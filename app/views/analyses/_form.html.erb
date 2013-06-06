@@ -1,4 +1,4 @@
-<%= form_for(@analysis, :html => {:class=>"form-inline"})  do |f| %>
+<%= form_for(@analysis, :method => "GET", :url => url_for(:controller => 'analyses', :action => 'new'), :html => {:class=>"form-inline"})  do |f| %>
   <% if @analysis.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@analysis.errors.count, "error") %> prohibited this analysis from being saved:</h2>
@@ -13,7 +13,6 @@
 
     <%= f.text_field :address, placeholder:"Address" %>
     <%= f.number_field :bedrooms, placeholder:"Number of Bedrooms" %>
-    <%= f.number_field :price, placeholder:"Price" %>
   
     <%= f.submit "Analyze!", class: "btn btn-danger" %>
 <% end %>
