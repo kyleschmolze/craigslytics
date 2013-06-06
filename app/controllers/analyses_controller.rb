@@ -14,6 +14,7 @@ class AnalysesController < ApplicationController
   # GET /analyses/1.json
   def show
     @analysis = Analysis.find(params[:id])
+    @body_class = 'analysis-show'
 
     respond_to do |format|
       format.html # show.html.erb
@@ -37,7 +38,7 @@ class AnalysesController < ApplicationController
     @body_class = 'homepage-body'
 
     respond_to do |format|
-      format.html # new.html.erb
+      format.html { render layout: 'home' }
       format.json { render json: @analysis }
     end
   end

@@ -3,6 +3,7 @@ class Listing < ActiveRecord::Base
   serialize :info
 
   has_and_belongs_to_many :analyses
+  validates_presence_of :price, :bedrooms, :latitude, :longitude
 
   def create_comparison_with(a_listing, options)
     if options 

@@ -41,6 +41,8 @@ GEM
     daemons (1.1.9)
     erubis (2.7.0)
     eventmachine (1.0.0)
+    exceptional (2.0.33)
+      rack
     execjs (1.4.0)
       multi_json (~> 1.0)
     geocoder (1.1.6)
@@ -145,6 +147,7 @@ PLATFORMS
 
 DEPENDENCIES
   coffee-rails (~> 3.2.1)
+  exceptional
   geocoder
   hirefire-resource
   jquery-rails
