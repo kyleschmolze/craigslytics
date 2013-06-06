@@ -1,48 +1,72 @@
 <% if @analysis.processed and !@analysis.failed %>
-  <h2 style="text-align:center">Ok, great.</h2>
+  <h1>Ok, great.</h1>
+  <h3>Your analysis is complete. Let's take a look.</h3>
+  <br>
+  <br>
+
+
   <div class="row-fluid">
-    <div class="span12"> 
-      <h3>Overview:</h3>
-    </div>
-  </div>
-  <div class="row-fluid">
-    <div class="well span6">
-        <div class="span12">
-          <% #"On #{DateTime.now.strftime("%a, %b %d %Y at %I:%M%p")}" %>
-          <h4><%= "There are #{@analysis.listings.count} similar listings in a #{Analysis::RADIUS} mile radius." %></h4>
-      </div>
-      <div class="row-fluid">
-        <div class="span12" id="map_canvas_all" style="width:640px; height:300px"></div>
-      </div>
-      <h4>The numbers:</h4>
-      <div class="row-fluid">
-        <div class="span4" style="text-align:center">
-          <div class="alert alert-block alert-info" style="border-radius:0; -webkit-border-radius:0; -moz-border-radius:0; margin-bottom:0; padding-right:0; padding-left:0">
-            Price Range: 
-            <br>
-            <strong>$<%= @analysis.min_listing_price %> - $<%= @analysis.max_listing_price %></strong>
-          </div>
-        </div>
-        <div class="span4" style="text-align:center">
-          <div class="alert alert-block alert-info" style="border-radius:0; -webkit-border-radius:0; -moz-border-radius:0; margin-bottom:0; padding-left:0; padding-right:0">
-            Average Price: 
-            <br>
-            <strong>$<%= @analysis.average_median %></strong>
-          </div>
-        </div>
-        <div class="span4" style="text-align:center">
-          <div class="alert alert-block alert-info" style="border-radius:0; -webkit-border-radius:0; -moz-border-radius:0; margin-bottom:0; padding-right:0; padding-left:0">
-            Average # of Pictures:
-            <br>
-            <strong><%= @analysis.average_pictures %></strong>
-          </div>
-        </div>
-      </div>
+    <div class="span6">
+      <p>
+        We looked for <strong><%= @analysis.bedrooms %> bedroom</strong>  apartments 
+        within <strong><%= pluralize Analysis::RADIUS, 'mile' %></strong> 
+        of <strong><%= @analysis.address %></strong>. 
+      </p>
+      <p>
+        There were <strong><%= @analysis.listings.count %> similar listings</strong>. 
+        You can view them on the right (the red pin represents your listing). 
+        Here are a few quick facts about these listings:
+      </p>
+      <table class='table'>
+        <tr>
+          <td> Total number of listings found </td>
+          <td> <%= @analysis.listings.count %> </td>
+        </tr>
+        <tr>
+          <td> Highest price we found </td>
+          <td> $<%= @analysis.max_listing_price %> / month </td>
+        </tr>
+        <tr>
+          <td> Lowest price we found </td>
+          <td> $<%= @analysis.min_listing_price %> / month </td>
+        </tr>
+        <tr>
+          <td> Average price </td>
+          <td> $<%= @analysis.average_median %> / month </td>
+        </tr>
+        <tr>
+          <td> Average number of pictures </td>
+          <td> <%= @analysis.average_pictures %> </td>
+        </tr>
+      </table>
     </div>
     <div class="span6">
-      <div id="chart_div_all" style="height:400px"></div>
+      <div id="map_canvas_all" style="height:300px;text-align:center;">
+        <%= image_tag 'loading.gif' %>
+      </div>
     </div>
   </div>
+
+  <br>
+  <br>
+
+  <div class="row-fluid">
+    <div class="span6">
+      <h3>We put together this cool graph, too.</h3>
+      <p>
+        On the right, you'll see a graph showing the distribution of prices for these listings.
+        Each bar represents a price range, and the size of the bar tells you how many
+        listings we found inside that range.
+      </p>
+    </div>
+    <div class="span6">
+      <div id="chart_div_all" style="height:400px;text-align:center;">
+        <%= image_tag 'loading.gif' %>
+      </div>
+    </div>
+  </div>
+
+
   <div class="row-fluid">
     <div class="span12"> 
       <h3>Lowest Price Bracket:</h3>
