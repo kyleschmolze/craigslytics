@@ -47,7 +47,7 @@ class Listing < ActiveRecord::Base
                                :address_score=>address_score, :bedrooms_score=>bedrooms_score, :location_score=>location_score, 
                                :price_score=>price_score})
     end
-  end
+    end
 
   def self.generate_all_comparisons(options)
     Listing.all.each do |i|

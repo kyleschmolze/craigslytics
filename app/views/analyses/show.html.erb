@@ -219,44 +219,110 @@
   </script>
 <% end %>
 
-<script type="text/javascript" src="https://www.google.com/jsapi"></script>
-<script type="text/javascript">
-  google.load("visualization", "1", {packages:["corechart"]});
+<!-- UserVoice JavaScript SDK (only needed once on a page) -->
+<script>(function(){var uv=document.createElement('script');uv.type='text/javascript';uv.async=true;uv.src='//widget.uservoice.com/Rn5kgHKZzgs32a0g7e5XQ.js';var s=document.getElementsByTagName('script')[0];s.parentNode.insertBefore(uv,s)})()</script>
+
+<!-- A tab to launch the Classic Widget -->
+<script>
+  UserVoice = window.UserVoice || [];
+  UserVoice.push(['showTab', 'classic_widget', {
+    mode: 'feedback',
+    primary_color: '#774fa8',
+    link_color: '#696563',
+    forum_id: 209863,
+    tab_label: 'Tell Us Your Thoughts!',
+    tab_color: '#6d458c',
+    tab_position: 'bottom-right',
+    tab_inverted: false
+  }]);
+</script>
+
+<script>
+  function bounce(){
+    a = $("#uvTabLabel");
+    //a.animate({ 'padding-bottom': '20', 'padding-top': '20'}, 320, function(){ a.animate({'padding-bottom': '10', 'padding-top': '10'}, 200)});
+    a.animate({ 'padding-bottom': '30'}, 320, function(){ a.animate({'padding-bottom': '10'}, 200)});
+  }
+
+  function bounce_thrice(){
+    bounce();
+    setTimeout(bounce, 450);
+    setTimeout(bounce, 900);
+  }
+
+INIT = 5;
+
+    window.onscroll = function (e) {
+      wait = INIT;
+    }
+
+  // Bounce after period of inactivity
+  function inactive_bounce(){
+    
+    setInterval(function(){ 
+      wait--;  
+      console.log(wait);
+      if(wait == 0) {
+        bounce_thrice();
+        wait = INIT;
+      }
+    }, 1000); 
+  }
+
+  function expo_bounce(){
+    e = 2;
+    setInterval(function(){
+      wait--;
+      console.log(wait);
+      if(wait == 0) {
+        bounce_thrice();
+        wait = INIT * e; 
+        e++;
+      }
+    }, 1000);
+  }
+
+
+</script>
+
+  <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+  <script type="text/javascript">
+    google.load("visualization", "1", {packages:["corechart"]});
   google.setOnLoadCallback(drawChart);
   function drawChart() {
     var data_all = google.visualization.arrayToDataTable([
         ['Price', 'Listings'],
         <% (@analysis.adjust_min_large(@analysis.listing_min)..@analysis.adjust_max_large(@analysis.listing_max)).step(Analysis::GRAPH_INCR_LARGE) do |i| %>
-        ["<%= "$#{i} - $#{i+Analysis::GRAPH_INCR_LARGE-1}" %>", <%= @analysis.listings.where("price >= ? AND price < ?", i, i+Analysis::GRAPH_INCR_LARGE).count %>],
+          ["<%= "$#{i} - $#{i+Analysis::GRAPH_INCR_LARGE-1}" %>", <%= @analysis.listings.where("price >= ? AND price < ?", i, i+Analysis::GRAPH_INCR_LARGE).count %>],
         <% end %>
         ]);
 
     var data_first_third = google.visualization.arrayToDataTable([
         ['Price', 'Listings'],
         <% (@analysis.adjust_min_small(@analysis.listing_min)..@analysis.adjust_max_small(@analysis.listing_first_third)).step(Analysis::GRAPH_INCR_SMALL) do |i| %>
-        ["<%= "$#{i} - $#{i+Analysis::GRAPH_INCR_SMALL-1}" %>", <%= @analysis.listings.where("price >= ? AND price < ?", i, i+Analysis::GRAPH_INCR_SMALL).count %>],
+          ["<%= "$#{i} - $#{i+Analysis::GRAPH_INCR_SMALL-1}" %>", <%= @analysis.listings.where("price >= ? AND price < ?", i, i+Analysis::GRAPH_INCR_SMALL).count %>],
         <% end %>
         ]);
 
     var data_second_third = google.visualization.arrayToDataTable([
         ['Price', 'Listings'],
         <% (@analysis.adjust_min_small(@analysis.listing_first_third)..@analysis.adjust_max_small(@analysis.listing_second_third)).step(Analysis::GRAPH_INCR_SMALL) do |i| %>
-        ["<%= "$#{i} - $#{i+Analysis::GRAPH_INCR_SMALL-1}" %>", <%= @analysis.listings.where("price >= ? AND price < ?", i, i+Analysis::GRAPH_INCR_SMALL).count %>],
+          ["<%= "$#{i} - $#{i+Analysis::GRAPH_INCR_SMALL-1}" %>", <%= @analysis.listings.where("price >= ? AND price < ?", i, i+Analysis::GRAPH_INCR_SMALL).count %>],
         <% end %>
         ]);
 
     var data_third_third = google.visualization.arrayToDataTable([
         ['Price', 'Listings'],
         <% (@analysis.adjust_min_small(@analysis.listing_second_third)..@analysis.adjust_max_small(@analysis.listing_max)+1).step(Analysis::GRAPH_INCR_SMALL) do |i| %>
-        ["<%= "$#{i} - $#{i+Analysis::GRAPH_INCR_SMALL-1}" %>", <%= @analysis.listings.where("price >= ? AND price < ?", i, i+Analysis::GRAPH_INCR_SMALL).count %>],
+          ["<%= "$#{i} - $#{i+Analysis::GRAPH_INCR_SMALL-1}" %>", <%= @analysis.listings.where("price >= ? AND price < ?", i, i+Analysis::GRAPH_INCR_SMALL).count %>],
         <% end %>
         ]);
 
     var options = {
-      title: 'Number of Listings by Price Range',
-      hAxis: {title: 'Number of Listings', showTextEvery: 1},
-      vAxis: {title: 'Price Range', showTextEvery: 1},
-      chartArea:{top:"5%", height:"85%"}
+title: 'Number of Listings by Price Range',
+       hAxis: {title: 'Number of Listings', showTextEvery: 1},
+       vAxis: {title: 'Price Range', showTextEvery: 1},
+       chartArea:{top:"5%", height:"85%"}
     };
 
     var chart_all = new google.visualization.BarChart(document.getElementById('chart_div_all'));
@@ -264,7 +330,7 @@
 
     var chart_first_third = new google.visualization.BarChart(document.getElementById('chart_div_first_third'));
     chart_first_third.draw(data_first_third, options);
-    
+
     var chart_second_third = new google.visualization.BarChart(document.getElementById('chart_div_second_third'));
     chart_second_third.draw(data_second_third, options);
 

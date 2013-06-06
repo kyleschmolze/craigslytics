@@ -2,7 +2,7 @@ class ListingsController < ApplicationController
   # GET /listings
   # GET /listings.json
   def index
-    @listings = Listing.all
+    @listings = Listing.order(:price).all
 
     respond_to do |format|
       format.html # index.html.erb
