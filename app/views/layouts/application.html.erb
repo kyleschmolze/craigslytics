@@ -34,6 +34,8 @@
     <!-- For all other devices -->
     <!-- Size should be 32 x 32 pixels -->
     <%= favicon_link_tag 'favicon.ico', :rel => 'shortcut icon' %>
+    <link href="//netdna.bootstrapcdn.com/font-awesome/3.1.1/css/font-awesome.css" rel="stylesheet">
+
   </head>
   <body class='application-body <%= @body_class %>'>
 
@@ -57,7 +59,6 @@
     <div class="container-fluid">
       <div class="row-fluid">
         <div class="span12">
-          <%= bootstrap_flash %>
           <%= yield %>
         </div>
       </div>

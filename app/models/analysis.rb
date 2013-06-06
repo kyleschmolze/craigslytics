@@ -316,7 +316,7 @@ class Analysis < ActiveRecord::Base
   @queue = :analysis
 
   def enqueue
-    if Rails.env.production? 
+    if Rails.env.production? or true
       Resque.enqueue Analysis, self.id
     else
       Analysis.perform(self.id)
@@ -325,8 +325,14 @@ class Analysis < ActiveRecord::Base
   
   def self.perform(analysis_id)
     analysis = Analysis.find analysis_id
-    analysis.analyze_and_store
-    analysis.processed = true
-    analysis.save!
+    begin
+      analysis.analyze_and_store
+      analysis.processed = true
+      analysis.save!
+    rescue => e
+      analysis.update_column :processed, true
+      analysis.update_column :failed, true
+      throw e
+    end
   end
 end

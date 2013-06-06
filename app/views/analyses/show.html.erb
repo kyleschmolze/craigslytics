@@ -1,6 +1,5 @@
-<h2 style="text-align:center"><%= "Market Analysis" %></h2>
-<br>
-<% if @analysis.processed %>
+<% if @analysis.processed and !@analysis.failed %>
+  <h2 style="text-align:center">Ok, great.</h2>
   <div class="row-fluid">
     <div class="span12"> 
       <h3>Overview:</h3>
@@ -208,8 +207,91 @@
       </div>
     </div>
   </div>
+  <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+  <script type="text/javascript">
+    google.load("visualization", "1", {packages:["corechart"]});
+    google.setOnLoadCallback(drawChart);
+    function imgerror(element) {
+      $(element).parent().remove();
+    }
+
+    function drawChart() {
+      var data_all = google.visualization.arrayToDataTable([
+          ['Price', 'Listings'],
+          <% min = @analysis.listing_min %>
+          <% max = @analysis.listing_max %>
+          <% incr = @analysis.determine_incr(min, max) %>
+          <% (@analysis.adjust_min_smart(min, incr)..@analysis.adjust_max_smart(max, incr)).step(incr) do |i| %>
+          ["<%= "$#{i} - $#{i+incr-1}" %>", <%= @analysis.listings.where("price >= ? AND price < ?", i, i+incr).count %>],
+          <% end %>
+          ]);
+
+      var data_first_third = google.visualization.arrayToDataTable([
+          ['Price', 'Listings'],
+          <% min = @analysis.listing_min %>
+          <% max = @analysis.listing_first_third %>
+          <% incr = @analysis.determine_incr(min, max) %>
+          <% (@analysis.adjust_min_smart(min, incr)..@analysis.adjust_max_smart(max, incr)).step(incr) do |i| %>
+          ["<%= "$#{i} - $#{i+incr-1}" %>", <%= @analysis.listings.where("price >= ? AND price < ?", i, i+incr).count %>],
+          <% end %>
+          ]);
+
+      var data_second_third = google.visualization.arrayToDataTable([
+          ['Price', 'Listings'],
+          <% min = @analysis.listing_first_third %>
+          <% max = @analysis.listing_second_third %>
+          <% incr = @analysis.determine_incr(min, max) %>
+          <% (@analysis.adjust_min_smart(min, incr)..@analysis.adjust_max_smart(max, incr)).step(incr) do |i| %>
+          ["<%= "$#{i} - $#{i+incr-1}" %>", <%= @analysis.listings.where("price >= ? AND price < ?", i, i+incr).count %>],
+          <% end %>
+          ]);
+
+      var data_third_third = google.visualization.arrayToDataTable([
+          ['Price', 'Listings'],
+          <% min = @analysis.listing_second_third %>
+          <% max = @analysis.listing_max %>
+          <% incr = @analysis.determine_incr(min, max) %>
+          <% (@analysis.adjust_min_smart(min, incr)..@analysis.adjust_max_smart(max, incr)+1).step(incr) do |i| %>
+          ["<%= "$#{i} - $#{i+incr-1}" %>", <%= @analysis.listings.where("price >= ? AND price < ?", i, i+incr).count %>],
+          <% end %>
+          ]);
+
+      var options = {
+        title: 'Number of Listings by Price Range',
+        hAxis: {title: 'Number of Listings', showTextEvery: 1},
+        vAxis: {title: 'Price Range', showTextEvery: 1},
+        chartArea:{top:"5%", height:"85%"}
+      };
+
+      var chart_all = new google.visualization.BarChart(document.getElementById('chart_div_all'));
+      chart_all.draw(data_all, options);
+
+      var chart_first_third = new google.visualization.BarChart(document.getElementById('chart_div_first_third'));
+      chart_first_third.draw(data_first_third, options);
+      
+      var chart_second_third = new google.visualization.BarChart(document.getElementById('chart_div_second_third'));
+      chart_second_third.draw(data_second_third, options);
+
+      var chart_third_third = new google.visualization.BarChart(document.getElementById('chart_div_third_third'));
+      chart_third_third.draw(data_third_third, options);
+    }
+  </script>
+<% elsif @analysis.processed %>
+  <center>
+    <h2>Damn.</h2>
+    <p>That analysis failed for some reason. We've been notified of the issue.</p>
+    <p>In the mean time, try starting again from the <%= link_to 'homepage', root_path %>.</p>
+    <br>
+    <i class='icon-frown icon-4x'></i>
+  </center>
 <% else %>
-  Loading...<br><br>
+  <center>
+    <h2>Generating analysis</h2>
+    <p>For <strong><%= @analysis.address %></strong>.</p>
+    <p>This may take up to two minutes.</p>
+    <br>
+    <%= image_tag 'loading.gif' %>
+  </center>
   <script>
     $(function() {
       App.Helpers.poll("<%= poll_analysis_path(@analysis) %>", function() {
@@ -219,72 +301,3 @@
   </script>
 <% end %>
 
-<script type="text/javascript" src="https://www.google.com/jsapi"></script>
-<script type="text/javascript">
-  google.load("visualization", "1", {packages:["corechart"]});
-  google.setOnLoadCallback(drawChart);
-  function imgerror(element) {
-    $(element).parent().remove();
-  }
-
-  function drawChart() {
-    var data_all = google.visualization.arrayToDataTable([
-        ['Price', 'Listings'],
-        <% min = @analysis.listing_min %>
-        <% max = @analysis.listing_max %>
-        <% incr = @analysis.determine_incr(min, max) %>
-        <% (@analysis.adjust_min_smart(min, incr)..@analysis.adjust_max_smart(max, incr)).step(incr) do |i| %>
-        ["<%= "$#{i} - $#{i+incr-1}" %>", <%= @analysis.listings.where("price >= ? AND price < ?", i, i+incr).count %>],
-        <% end %>
-        ]);
-
-    var data_first_third = google.visualization.arrayToDataTable([
-        ['Price', 'Listings'],
-        <% min = @analysis.listing_min %>
-        <% max = @analysis.listing_first_third %>
-        <% incr = @analysis.determine_incr(min, max) %>
-        <% (@analysis.adjust_min_smart(min, incr)..@analysis.adjust_max_smart(max, incr)).step(incr) do |i| %>
-        ["<%= "$#{i} - $#{i+incr-1}" %>", <%= @analysis.listings.where("price >= ? AND price < ?", i, i+incr).count %>],
-        <% end %>
-        ]);
-
-    var data_second_third = google.visualization.arrayToDataTable([
-        ['Price', 'Listings'],
-        <% min = @analysis.listing_first_third %>
-        <% max = @analysis.listing_second_third %>
-        <% incr = @analysis.determine_incr(min, max) %>
-        <% (@analysis.adjust_min_smart(min, incr)..@analysis.adjust_max_smart(max, incr)).step(incr) do |i| %>
-        ["<%= "$#{i} - $#{i+incr-1}" %>", <%= @analysis.listings.where("price >= ? AND price < ?", i, i+incr).count %>],
-        <% end %>
-        ]);
-
-    var data_third_third = google.visualization.arrayToDataTable([
-        ['Price', 'Listings'],
-        <% min = @analysis.listing_second_third %>
-        <% max = @analysis.listing_max %>
-        <% incr = @analysis.determine_incr(min, max) %>
-        <% (@analysis.adjust_min_smart(min, incr)..@analysis.adjust_max_smart(max, incr)+1).step(incr) do |i| %>
-        ["<%= "$#{i} - $#{i+incr-1}" %>", <%= @analysis.listings.where("price >= ? AND price < ?", i, i+incr).count %>],
-        <% end %>
-        ]);
-
-    var options = {
-      title: 'Number of Listings by Price Range',
-      hAxis: {title: 'Number of Listings', showTextEvery: 1},
-      vAxis: {title: 'Price Range', showTextEvery: 1},
-      chartArea:{top:"5%", height:"85%"}
-    };
-
-    var chart_all = new google.visualization.BarChart(document.getElementById('chart_div_all'));
-    chart_all.draw(data_all, options);
-
-    var chart_first_third = new google.visualization.BarChart(document.getElementById('chart_div_first_third'));
-    chart_first_third.draw(data_first_third, options);
-    
-    var chart_second_third = new google.visualization.BarChart(document.getElementById('chart_div_second_third'));
-    chart_second_third.draw(data_second_third, options);
-
-    var chart_third_third = new google.visualization.BarChart(document.getElementById('chart_div_third_third'));
-    chart_third_third.draw(data_third_third, options);
-  }
-</script>
