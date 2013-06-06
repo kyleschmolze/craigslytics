@@ -136,6 +136,14 @@ class Analysis < ActiveRecord::Base
     return map
   end
 
+  def get_low_listings
+    listings = []
+    for listing in self.listings.where("price > ? AND price <= ?", self.listing_min-1, self.listing_first_third) do 
+      listings << listing
+    end
+    return listings
+  end
+
   def get_low_map
     markers = "center=#{self.latitude},#{self.longitude}&sensor=true&markers=color:red|#{self.latitude},#{self.longitude}&markers=color:blue|size:mid|" 
     for listing in self.listings.where("price > ? AND price <= ?", self.listing_min-1, self.listing_first_third) do 
@@ -154,6 +162,14 @@ class Analysis < ActiveRecord::Base
       end 
     end 
     return map
+  end
+
+  def get_middle_listings
+    listings = []
+    for listing in self.listings.where("price > ? AND price <= ?", self.listing_first_third, self.listing_second_third) do 
+      listings << listing
+    end
+    return listings
   end
   
   def get_middle_map
@@ -174,6 +190,14 @@ class Analysis < ActiveRecord::Base
       end 
     end 
     return map
+  end
+
+  def get_high_listings
+    listings = []
+    for listing in self.listings.where("price > ? AND price <= ?", self.listing_second_third, self.listing_max) do 
+      listings << listing
+    end
+    return listings
   end
 
   def get_high_map
