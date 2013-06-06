@@ -465,18 +465,103 @@
   </center>
 <% else %>
   <center>
-    <h2>Generating analysis</h2>
+    <br>
+    <h2 class='generating'>Generating analysis</h2>
     <p>For <strong><%= @analysis.address %></strong>.</p>
     <p>This may take up to two minutes.</p>
     <br>
-    <%= image_tag 'loading.gif' %>
+    <div class='action'>
+      <%= image_tag 'loading.gif' %>
+    </div>
+    <br>
+    <br>
+    <div class='row-fluid'>
+    <div class='span8 offset2 '>
+      <div class='span8 offset2 well'>
+      <h2>While You Wait --</h2>
+      <h4>Help Us Make Our Product Better</h4>
+      <p>After looking over the analysis, don't hesitate to give us feedback. We recognize that the Rentalyzer has a lot of potential, but wanted to ask you, our users, what new features would be helpful.  So take the time to tell us, we are always looking to improve our service!</p>
+      <br>
+      <p>Simply click the purple tab at the bottom right of your screen whenever you are done viewing our analysis.</p>
+    </div>
+    </div>
+    </div>
+    <i class="icon-large icon-arrow-down" style="font-size:75px;position: fixed;bottom: 40px;right: 80px;"></i>
   </center>
   <script>
     $(function() {
       App.Helpers.poll("<%= poll_analysis_path(@analysis) %>", function() {
-        location.reload();
+        $(".action").html('<%= link_to "Continue to analysis", @analysis, class: "btn btn-primary" %>')
+        $(".generating").html('Analysis complete!')
       })
     })
   </script>
 <% end %>
+
+
+<!-- UserVoice JavaScript SDK (only needed once on a page) -->
+<script>(function(){var uv=document.createElement('script');uv.type='text/javascript';uv.async=true;uv.src='//widget.uservoice.com/Rn5kgHKZzgs32a0g7e5XQ.js';var s=document.getElementsByTagName('script')[0];s.parentNode.insertBefore(uv,s)})()</script>
+
+<!-- A tab to launch the Classic Widget -->
+<script>
+  UserVoice = window.UserVoice || [];
+  UserVoice.push(['showTab', 'classic_widget', {
+    mode: 'feedback',
+    primary_color: '#774fa8',
+    link_color: '#696563',
+    forum_id: 209863,
+    tab_label: 'Tell Us Your Thoughts!',
+    tab_color: '#6d458c',
+    tab_position: 'bottom-right',
+    tab_inverted: false
+  }]);
+</script>
+
+<script>
+  function bounce(){
+    a = $("#uvTabLabel");
+    //a.animate({ 'padding-bottom': '20', 'padding-top': '20'}, 320, function(){ a.animate({'padding-bottom': '10', 'padding-top': '10'}, 200)});
+    a.animate({ 'padding-bottom': '20px'}, 320, function(){ a.animate({'padding-bottom': '2px'}, 200)});
+  }
+
+  function bounce_thrice(){
+    bounce();
+    setTimeout(bounce, 450);
+    setTimeout(bounce, 900);
+  }
+
+INIT = 5;
+
+    window.onscroll = function (e) {
+      wait = INIT;
+    }
+
+  // Bounce after period of inactivity
+  function inactive_bounce(){
+    
+    setInterval(function(){ 
+      wait--;  
+      console.log(wait);
+      if(wait == 0) {
+        bounce_thrice();
+        wait = INIT;
+      }
+    }, 1000); 
+  }
+
+  function expo_bounce(){
+    e = 2;
+    setInterval(function(){
+      wait--;
+      console.log(wait);
+      if(wait == 0) {
+        bounce_thrice();
+        wait = INIT * e; 
+        e++;
+      }
+    }, 1000);
+  }
+
+
+</script>
 

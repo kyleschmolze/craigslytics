@@ -16,7 +16,21 @@
     </div>
   <% end %>
 </div>
-  <div>
+<br>
+<h3>Success Rates</h3>
+<h6>The Higher the false rates, the further from perfect the algorithm is<h6>
+<table class="table">
+<tr>
+  <th>false positives rate</th>
+  <th>false negatives rate</th>
+</tr>
+<tr>
+  <td> <%= @false_positive %> </td> 
+  <td> <%= @false_negative %> </td>
+</tr>
+</table>
+
+<div>
   <h3>Identified as Duplicates</h3>
   <table class="table">
     <tr>

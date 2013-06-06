@@ -13,6 +13,13 @@ class ListingComparisonsController < ApplicationController
     end
 
     @listing_comparisons = ListingComparison.order(:score).all
+    
+#  @false_positive = (ListingComparison.where("score <= ? AND duplicate == ?", @cutoff, -1).count * 100) / ListingComparison.all.count
+# @false_negative = (ListingComparison.where("score > ? AND duplicate == ?", @cutoff, 1).count * 100) / ListingComparison.all.count
+
+  @false_positive = ListingComparison.where("score <= ? AND duplicate == ?", @cutoff, -1).count
+ @false_negative = ListingComparison.where("score > ? AND duplicate == ?", @cutoff, 1).count
+  
 
     respond_to do |format|
       format.html # index.html.erb
