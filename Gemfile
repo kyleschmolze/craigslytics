@@ -10,6 +10,7 @@ gem 'redis', ">= 2.0", "< 3.0.0"
 gem 'hirefire-resource'
 gem 'thin'
 gem 'exceptional'
+gem 'newrelic_rpm'
 
 
 # Bundle edge Rails instead:
