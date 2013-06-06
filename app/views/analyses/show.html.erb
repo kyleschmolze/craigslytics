@@ -12,9 +12,7 @@
           <h4><%= "There are #{@analysis.listings.count} similar listings in a #{Analysis::RADIUS} mile radius." %></h4>
       </div>
       <div class="row-fluid">
-        <div class="span12">
-          <%= image_tag @analysis.get_listings_map %>
-        </div>
+        <div class="span12" id="map_canvas_all" style="width:640px; height:300px"></div>
       </div>
       <h4>The numbers:</h4>
       <div class="row-fluid">
@@ -22,7 +20,7 @@
           <div class="alert alert-block alert-info" style="border-radius:0; -webkit-border-radius:0; -moz-border-radius:0; margin-bottom:0; padding-right:0; padding-left:0">
             Price Range: 
             <br>
-            <strong>$<%= @analysis.listing_min %> - $<%= @analysis.listing_max %></strong>
+            <strong>$<%= @analysis.min_listing_price %> - $<%= @analysis.max_listing_price %></strong>
           </div>
         </div>
         <div class="span4" style="text-align:center">
@@ -54,12 +52,10 @@
     <div class="well span6">
         <div class="span12">
           <% #"On #{DateTime.now.strftime("%a, %b %d %Y at %I:%M%p")}" %>
-          <h4><%= "Of the similar listings, there are #{@analysis.listings.where("price > ? AND price <= ?", @analysis.listing_min-1, @analysis.listing_first_third).count} in the lowest price bracket." %></h4>
+          <h4><%= "Of the similar listings, there are #{@analysis.listings.where("price > ? AND price <= ?", @analysis.min_listing_price-1, @analysis.first_tertile).count} in the lowest price bracket." %></h4>
       </div>
       <div class=row-fluid>
-        <div class="span12">
-          <%= image_tag @analysis.get_low_map %>
-        </div>
+        <div class="span12" id="map_canvas_first_third" style="width:640px; height:300px"></div>
       </div>
       <h4>The numbers:</h4>
       <div class="row-fluid">
@@ -67,7 +63,7 @@
           <div class="alert alert-block alert-info" style="border-radius:0; -webkit-border-radius:0; -moz-border-radius:0; margin-bottom:0; padding-right:0; padding-left:0">
             Price Range: 
             <br>
-            <strong>$<%= @analysis.listing_min %> - $<%= @analysis.listing_first_third %></strong>
+            <strong>$<%= @analysis.min_listing_price %> - $<%= @analysis.first_tertile %></strong>
           </div>
         </div>
         <div class="span4" style="text-align:center">
@@ -108,12 +104,10 @@
     <div class="well span6">
         <div class="span12">
           <% #"On #{DateTime.now.strftime("%a, %b %d %Y at %I:%M%p")}" %>
-          <h4><%= "Of the similar listings, there are #{@analysis.listings.where("price > ? AND price <= ?", @analysis.listing_first_third, @analysis.listing_second_third).count} in the middle price bracket." %></h4>
+          <h4><%= "Of the similar listings, there are #{@analysis.listings.where("price > ? AND price <= ?", @analysis.first_tertile, @analysis.second_tertile).count} in the middle price bracket." %></h4>
       </div>
       <div class=row-fluid>
-        <div class="span12">
-          <%= image_tag @analysis.get_middle_map %>
-        </div>
+        <div class="span12" id="map_canvas_second_third" style="width:640px; height:300px"></div>
       </div>
       <h4>The numbers:</h4>
       <div class="row-fluid">
@@ -121,7 +115,7 @@
           <div class="alert alert-block alert-info" style="border-radius:0; -webkit-border-radius:0; -moz-border-radius:0; margin-bottom:0; padding-right:0; padding-left:0">
             Price Range: 
             <br>
-            <strong>$<%= @analysis.listing_first_third + 1 %> - $<%= @analysis.listing_second_third %></strong>
+            <strong>$<%= @analysis.first_tertile + 1 %> - $<%= @analysis.second_tertile %></strong>
           </div>
         </div>
         <div class="span4" style="text-align:center">
@@ -162,12 +156,10 @@
     <div class="well span6">
         <div class="span12">
           <% #"On #{DateTime.now.strftime("%a, %b %d %Y at %I:%M%p")}" %>
-          <h4><%= "Of the similar listings, there are #{@analysis.listings.where("price > ? AND price <= ?", @analysis.listing_second_third, @analysis.listing_max).count} in the middle price bracket." %></h4>
+          <h4><%= "Of the similar listings, there are #{@analysis.listings.where("price > ? AND price <= ?", @analysis.second_tertile, @analysis.max_listing_price).count} in the middle price bracket." %></h4>
       </div>
       <div class=row-fluid>
-        <div class="span12">
-          <%= image_tag @analysis.get_high_map %>
-        </div>
+        <div class="span12" id="map_canvas_third_third" style="width:640px; height:300px"></div>
       </div>
       <h4>The numbers:</h4>
       <div class="row-fluid">
@@ -175,7 +167,7 @@
           <div class="alert alert-block alert-info" style="border-radius:0; -webkit-border-radius:0; -moz-border-radius:0; margin-bottom:0; padding-right:0; padding-left:0">
             Price Range: 
             <br>
-            <strong>$<%= @analysis.listing_second_third + 1 %> - $<%= @analysis.listing_max %></strong>
+            <strong>$<%= @analysis.second_tertile + 1 %> - $<%= @analysis.max_listing_price %></strong>
           </div>
         </div>
         <div class="span4" style="text-align:center">
@@ -208,18 +200,24 @@
     </div>
   </div>
   <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+
+  <!-- Image Load Error -->
   <script type="text/javascript">
-    google.load("visualization", "1", {packages:["corechart"]});
-    google.setOnLoadCallback(drawChart);
     function imgerror(element) {
       $(element).parent().remove();
     }
+  </script>
+
+  <!-- Google Charts -->
+  <script type="text/javascript">
+    google.load("visualization", "1", {packages:["corechart"]});
+    google.setOnLoadCallback(drawChart);
 
     function drawChart() {
       var data_all = google.visualization.arrayToDataTable([
           ['Price', 'Listings'],
-          <% min = @analysis.listing_min %>
-          <% max = @analysis.listing_max %>
+          <% min = @analysis.min_listing_price %>
+          <% max = @analysis.max_listing_price %>
           <% incr = @analysis.determine_incr(min, max) %>
           <% (@analysis.adjust_min_smart(min, incr)..@analysis.adjust_max_smart(max, incr)).step(incr) do |i| %>
           ["<%= "$#{i} - $#{i+incr-1}" %>", <%= @analysis.listings.where("price >= ? AND price < ?", i, i+incr).count %>],
@@ -228,8 +226,8 @@
 
       var data_first_third = google.visualization.arrayToDataTable([
           ['Price', 'Listings'],
-          <% min = @analysis.listing_min %>
-          <% max = @analysis.listing_first_third %>
+          <% min = @analysis.min_listing_price %>
+          <% max = @analysis.first_tertile %>
           <% incr = @analysis.determine_incr(min, max) %>
           <% (@analysis.adjust_min_smart(min, incr)..@analysis.adjust_max_smart(max, incr)).step(incr) do |i| %>
           ["<%= "$#{i} - $#{i+incr-1}" %>", <%= @analysis.listings.where("price >= ? AND price < ?", i, i+incr).count %>],
@@ -238,8 +236,8 @@
 
       var data_second_third = google.visualization.arrayToDataTable([
           ['Price', 'Listings'],
-          <% min = @analysis.listing_first_third %>
-          <% max = @analysis.listing_second_third %>
+          <% min = @analysis.first_tertile %>
+          <% max = @analysis.second_tertile %>
           <% incr = @analysis.determine_incr(min, max) %>
           <% (@analysis.adjust_min_smart(min, incr)..@analysis.adjust_max_smart(max, incr)).step(incr) do |i| %>
           ["<%= "$#{i} - $#{i+incr-1}" %>", <%= @analysis.listings.where("price >= ? AND price < ?", i, i+incr).count %>],
@@ -248,8 +246,8 @@
 
       var data_third_third = google.visualization.arrayToDataTable([
           ['Price', 'Listings'],
-          <% min = @analysis.listing_second_third %>
-          <% max = @analysis.listing_max %>
+          <% min = @analysis.second_tertile %>
+          <% max = @analysis.max_listing_price %>
           <% incr = @analysis.determine_incr(min, max) %>
           <% (@analysis.adjust_min_smart(min, incr)..@analysis.adjust_max_smart(max, incr)+1).step(incr) do |i| %>
           ["<%= "$#{i} - $#{i+incr-1}" %>", <%= @analysis.listings.where("price >= ? AND price < ?", i, i+incr).count %>],
@@ -275,6 +273,107 @@
       var chart_third_third = new google.visualization.BarChart(document.getElementById('chart_div_third_third'));
       chart_third_third.draw(data_third_third, options);
     }
+  </script>
+
+  <!-- Google Maps -->
+  <script type="text/javascript">
+    function initialize() {
+      var analysis_lat_lng = new google.maps.LatLng(<%= @analysis.latitude %>, <%= @analysis.longitude %>);
+      var mapOptions = {
+        center: analysis_lat_lng,
+        zoom: 14,
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+      };
+      var map_all = new google.maps.Map(document.getElementById("map_canvas_all"), mapOptions);
+      var map_first = new google.maps.Map(document.getElementById("map_canvas_first_third"), mapOptions);
+      var map_second = new google.maps.Map(document.getElementById("map_canvas_second_third"), mapOptions);
+      var map_third = new google.maps.Map(document.getElementById("map_canvas_third_third"), mapOptions);
+      var analysis_lat_lng = new google.maps.LatLng(<%= @analysis.latitude %>, <%= @analysis.longitude %>);
+      var map_all_bounds = new google.maps.LatLngBounds(analysis_lat_lng, analysis_lat_lng)
+      var map_first_bounds = new google.maps.LatLngBounds(analysis_lat_lng, analysis_lat_lng)
+      var map_second_bounds = new google.maps.LatLngBounds(analysis_lat_lng, analysis_lat_lng)
+      var map_third_bounds = new google.maps.LatLngBounds(analysis_lat_lng, analysis_lat_lng)
+
+      var image = new google.maps.MarkerImage(
+        'http://maps.google.com/mapfiles/ms/micons/blue.png',
+        new google.maps.Size(32, 32), // size
+        new google.maps.Point(0,0), // origin
+        new google.maps.Point(16, 32) // anchor
+      );
+
+      var shadow = new google.maps.MarkerImage(
+        'http://maps.google.com/mapfiles/ms/micons/msmarker.shadow.png',
+        new google.maps.Size(59, 32), // size
+        new google.maps.Point(0,0), // origin
+        new google.maps.Point(16, 32) // anchor
+      );
+
+      <% for listing in @analysis.listings %>
+        var pos = new google.maps.LatLng(<%= listing.latitude %>, <%= listing.longitude %>);
+        var marker = new google.maps.Marker({
+          position: new google.maps.LatLng(<%= listing.latitude %>, <%= listing.longitude %>),
+          map: map_all,
+          icon: image,
+          shadow: shadow
+        });
+        map_all_bounds.extend(pos);
+      <% end %>
+      var marker = new google.maps.Marker({
+        position: analysis_lat_lng,
+        map: map_all,
+      });
+      
+      <% for listing in @analysis.get_low_listings %>
+        var pos = new google.maps.LatLng(<%= listing.latitude %>, <%= listing.longitude %>);
+        var marker = new google.maps.Marker({
+          position: pos,
+          map: map_first,
+          icon: image,
+          shadow: shadow
+        });
+        map_first_bounds.extend(pos);
+      <% end %>
+      var marker = new google.maps.Marker({
+        position: analysis_lat_lng,
+        map: map_first,
+      });
+      
+      <% for listing in @analysis.get_middle_listings %>
+        var pos = new google.maps.LatLng(<%= listing.latitude %>, <%= listing.longitude %>);
+        var marker = new google.maps.Marker({
+          position: new google.maps.LatLng(<%= listing.latitude %>, <%= listing.longitude %>),
+          map: map_second,
+          icon: image,
+          shadow: shadow
+        });
+        map_second_bounds.extend(pos);
+      <% end %>
+      var marker = new google.maps.Marker({
+        position: analysis_lat_lng,
+        map: map_second,
+      });
+      
+      <% for listing in @analysis.get_high_listings %>
+        var pos = new google.maps.LatLng(<%= listing.latitude %>, <%= listing.longitude %>);
+        var marker = new google.maps.Marker({
+          position: new google.maps.LatLng(<%= listing.latitude %>, <%= listing.longitude %>),
+          map: map_third,
+          icon: image,
+          shadow: shadow
+        });
+        map_third_bounds.extend(pos);
+      <% end %>
+      var marker = new google.maps.Marker({
+        position: analysis_lat_lng,
+        map: map_third,
+      });
+
+      map_all.fitBounds(map_all_bounds);
+      map_first(map_first_bounds);
+      map_second(map_second_bounds);
+      map_third(map_third_bounds);
+    }
+    google.maps.event.addDomListener(window, 'load', initialize);
   </script>
 <% elsif @analysis.processed %>
   <center>

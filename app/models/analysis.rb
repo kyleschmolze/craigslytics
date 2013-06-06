@@ -45,24 +45,30 @@ class Analysis < ActiveRecord::Base
     return incr
   end
 
-  def listing_min
+  #listing_min
+  def min_listing_price
     return self.listings.first.price
   end
   
-  def listing_first_third
-    return self.listings[self.listings.length/3].price
+  #listing_first_third
+  def first_tertile
+    prices = self.listings.map(&:price).uniq
+    return prices[prices.length/3]
   end
 
-  def listing_second_third
-    return self.listings[(self.listings.length*2)/3].price
+  #listing_second_third
+  def second_tertile
+    prices = self.listings.map(&:price).uniq
+    return prices[(prices.length*2)/3]
   end
 
-  def listing_max
+  #listing_max
+  def max_listing_price
     return self.listings.last.price
   end
 
   def average_price_first_third
-    listings = self.listings.where("price > ? AND price <= ?", self.listing_min-1, self.listing_first_third)
+    listings = self.listings.where("price > ? AND price <= ?", self.min_listing_price-1, self.first_tertile)
     total = 0
     for listing in listings do
       total += listing.price
@@ -71,7 +77,7 @@ class Analysis < ActiveRecord::Base
   end
   
   def average_price_second_third
-    listings = self.listings.where("price > ? AND price <= ?", self.listing_first_third, self.listing_second_third)
+    listings = self.listings.where("price > ? AND price <= ?", self.first_tertile, self.second_tertile)
     total = 0
     for listing in listings do
       total += listing.price
@@ -80,7 +86,7 @@ class Analysis < ActiveRecord::Base
   end
 
   def average_price_third_third
-    listings = self.listings.where("price > ? AND price <= ?", self.listing_second_third, self.listing_max)
+    listings = self.listings.where("price > ? AND price <= ?", self.second_tertile, self.max_listing_price)
     total = 0
     for listing in listings do
       total += listing.price
@@ -99,7 +105,7 @@ class Analysis < ActiveRecord::Base
   end
   
   def average_median_first_third
-    listings = self.listings.where("price > ? AND price <= ?", self.listing_min-1, self.listing_first_third)
+    listings = self.listings.where("price > ? AND price <= ?", self.min_listing_price-1, self.first_tertile)
     count = listings.count
     middle = count/2 
     if count % 2
@@ -110,7 +116,7 @@ class Analysis < ActiveRecord::Base
   end
   
   def average_median_second_third
-    listings = self.listings.where("price > ? AND price <= ?", self.listing_first_third, self.listing_second_third)
+    listings = self.listings.where("price > ? AND price <= ?", self.first_tertile, self.second_tertile)
     count = listings.count
     middle = count/2
     if count % 2
@@ -121,7 +127,7 @@ class Analysis < ActiveRecord::Base
   end
 
   def average_median_third_third
-    listings = self.listings.where("price > ? AND price <= ?", self.listing_second_third, self.listing_max)
+    listings = self.listings.where("price > ? AND price <= ?", self.second_tertile, self.max_listing_price)
     count = listings.count
     middle = count/2 
     if count % 2
@@ -136,29 +142,17 @@ class Analysis < ActiveRecord::Base
     return map
   end
 
+  def get_low_listings
+    listings = []
+    for listing in self.listings.where("price > ? AND price <= ?", self.min_listing_price-1, self.first_tertile) do 
+      listings << listing
+    end
+    return listings
+  end
+
   def get_low_map
     markers = "center=#{self.latitude},#{self.longitude}&sensor=true&markers=color:red|#{self.latitude},#{self.longitude}&markers=color:blue|size:mid|" 
-    for listing in self.listings.where("price > ? AND price <= ?", self.listing_min-1, self.listing_first_third) do 
-      markers += "|#{listing.latitude},#{listing.longitude}" 
-    end 
-    map = "http://maps.google.com/maps/api/staticmap?size=850x300&zoom=auto&#{markers}"
-    if map.length > 1850 
-      split = map.split("|") 
-      map = split[0].to_s + "|" + split[1].to_s 
-      (2..split.length).each do |i| 
-        if (map + "|" + split[i].to_s).length < 1850
-          map = map + "|" + split[i].to_s 
-        else 
-          break 
-        end 
-      end 
-    end 
-    return map
-  end
-  
-  def get_middle_map
-    markers = "center=#{self.latitude},#{self.longitude}&sensor=true&markers=color:red|#{self.latitude},#{self.longitude}&markers=color:blue|size:mid|" 
-    for listing in self.listings.where("price > ? AND price <= ?", self.listing_first_third, self.listing_second_third) do 
+    for listing in self.listings.where("price > ? AND price <= ?", self.min_listing_price-1, self.first_tertile) do 
       markers += "|#{listing.latitude},#{listing.longitude}" 
     end 
     map = "http://maps.google.com/maps/api/staticmap?size=850x300&zoom=auto&#{markers}"
@@ -176,9 +170,45 @@ class Analysis < ActiveRecord::Base
     return map
   end
 
+  def get_middle_listings
+    listings = []
+    for listing in self.listings.where("price > ? AND price <= ?", self.first_tertile, self.second_tertile) do 
+      listings << listing
+    end
+    return listings
+  end
+  
+  def get_middle_map
+    markers = "center=#{self.latitude},#{self.longitude}&sensor=true&markers=color:red|#{self.latitude},#{self.longitude}&markers=color:blue|size:mid|" 
+    for listing in self.listings.where("price > ? AND price <= ?", self.first_tertile, self.second_tertile) do 
+      markers += "|#{listing.latitude},#{listing.longitude}" 
+    end 
+    map = "http://maps.google.com/maps/api/staticmap?size=850x300&zoom=auto&#{markers}"
+    if map.length > 1850 
+      split = map.split("|") 
+      map = split[0].to_s + "|" + split[1].to_s 
+      (2..split.length).each do |i| 
+        if (map + "|" + split[i].to_s).length < 1850
+          map = map + "|" + split[i].to_s 
+        else 
+          break 
+        end 
+      end 
+    end 
+    return map
+  end
+
+  def get_high_listings
+    listings = []
+    for listing in self.listings.where("price > ? AND price <= ?", self.second_tertile, self.max_listing_price) do 
+      listings << listing
+    end
+    return listings
+  end
+
   def get_high_map
     markers = "center=#{self.latitude},#{self.longitude}&sensor=true&markers=color:red|#{self.latitude},#{self.longitude}&markers=color:blue|size:mid|" 
-    for listing in self.listings.where("price > ? AND price <= ?", self.listing_second_third, self.listing_max) do 
+    for listing in self.listings.where("price > ? AND price <= ?", self.second_tertile, self.max_listing_price) do 
       markers += "|#{listing.latitude},#{listing.longitude}" 
     end 
     map = "http://maps.google.com/maps/api/staticmap?size=850x300&zoom=auto&#{markers}"
@@ -226,7 +256,7 @@ class Analysis < ActiveRecord::Base
 
   def average_pictures_first_third
     count = 0
-    listings = self.listings.where("price > ? AND price <= ?", self.listing_min-1, self.listing_first_third) 
+    listings = self.listings.where("price > ? AND price <= ?", self.min_listing_price-1, self.first_tertile) 
     for listing in listings 
       count += listing.info["images"].count if listing.info["images"].present?
     end
@@ -235,7 +265,7 @@ class Analysis < ActiveRecord::Base
 
   def average_pictures_second_third
     count = 0
-    listings = self.listings.where("price > ? AND price <= ?", self.listing_first_third, self.listing_second_third) 
+    listings = self.listings.where("price > ? AND price <= ?", self.first_tertile, self.second_tertile) 
     for listing in listings do 
       count += listing.info["images"].count if listing.info["images"].present?
     end
@@ -244,7 +274,7 @@ class Analysis < ActiveRecord::Base
 
   def average_pictures_third_third
     count = 0
-    listings = self.listings.where("price > ? AND price <= ?", self.listing_second_third, self.listing_max) 
+    listings = self.listings.where("price > ? AND price <= ?", self.second_tertile, self.max_listing_price) 
     for listing in listings
       count += listing.info["images"].count if listing.info["images"].present?
     end
@@ -253,7 +283,7 @@ class Analysis < ActiveRecord::Base
 
   def pictures_first_third
     images = []
-    for listing in self.listings.where("price > ? AND price <= ?", self.listing_min-1, self.listing_first_third) do 
+    for listing in self.listings.where("price > ? AND price <= ?", self.min_listing_price-1, self.first_tertile) do 
       images << listing.info["images"].sample["full"] if listing.info["images"].present?
     end
     return images.uniq {|i| i.gsub(/https?:\/\//, '').gsub(/^.*\//, '') }
@@ -261,7 +291,7 @@ class Analysis < ActiveRecord::Base
 
   def pictures_second_third
     images = []
-    for listing in self.listings.where("price > ? AND price <= ?", self.listing_first_third, self.listing_second_third) do 
+    for listing in self.listings.where("price > ? AND price <= ?", self.first_tertile, self.second_tertile) do 
       images << listing.info["images"].sample["full"] if listing.info["images"].present?
     end
     return images.uniq {|i| i.gsub(/https?:\/\//, '').gsub(/^.*\//, '') }
@@ -269,7 +299,7 @@ class Analysis < ActiveRecord::Base
 
   def pictures_third_third
     images = []
-    for listing in self.listings.where("price > ? AND price <= ?", self.listing_second_third, self.listing_max) do
+    for listing in self.listings.where("price > ? AND price <= ?", self.second_tertile, self.max_listing_price) do
       images << listing.info["images"].sample["full"] if listing.info["images"].present?
     end
     return images.uniq {|i| i.gsub(/https?:\/\//, '').gsub(/^.*\//, '') }
@@ -316,7 +346,7 @@ class Analysis < ActiveRecord::Base
   @queue = :analysis
 
   def enqueue
-    if Rails.env.production? or true
+    if Rails.env.production?
       Resque.enqueue Analysis, self.id
     else
       Analysis.perform(self.id)
