@@ -7,5 +7,6 @@ end
 #Resque::Mailer.excluded_environments = [:test, :cucumber, :development]
 
 Resque.after_fork do |job|
+  ActiveRecord::Base.establish_connection
   ActiveRecord::Base.connection_handler.verify_active_connections!
 end
