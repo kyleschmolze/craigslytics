@@ -8,5 +8,21 @@
   <div class="analyze-bar">
     <%= render 'form' %>
   </div>
+  <div class='error hide'>
+    <h4>Both fields are required.</h4>
+  </div>
 </div>
+<script>
+  $(function() {
+    $("form").submit(function() {
+      if($("#analysis_address").val() == "" || $("#analysis_bedrooms").val() == "") {
+        $(".error").show()
+        return false
+      }
+      else {
+        return true
+      }
+    })
+  })
+</script>
 

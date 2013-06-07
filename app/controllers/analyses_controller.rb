@@ -58,7 +58,10 @@ class AnalysesController < ApplicationController
         format.html # new.html.erb
         format.json { render json: @analysis }
       else
-        format.html { render action: "home" }
+        format.html { 
+          @body_class = 'homepage-body'
+          render action: "home", layout: "home" 
+        }
         format.json { render json: @analysis.errors, status: :unprocessable_entity }
       end
     end
