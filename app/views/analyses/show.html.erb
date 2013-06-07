@@ -342,11 +342,22 @@
       $(element).parent().remove();
     }
 
-//function imgchecksize(element) {
-//  img = $(element).parent();
-//  if((img.width < 99) or (img.height < 99) {
-//      img.remove();
-//  }
+    //Remove the tiny images
+    $(function() {
+      $("ul img").each(function(i, img) {
+        var pic_real_width, pic_real_height;
+        $("<img/>") // Make in memory copy of image to avoid css issues
+        .attr("src", $(img).attr("src"))
+        .load(function() {
+          pic_real_width = this.width;   // Note: $(this).width() will not
+          pic_real_height = this.height; // work for in memory images.
+          if((pic_real_width < 250) || (pic_real_height < 250)) {
+            $(img).parent().remove();
+            console.log('removing');
+          }
+        })
+      })
+    })
   </script>
   
 
