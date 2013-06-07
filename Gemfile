@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 gem 'rails', '3.2.12'
-gem 'twitter-bootstrap-rails'
+gem 'twitter-bootstrap-rails', ">= 2.2.7"
 gem "therubyracer"
 gem "less-rails"
 gem 'geocoder'
@@ -10,7 +10,7 @@ gem 'redis', ">= 2.0", "< 3.0.0"
 gem 'hirefire-resource'
 gem 'thin'
 gem 'exceptional'
-
+gem 'newrelic_rpm'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'

@@ -66,6 +66,7 @@ GEM
       treetop (~> 1.4.8)
     mime-types (1.23)
     multi_json (1.7.3)
+    newrelic_rpm (3.5.6.55)
     pg (0.15.1)
     polyglot (0.3.3)
     rack (1.4.5)
@@ -131,9 +132,10 @@ GEM
     treetop (1.4.12)
       polyglot
       polyglot (>= 0.3.1)
-    twitter-bootstrap-rails (2.2.0)
+    twitter-bootstrap-rails (2.2.7)
       actionpack (>= 3.1)
       execjs
+      rails (>= 3.1)
       railties (>= 3.1)
     tzinfo (0.3.37)
     uglifier (2.1.0)
@@ -152,6 +154,7 @@ DEPENDENCIES
   hirefire-resource
   jquery-rails
   less-rails
+  newrelic_rpm
   pg
   rails (= 3.2.12)
   redis (>= 2.0, < 3.0.0)
@@ -160,5 +163,5 @@ DEPENDENCIES
   sqlite3
   therubyracer
   thin
-  twitter-bootstrap-rails
+  twitter-bootstrap-rails (>= 2.2.7)
   uglifier (>= 1.0.3)
