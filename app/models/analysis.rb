@@ -4,7 +4,7 @@ class Analysis < ActiveRecord::Base
   attr_accessible :address, :bedrooms, :latitude, :longitude, :price, :average_price
 
   geocoded_by :address   # can also be an IP address
-  after_validation :geocode          # auto-fetch coordinates
+  after_validation :geocode, :if => :lat_lng_blank?          # auto-fetch coordinates
   has_and_belongs_to_many :listings, :order=>:price
 
   RADIUS = '1'
@@ -12,6 +12,10 @@ class Analysis < ActiveRecord::Base
   GRAPH_INCR_LARGE = 200
   GRAPH_INCR_SMALL = 50
   after_create :enqueue
+
+  def lat_lng_blank?
+    return (latitude.blank? or longitude.blank?)
+  end
 
   def adjust_min_small(min)
     return min - (min % GRAPH_INCR_SMALL)
@@ -138,7 +142,7 @@ class Analysis < ActiveRecord::Base
   end
 
   def get_self_map
-    map = "http://maps.google.com/maps/api/staticmap?size=850x200&zoom=auto&center=#{self.latitude},#{self.longitude}&sensor=true&markers=color:red|#{self.latitude},#{self.longitude}"
+    map = "http://maps.google.com/maps/api/staticmap?size=650x300&zoom=auto&center=#{self.latitude},#{self.longitude}&sensor=true&markers=color:red|#{self.latitude},#{self.longitude}"
     return map
   end
 
