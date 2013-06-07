@@ -11,8 +11,8 @@
       </script>
 
   <div id="overview" style="padding-top:30px"></div>
-  <h1>Ok, great.</h1>
-  <h3>Your analysis is complete. Let's take a look.</h3>
+  <h1>Your analysis is complete.</h1>
+  <h3>Let's take a look.</h3>
   <br>
   <br>
 
@@ -25,7 +25,7 @@
       </p>
       <p>
         There were <strong><%= @analysis.listings.count %> similar listings</strong>. 
-        You can view them on the right (the red pin represents your listing). 
+        You can see them on the map (the red pin represents your listing). 
         Here are a few quick facts about these listings:
       </p>
       <table class='table'>
@@ -42,7 +42,7 @@
           <td> $<%= @analysis.min_listing_price %> / month </td>
         </tr>
         <tr>
-          <td> Average price </td>
+          <td> Median price </td>
           <td> $<%= @analysis.average_median %> / month </td>
         </tr>
         <tr>
@@ -62,15 +62,13 @@
   <br>
 
   <div class="row-fluid">
-    <div class="span6">
+    <div class="span6 offset3">
       <h3>We put together a cool graph, too.</h3>
       <p>
-        On the right, you'll see a graph showing the distribution of prices for these listings.
+        Here's a graph showing the distribution of prices for these listings.
         Each bar represents a price range, and the size of the bar tells you how many
         listings we found inside that range.
       </p>
-    </div>
-    <div class="span6">
       <div id="chart_div_all" style="height:400px;text-align:center;">
         <%= image_tag 'loading.gif' %>
       </div>
@@ -79,22 +77,23 @@
 
   <div class="row-fluid">
     <h1>
-      To better help you evaluate the market, <br>
-      we have further analyzed it by price bracket. <br>
+      Let's break it down
     </h1>
-    <div id="low" style="padding-top:30px"></div>
     <h3>
-      Let's take a look at the breakdown.
+      To help you understand the market,
+      we've separated it into three market segments.
     </h3>
+    <div id="low" style="padding-top:30px"></div>
+    <h3>First, let's check out the lower market segment.</h3>
   </div>
 
   <div class="row-fluid">
     <div class="span6">
       <p>
-        Of the<strong><%= @analysis.listings.count %> similar listings</strong>,
-        there are <strong><%= @analysis.listings.where("price > ? AND price <= ?", @analysis.min_listing_price-1, @analysis.first_tertile).count %> similar listings</strong> in the lowest price bracket.
-        You can view where they are located to the right (the red pin represents your listing). 
-        Here are a few quick facts about this price bracket:
+        Of the <strong><%= @analysis.listings.count %> similar listings</strong>,
+        there are <strong><%= @analysis.listings.where("price > ? AND price <= ?", @analysis.min_listing_price-1, @analysis.first_tertile).count %> listings</strong> in the lower market segment.
+        You can see them on the map (the red pin represents your listing). 
+        Here are a few quick facts about this market segment:
       </p>
       <table class='table'>
         <tr>
@@ -110,7 +109,7 @@
           <td> $<%= @analysis.min_listing_price %> / month </td>
         </tr>
         <tr>
-          <td> Average price </td>
+          <td> Median price </td>
           <td> $<%= @analysis.average_median_first_third %> / month </td>
         </tr>
         <tr>
@@ -130,18 +129,32 @@
   <br>
 
   <div class="row-fluid">
-    <div class="span6">
-      <h3>We put together a cool graph, too.</h3>
+    <div class="span6 offset3">
+      <h3>Here's the distribution graph, again.</h3>
       <p>
-        On the right, you'll see a graph showing the distribution of prices for these listings.
+        This graph shows the distribution of prices for these listings.
         Each bar represents a price range, and the size of the bar tells you how many
         listings we found inside that range.
       </p>
-    </div>
-    <div class="span6">
       <div id="chart_div_first_third" style="height:400px;text-align:center;">
         <%= image_tag 'loading.gif' %>
       </div>
+    </div>
+  </div>
+
+  <h3>And here are some pictures from listings in the lower market segment.</h3>
+  <p class='text-center'>
+    You can scroll to the right to see more. Sorry if we picked up some pictures of other stuff along the way.
+  </p>
+  <br>
+
+  <div class="row-fluid">
+    <div class="span12" style="position:relative; margin:0 auto; overflow: auto;">
+      <ul style="position:relative; left:0; top:0; white-space:nowrap">
+        <% for image in @analysis.pictures_first_third do %>
+          <li style="display:inline; width:200px; height:200px"><img style="width:200px; height:200px" src="<%= image %>" alt="" onError="imgerror(this);" /></li> 
+        <% end %>
+      </ul>
     </div>
   </div>
 
@@ -157,7 +170,7 @@
       <p>
         Of the<strong><%= @analysis.listings.count %> similar listings</strong>,
         there are <strong><%= @analysis.listings.where("price > ? AND price <= ?", @analysis.first_tertile, @analysis.second_tertile).count %> similar listings</strong> in the middle price bracket.
-        You can view where they are located to the right (the red pin represents your listing). 
+        You can see them on the map (the red pin represents your listing). 
         Here are a few quick facts about this price bracket:
       </p>
       <table class='table'>
@@ -174,7 +187,7 @@
           <td> $<%= @analysis.first_tertile %> / month </td>
         </tr>
         <tr>
-          <td> Average price </td>
+          <td> Median price </td>
           <td> $<%= @analysis.average_median_second_third %> / month </td>
         </tr>
         <tr>
@@ -209,6 +222,17 @@
     </div>
   </div>
 
+  <div class="row-fluid">
+    <div class="span12" style="position:relative; margin:0 auto; overflow: auto;">
+      <ul style="position:relative; left:0; top:0; white-space:nowrap">
+        <% for image in @analysis.pictures_second_third do %>
+          <li style="display:inline; width:200px; height:200px"><img style="width:200px; height:200px" src="<%= image %>" alt="" onError="imgerror(this);" /></li> 
+        <% end %>
+      </ul>
+    </div>
+  </div>
+
+
   <div id="high" style="padding-top:30px"></div>
   <div class="row-fluid">
     <h3>
@@ -221,7 +245,7 @@
       <p>
         Of the<strong><%= @analysis.listings.count %> similar listings</strong>,
         there are <strong><%= @analysis.listings.where("price > ? AND price <= ?", @analysis.second_tertile, @analysis.max_listing_price).count %> similar listings</strong> in the upper price bracket.
-        You can view where they are located to the right (the red pin represents your listing). 
+        You can see them on the map (the red pin represents your listing). 
         Here are a few quick facts about this price bracket:
       </p>
       <table class='table'>
@@ -238,7 +262,7 @@
           <td> $<%= @analysis.second_tertile %> / month </td>
         </tr>
         <tr>
-          <td> Average price </td>
+          <td> Median price </td>
           <td> $<%= @analysis.average_median_third_third %> / month </td>
         </tr>
         <tr>
@@ -467,9 +491,9 @@
       });
 
       map_all.fitBounds(map_all_bounds);
-      map_first(map_first_bounds);
-      map_second(map_second_bounds);
-      map_third(map_third_bounds);
+      map_first.fitBounds(map_first_bounds);
+      map_second.fitBounds(map_second_bounds);
+      map_third.fitBounds(map_third_bounds);
     }
     google.maps.event.addDomListener(window, 'load', initialize);
   </script>

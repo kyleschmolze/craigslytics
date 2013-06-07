@@ -7,12 +7,17 @@
     mixpanel.track("Landing Page Loaded")
   </script>
 
-    <div style="text-align:center;">
-      <h1>Not sure what to charge for your apartment?</h1>
-      <h4>The rentalyzer will scan comparable listings to help you figure it out.</h4>
-
-      <div class="analyze-bar">
-        <%= render 'form' %>
-      </div>
-    </div>
-
+<div style="text-align:center;">
+  <h2>
+    Before we go ahead and crunch those numbers, <br>
+    can you confirm the location of your apartment?
+  </h2>
+  <br>
+  <div>
+    <%= render 'form_hidden' %>
+  </div>
+  <br>
+  <div>
+    <img src="<%= @analysis.get_self_map %>">
+  </div>
+</div>
