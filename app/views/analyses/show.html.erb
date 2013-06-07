@@ -474,30 +474,17 @@
     setTimeout(bounce, 900);
   }
 
-INIT = 5;
+  INIT = 8;
+  wait = INIT;
 
     window.onscroll = function (e) {
       wait = INIT;
     }
 
-  // Bounce after period of inactivity
-  function inactive_bounce(){
-    
-    setInterval(function(){ 
-      wait--;  
-      console.log(wait);
-      if(wait == 0) {
-        bounce_thrice();
-        wait = INIT;
-      }
-    }, 1000); 
-  }
-
   function expo_bounce(){
     e = 2;
     setInterval(function(){
       wait--;
-      console.log(wait);
       if(wait == 0) {
         bounce_thrice();
         wait = INIT * e; 
@@ -506,6 +493,6 @@ INIT = 5;
     }, 1000);
   }
 
-
+expo_bounce();
 </script>
 
