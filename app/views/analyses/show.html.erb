@@ -1,9 +1,22 @@
-<!-- start Mixpanel --><script type="text/javascript">(function(e,b){if(!b.__SV){var a,f,i,g;window.mixpanel=b;a=e.createElement("script");a.type="text/javascript";a.async=!0;a.src=("https:"===e.location.protocol?"https:":"http:")+'//cdn.mxpnl.com/libs/mixpanel-2.2.min.js';f=e.getElementsByTagName("script")[0];f.parentNode.insertBefore(a,f);b._i=[];b.init=function(a,e,d){function f(b,h){var a=h.split(".");2==a.length&&(b=b[a[0]],h=a[1]);b[h]=function(){b.push([h].concat(Array.prototype.slice.call(arguments,0)))}}var c=b;"undefined"!==
-  typeof d?c=b[d]=[]:d="mixpanel";c.people=c.people||[];c.toString=function(b){var a="mixpanel";"mixpanel"!==d&&(a+="."+d);b||(a+=" (stub)");return a};c.people.toString=function(){return c.toString(1)+".people (stub)"};i="disable track track_pageview track_links track_forms register register_once alias unregister identify name_tag set_config people.set people.set_once people.increment people.append people.track_charge people.clear_charges people.delete_user".split(" ");for(g=0;g<i.length;g++)f(c,i[g]);
-  b._i.push([a,e,d])};b.__SV=1.2}})(document,window.mixpanel||[]);
-  mixpanel.init("d0b4d456dff481c1a9e7b83541d3e42d");</script><!-- end Mixpanel -->
 
+  <!-- Image Load Error -->
+  <script type="text/javascript">
+    function imgerror(element) {
+      $(element).parent().remove();
+    }
 
+function imgchecksize(element) {
+  console.log('were in');
+  img = $(element);
+  new_image = new Image(); 
+  new_image.src = img.src;
+
+  if((new_image.width < 99) || (new_imagke.height < 99)) {
+    console.log('removing');
+    img.parent().remove();
+    }
+}
+</script>
 
 <% if @analysis.processed and !@analysis.failed %>
   <script type="text/javascript">
@@ -11,8 +24,8 @@
       </script>
 
   <div id="overview" style="padding-top:30px"></div>
-  <h1>Your analysis is complete.</h1>
-  <h3>Let's take a look.</h3>
+  <h1>Ok, great.</h1>
+  <h3>Your analysis is complete. Let's take a look.</h3>
   <br>
   <br>
 
@@ -25,7 +38,7 @@
       </p>
       <p>
         There were <strong><%= @analysis.listings.count %> similar listings</strong>. 
-        You can see them on the map (the red pin represents your listing). 
+        You can view them on the right (the red pin represents your listing). 
         Here are a few quick facts about these listings:
       </p>
       <table class='table'>
@@ -42,7 +55,7 @@
           <td> $<%= @analysis.min_listing_price %> / month </td>
         </tr>
         <tr>
-          <td> Median price </td>
+          <td> Average price </td>
           <td> $<%= @analysis.average_median %> / month </td>
         </tr>
         <tr>
@@ -62,13 +75,15 @@
   <br>
 
   <div class="row-fluid">
-    <div class="span6 offset3">
+    <div class="span6">
       <h3>We put together a cool graph, too.</h3>
       <p>
-        Here's a graph showing the distribution of prices for these listings.
+        On the right, you'll see a graph showing the distribution of prices for these listings.
         Each bar represents a price range, and the size of the bar tells you how many
         listings we found inside that range.
       </p>
+    </div>
+    <div class="span6">
       <div id="chart_div_all" style="height:400px;text-align:center;">
         <%= image_tag 'loading.gif' %>
       </div>
@@ -77,23 +92,22 @@
 
   <div class="row-fluid">
     <h1>
-      Let's break it down
+      To better help you evaluate the market, <br>
+      we have further analyzed it by price bracket. <br>
     </h1>
-    <h3>
-      To help you understand the market,
-      we've separated it into three market segments.
-    </h3>
     <div id="low" style="padding-top:30px"></div>
-    <h3>First, let's check out the lower market segment.</h3>
+    <h3>
+      Let's take a look at the breakdown.
+    </h3>
   </div>
 
   <div class="row-fluid">
     <div class="span6">
       <p>
-        Of the <strong><%= @analysis.listings.count %> similar listings</strong>,
-        there are <strong><%= @analysis.listings.where("price > ? AND price <= ?", @analysis.min_listing_price-1, @analysis.first_tertile).count %> listings</strong> in the lower market segment.
-        You can see them on the map (the red pin represents your listing). 
-        Here are a few quick facts about this market segment:
+        Of the<strong><%= @analysis.listings.count %> similar listings</strong>,
+        there are <strong><%= @analysis.listings.where("price > ? AND price <= ?", @analysis.min_listing_price-1, @analysis.first_tertile).count %> similar listings</strong> in the lowest price bracket.
+        You can view where they are located to the right (the red pin represents your listing). 
+        Here are a few quick facts about this price bracket:
       </p>
       <table class='table'>
         <tr>
@@ -109,7 +123,7 @@
           <td> $<%= @analysis.min_listing_price %> / month </td>
         </tr>
         <tr>
-          <td> Median price </td>
+          <td> Average price </td>
           <td> $<%= @analysis.average_median_first_third %> / month </td>
         </tr>
         <tr>
@@ -129,32 +143,18 @@
   <br>
 
   <div class="row-fluid">
-    <div class="span6 offset3">
-      <h3>Here's the distribution graph, again.</h3>
+    <div class="span6">
+      <h3>We put together a cool graph, too.</h3>
       <p>
-        This graph shows the distribution of prices for these listings.
+        On the right, you'll see a graph showing the distribution of prices for these listings.
         Each bar represents a price range, and the size of the bar tells you how many
         listings we found inside that range.
       </p>
+    </div>
+    <div class="span6">
       <div id="chart_div_first_third" style="height:400px;text-align:center;">
         <%= image_tag 'loading.gif' %>
       </div>
-    </div>
-  </div>
-
-  <h3>And here are some pictures from listings in the lower market segment.</h3>
-  <p class='text-center'>
-    You can scroll to the right to see more. Sorry if we picked up some pictures of other stuff along the way.
-  </p>
-  <br>
-
-  <div class="row-fluid">
-    <div class="span12" style="position:relative; margin:0 auto; overflow: auto;">
-      <ul style="position:relative; left:0; top:0; white-space:nowrap">
-        <% for image in @analysis.pictures_first_third do %>
-          <li style="display:inline; width:200px; height:200px"><img style="width:200px; height:200px" src="<%= image %>" alt="" onError="imgerror(this);" /></li> 
-        <% end %>
-      </ul>
     </div>
   </div>
 
@@ -170,7 +170,7 @@
       <p>
         Of the<strong><%= @analysis.listings.count %> similar listings</strong>,
         there are <strong><%= @analysis.listings.where("price > ? AND price <= ?", @analysis.first_tertile, @analysis.second_tertile).count %> similar listings</strong> in the middle price bracket.
-        You can see them on the map (the red pin represents your listing). 
+        You can view where they are located to the right (the red pin represents your listing). 
         Here are a few quick facts about this price bracket:
       </p>
       <table class='table'>
@@ -187,7 +187,7 @@
           <td> $<%= @analysis.first_tertile %> / month </td>
         </tr>
         <tr>
-          <td> Median price </td>
+          <td> Average price </td>
           <td> $<%= @analysis.average_median_second_third %> / month </td>
         </tr>
         <tr>
@@ -222,17 +222,6 @@
     </div>
   </div>
 
-  <div class="row-fluid">
-    <div class="span12" style="position:relative; margin:0 auto; overflow: auto;">
-      <ul style="position:relative; left:0; top:0; white-space:nowrap">
-        <% for image in @analysis.pictures_second_third do %>
-          <li style="display:inline; width:200px; height:200px"><img style="width:200px; height:200px" src="<%= image %>" alt="" onError="imgerror(this);" /></li> 
-        <% end %>
-      </ul>
-    </div>
-  </div>
-
-
   <div id="high" style="padding-top:30px"></div>
   <div class="row-fluid">
     <h3>
@@ -245,7 +234,7 @@
       <p>
         Of the<strong><%= @analysis.listings.count %> similar listings</strong>,
         there are <strong><%= @analysis.listings.where("price > ? AND price <= ?", @analysis.second_tertile, @analysis.max_listing_price).count %> similar listings</strong> in the upper price bracket.
-        You can see them on the map (the red pin represents your listing). 
+        You can view where they are located to the right (the red pin represents your listing). 
         Here are a few quick facts about this price bracket:
       </p>
       <table class='table'>
@@ -262,7 +251,7 @@
           <td> $<%= @analysis.second_tertile %> / month </td>
         </tr>
         <tr>
-          <td> Median price </td>
+          <td> Average price </td>
           <td> $<%= @analysis.average_median_third_third %> / month </td>
         </tr>
         <tr>
@@ -301,7 +290,7 @@
     <div class="span12" style="position:relative; margin:0 auto; overflow: auto;">
       <ul style="position:relative; left:0; top:0; white-space:nowrap">
         <% for image in @analysis.pictures_third_third do %>
-          <li style="display:inline; width:200px; height:200px"><img style="width:200px; height:200px" src="<%= image %>" alt="" onError="imgerror(this);" /></li> 
+          <li style="display:inline; width:200px; height:200px"><img style="width:200px; height:200px" src="<%= image %>" alt= ""  onError="imgerror(this);" /></li> 
         <% end %>
       </ul>
     </div>
@@ -309,91 +298,78 @@
 
   <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 
-  <!-- Image Load Error -->
-  <script type="text/javascript">
-    function imgerror(element) {
-      $(element).parent().remove();
-    }
 
-//function imgchecksize(element) {
-//  img = $(element).parent();
-//  if((img.width < 99) or (img.height < 99) {
-//      img.remove();
-//  }
-  </script>
-  
+<!-- Google Charts -->
+<script type="text/javascript">
+  google.load("visualization", "1", {packages:["corechart"]});
+  google.setOnLoadCallback(drawChart);
 
-  <!-- Google Charts -->
-  <script type="text/javascript">
-    google.load("visualization", "1", {packages:["corechart"]});
-    google.setOnLoadCallback(drawChart);
-
-    function drawChart() {
-      var data_all = google.visualization.arrayToDataTable([
-          ['Price', 'Listings'],
-          <% min = @analysis.min_listing_price %>
-          <% max = @analysis.max_listing_price %>
-          <% incr = @analysis.determine_incr(min, max) %>
-          <% (@analysis.adjust_min_smart(min, incr)..@analysis.adjust_max_smart(max, incr)).step(incr) do |i| %>
+  function drawChart() {
+    var data_all = google.visualization.arrayToDataTable([
+        ['Price', 'Listings'],
+        <% min = @analysis.min_listing_price %>
+        <% max = @analysis.max_listing_price %>
+        <% incr = @analysis.determine_incr(min, max) %>
+        <% (@analysis.adjust_min_smart(min, incr)..@analysis.adjust_max_smart(max, incr)).step(incr) do |i| %>
           ["<%= "$#{i} - $#{i+incr-1}" %>", <%= @analysis.listings.where("price >= ? AND price < ?", i, i+incr).count %>],
-          <% end %>
-          ]);
+        <% end %>
+        ]);
 
-      var data_first_third = google.visualization.arrayToDataTable([
-          ['Price', 'Listings'],
-          <% min = @analysis.min_listing_price %>
-          <% max = @analysis.first_tertile %>
-          <% incr = @analysis.determine_incr(min, max) %>
-          <% (@analysis.adjust_min_smart(min, incr)..@analysis.adjust_max_smart(max, incr)).step(incr) do |i| %>
+    var data_first_third = google.visualization.arrayToDataTable([
+        ['Price', 'Listings'],
+        <% min = @analysis.min_listing_price %>
+        <% max = @analysis.first_tertile %>
+        <% incr = @analysis.determine_incr(min, max) %>
+        <% (@analysis.adjust_min_smart(min, incr)..@analysis.adjust_max_smart(max, incr)).step(incr) do |i| %>
           ["<%= "$#{i} - $#{i+incr-1}" %>", <%= @analysis.listings.where("price >= ? AND price < ?", i, i+incr).count %>],
-          <% end %>
-          ]);
+        <% end %>
+        ]);
 
-      var data_second_third = google.visualization.arrayToDataTable([
-          ['Price', 'Listings'],
-          <% min = @analysis.first_tertile %>
-          <% max = @analysis.second_tertile %>
-          <% incr = @analysis.determine_incr(min, max) %>
-          <% (@analysis.adjust_min_smart(min, incr)..@analysis.adjust_max_smart(max, incr)).step(incr) do |i| %>
+    var data_second_third = google.visualization.arrayToDataTable([
+        ['Price', 'Listings'],
+        <% min = @analysis.first_tertile %>
+        <% max = @analysis.second_tertile %>
+        <% incr = @analysis.determine_incr(min, max) %>
+        <% (@analysis.adjust_min_smart(min, incr)..@analysis.adjust_max_smart(max, incr)).step(incr) do |i| %>
           ["<%= "$#{i} - $#{i+incr-1}" %>", <%= @analysis.listings.where("price >= ? AND price < ?", i, i+incr).count %>],
-          <% end %>
-          ]);
+        <% end %>
+        ]);
 
-      var data_third_third = google.visualization.arrayToDataTable([
-          ['Price', 'Listings'],
-          <% min = @analysis.second_tertile %>
-          <% max = @analysis.max_listing_price %>
-          <% incr = @analysis.determine_incr(min, max) %>
-          <% (@analysis.adjust_min_smart(min, incr)..@analysis.adjust_max_smart(max, incr)+1).step(incr) do |i| %>
+    var data_third_third = google.visualization.arrayToDataTable([
+        ['Price', 'Listings'],
+        <% min = @analysis.second_tertile %>
+        <% max = @analysis.max_listing_price %>
+        <% incr = @analysis.determine_incr(min, max) %>
+        <% (@analysis.adjust_min_smart(min, incr)..@analysis.adjust_max_smart(max, incr)+1).step(incr) do |i| %>
           ["<%= "$#{i} - $#{i+incr-1}" %>", <%= @analysis.listings.where("price >= ? AND price < ?", i, i+incr).count %>],
-          <% end %>
-          ]);
+        <% end %>
+        ]);
 
-      var options = {
-        title: 'Number of Listings by Price Range',
-        hAxis: {title: 'Number of Listings', showTextEvery: 1},
-        vAxis: {title: 'Price Range', showTextEvery: 1},
-        legend: {position: 'none'},
-        chartArea:{top:"5%", height:"85%"}
-      };
+    var options = {
+title: 'Number of Listings by Price Range',
+       hAxis: {title: 'Number of Listings', showTextEvery: 1},
+       vAxis: {title: 'Price Range', showTextEvery: 1},
+       legend: {position: 'none'},
+       chartArea:{top:"5%", height:"85%"}
+    };
 
-      var chart_all = new google.visualization.BarChart(document.getElementById('chart_div_all'));
-      chart_all.draw(data_all, options);
+    var chart_all = new google.visualization.BarChart(document.getElementById('chart_div_all'));
+    chart_all.draw(data_all, options);
 
-      var chart_first_third = new google.visualization.BarChart(document.getElementById('chart_div_first_third'));
-      chart_first_third.draw(data_first_third, options);
-      
-      var chart_second_third = new google.visualization.BarChart(document.getElementById('chart_div_second_third'));
-      chart_second_third.draw(data_second_third, options);
+    var chart_first_third = new google.visualization.BarChart(document.getElementById('chart_div_first_third'));
+    chart_first_third.draw(data_first_third, options);
 
-      var chart_third_third = new google.visualization.BarChart(document.getElementById('chart_div_third_third'));
-      chart_third_third.draw(data_third_third, options);
-    }
-  </script>
+    var chart_second_third = new google.visualization.BarChart(document.getElementById('chart_div_second_third'));
+    chart_second_third.draw(data_second_third, options);
 
-  <!-- Scrollspy -->
-  <script type="text/javascript">
-    $('#analysis_navbar').scrollspy();
+    var chart_third_third = new google.visualization.BarChart(document.getElementById('chart_div_third_third'));
+    chart_third_third.draw(data_third_third, options);
+  }
+</script>
+
+<!-- Scrollspy -->
+<script type="text/javascript">
+  $('#analysis_navbar').scrollspy();
   </script>
 
   <!-- Google Maps -->
@@ -401,10 +377,10 @@
     function initialize() {
       var analysis_lat_lng = new google.maps.LatLng(<%= @analysis.latitude %>, <%= @analysis.longitude %>);
       var mapOptions = {
-        scrollwheel: false,
-        center: analysis_lat_lng,
-        zoom: 14,
-        mapTypeId: google.maps.MapTypeId.ROADMAP
+scrollwheel: false,
+             center: analysis_lat_lng,
+             zoom: 14,
+             mapTypeId: google.maps.MapTypeId.ROADMAP
       };
       var map_all = new google.maps.Map(document.getElementById("map_canvas_all"), mapOptions);
       var map_first = new google.maps.Map(document.getElementById("map_canvas_first_third"), mapOptions);
@@ -412,91 +388,91 @@
       var map_third = new google.maps.Map(document.getElementById("map_canvas_third_third"), mapOptions);
       var analysis_lat_lng = new google.maps.LatLng(<%= @analysis.latitude %>, <%= @analysis.longitude %>);
       var map_all_bounds = new google.maps.LatLngBounds(analysis_lat_lng, analysis_lat_lng)
-      var map_first_bounds = new google.maps.LatLngBounds(analysis_lat_lng, analysis_lat_lng)
-      var map_second_bounds = new google.maps.LatLngBounds(analysis_lat_lng, analysis_lat_lng)
-      var map_third_bounds = new google.maps.LatLngBounds(analysis_lat_lng, analysis_lat_lng)
+        var map_first_bounds = new google.maps.LatLngBounds(analysis_lat_lng, analysis_lat_lng)
+        var map_second_bounds = new google.maps.LatLngBounds(analysis_lat_lng, analysis_lat_lng)
+        var map_third_bounds = new google.maps.LatLngBounds(analysis_lat_lng, analysis_lat_lng)
 
-      var image = new google.maps.MarkerImage(
-        'http://maps.google.com/mapfiles/ms/micons/blue.png',
-        new google.maps.Size(32, 32), // size
-        new google.maps.Point(0,0), // origin
-        new google.maps.Point(16, 32) // anchor
-      );
+        var image = new google.maps.MarkerImage(
+            'http://maps.google.com/mapfiles/ms/micons/blue.png',
+            new google.maps.Size(32, 32), // size
+            new google.maps.Point(0,0), // origin
+            new google.maps.Point(16, 32) // anchor
+            );
 
       var shadow = new google.maps.MarkerImage(
-        'http://maps.google.com/mapfiles/ms/micons/msmarker.shadow.png',
-        new google.maps.Size(59, 32), // size
-        new google.maps.Point(0,0), // origin
-        new google.maps.Point(16, 32) // anchor
-      );
+          'http://maps.google.com/mapfiles/ms/micons/msmarker.shadow.png',
+          new google.maps.Size(59, 32), // size
+          new google.maps.Point(0,0), // origin
+          new google.maps.Point(16, 32) // anchor
+          );
 
       <% for listing in @analysis.listings %>
-        var pos = new google.maps.LatLng(<%= listing.latitude %>, <%= listing.longitude %>);
-        var marker = new google.maps.Marker({
-          position: new google.maps.LatLng(<%= listing.latitude %>, <%= listing.longitude %>),
-          map: map_all,
-          icon: image,
-          shadow: shadow
-        });
-        map_all_bounds.extend(pos);
+          var pos = new google.maps.LatLng(<%= listing.latitude %>, <%= listing.longitude %>);
+      var marker = new google.maps.Marker({
+position: new google.maps.LatLng(<%= listing.latitude %>, <%= listing.longitude %>),
+map: map_all,
+icon: image,
+shadow: shadow
+});
+map_all_bounds.extend(pos);
       <% end %>
       var marker = new google.maps.Marker({
-        position: analysis_lat_lng,
-        map: map_all,
-      });
-      
-      <% for listing in @analysis.get_low_listings %>
-        var pos = new google.maps.LatLng(<%= listing.latitude %>, <%= listing.longitude %>);
-        var marker = new google.maps.Marker({
-          position: pos,
-          map: map_first,
-          icon: image,
-          shadow: shadow
-        });
-        map_first_bounds.extend(pos);
-      <% end %>
-      var marker = new google.maps.Marker({
-        position: analysis_lat_lng,
-        map: map_first,
-      });
-      
-      <% for listing in @analysis.get_middle_listings %>
-        var pos = new google.maps.LatLng(<%= listing.latitude %>, <%= listing.longitude %>);
-        var marker = new google.maps.Marker({
-          position: new google.maps.LatLng(<%= listing.latitude %>, <%= listing.longitude %>),
-          map: map_second,
-          icon: image,
-          shadow: shadow
-        });
-        map_second_bounds.extend(pos);
-      <% end %>
-      var marker = new google.maps.Marker({
-        position: analysis_lat_lng,
-        map: map_second,
-      });
-      
-      <% for listing in @analysis.get_high_listings %>
-        var pos = new google.maps.LatLng(<%= listing.latitude %>, <%= listing.longitude %>);
-        var marker = new google.maps.Marker({
-          position: new google.maps.LatLng(<%= listing.latitude %>, <%= listing.longitude %>),
-          map: map_third,
-          icon: image,
-          shadow: shadow
-        });
-        map_third_bounds.extend(pos);
-      <% end %>
-      var marker = new google.maps.Marker({
-        position: analysis_lat_lng,
-        map: map_third,
-      });
+position: analysis_lat_lng,
+map: map_all,
+});
 
-      map_all.fitBounds(map_all_bounds);
-      map_first.fitBounds(map_first_bounds);
-      map_second.fitBounds(map_second_bounds);
-      map_third.fitBounds(map_third_bounds);
-    }
-    google.maps.event.addDomListener(window, 'load', initialize);
-  </script>
+<% for listing in @analysis.get_low_listings %>
+  var pos = new google.maps.LatLng(<%= listing.latitude %>, <%= listing.longitude %>);
+  var marker = new google.maps.Marker({
+position: pos,
+map: map_first,
+icon: image,
+shadow: shadow
+});
+map_first_bounds.extend(pos);
+      <% end %>
+      var marker = new google.maps.Marker({
+position: analysis_lat_lng,
+map: map_first,
+});
+
+<% for listing in @analysis.get_middle_listings %>
+  var pos = new google.maps.LatLng(<%= listing.latitude %>, <%= listing.longitude %>);
+  var marker = new google.maps.Marker({
+position: new google.maps.LatLng(<%= listing.latitude %>, <%= listing.longitude %>),
+map: map_second,
+icon: image,
+shadow: shadow
+});
+map_second_bounds.extend(pos);
+      <% end %>
+      var marker = new google.maps.Marker({
+position: analysis_lat_lng,
+map: map_second,
+});
+
+<% for listing in @analysis.get_high_listings %>
+  var pos = new google.maps.LatLng(<%= listing.latitude %>, <%= listing.longitude %>);
+  var marker = new google.maps.Marker({
+position: new google.maps.LatLng(<%= listing.latitude %>, <%= listing.longitude %>),
+map: map_third,
+icon: image,
+shadow: shadow
+});
+map_third_bounds.extend(pos);
+      <% end %>
+      var marker = new google.maps.Marker({
+position: analysis_lat_lng,
+map: map_third,
+});
+
+map_all.fitBounds(map_all_bounds);
+map_first(map_first_bounds);
+map_second(map_second_bounds);
+map_third(map_third_bounds);
+}
+google.maps.event.addDomListener(window, 'load', initialize);
+</script>
 <% elsif @analysis.processed %>
   <center>
     <h2>Damn.</h2>
@@ -518,15 +494,15 @@
     <br>
     <br>
     <div class='row-fluid'>
-    <div class='span8 offset2 '>
-      <div class='span8 offset2 well'>
-      <h2>While You Wait --</h2>
-      <h4>Help Us Make Our Product Better</h4>
-      <p>After looking over the analysis, don't hesitate to give us feedback. We recognize that the Rentalyzer has a lot of potential, but wanted to ask you, our users, what new features would be helpful.  So take the time to tell us, we are always looking to improve our service!</p>
-      <br>
-      <p>Simply click the purple tab at the bottom right of your screen whenever you are done viewing our analysis.</p>
-    </div>
-    </div>
+      <div class='span8 offset2 '>
+        <div class='span8 offset2 well'>
+          <h2>While You Wait --</h2>
+          <h4>Help Us Make Our Product Better</h4>
+          <p>After looking over the analysis, don't hesitate to give us feedback. We recognize that the Rentalyzer has a lot of potential, but wanted to ask you, our users, what new features would be helpful.  So take the time to tell us, we are always looking to improve our service!</p>
+          <br>
+          <p>Simply click the purple tab at the bottom right of your screen whenever you are done viewing our analysis.</p>
+        </div>
+      </div>
     </div>
     <i class="icon-large icon-arrow-down" style="font-size:75px;position: fixed;bottom: 40px;right: 80px;"></i>
   </center>
@@ -575,9 +551,9 @@
   INIT = 8;
   wait = INIT;
 
-    window.onscroll = function (e) {
-      wait = INIT;
-    }
+  window.onscroll = function (e) {
+    wait = INIT;
+  }
 
   function expo_bounce(){
     e = 2;
@@ -591,6 +567,24 @@
     }, 1000);
   }
 
-expo_bounce();
+  expo_bounce();
+</script>
+
+<script>
+
+  var imgs = $("img"); // Get my img elem
+  for(i in imgs) {
+   img = imgs[i];
+  var pic_real_width, pic_real_height;
+  $("<img/>") // Make in memory copy of image to avoid css issues
+  .attr("src", $(img).attr("src"))
+  .load(function() {
+    pic_real_width = this.width;   // Note: $(this).width() will not
+    pic_real_height = this.height; // work for in memory images.
+    if((pic_real_width < 250) || (pic_real_height < 250)) {
+      $(this).parent().remove();
+      console.log('removing');
+    }
+})}
 </script>
 
