@@ -35,9 +35,10 @@ class AnalysesController < ApplicationController
   # GET /analyses/home.json
   def home
     @analysis = Analysis.new
+    @body_class = 'homepage-body'
 
     respond_to do |format|
-      format.html # home.html.erb
+      format.html { render layout: 'home' }
       format.json { render json: @analysis }
     end
   end
@@ -46,11 +47,15 @@ class AnalysesController < ApplicationController
   # GET /analyses/new.json
   def new
     @analysis = Analysis.new(params[:analysis])
-    @body_class = 'homepage-body'
 
     respond_to do |format|
-      format.html { render layout: 'home' }
-      format.json { render json: @analysis }
+      if @analysis.valid?
+        format.html # new.html.erb
+        format.json { render json: @analysis }
+      else
+        format.html { render action: "home" }
+        format.json { render json: @analysis.errors, status: :unprocessable_entity }
+      end
     end
   end
 
