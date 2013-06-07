@@ -4,11 +4,14 @@
 
 <% if @analysis.processed and !@analysis.failed and @analysis.listings.count > 3%>
   <% if @analysis.listings.count < 20 %>
+    <br>
     <div class="row-fluid">
       <div class="alert alert-error span8 offset2">
+        <h5>
         Hey! Just a heads up, we only managed to find a small number of listings in your area. 
         As such, the analysis may not be as informative as we would have liked. 
         Feel free to take a look at what we generated, but we apologize if the data is not helpful. 
+        </h5>
       </div>
     </div>
   <% end %>
