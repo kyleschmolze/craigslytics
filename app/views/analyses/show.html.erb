@@ -72,6 +72,11 @@
       To help you understand the market,
       we've separated it into three market segments.
     </h3>
+    <div class="row-fluid">
+      <div id="chart_breakdown" class="span6 offset3" style="height:400px;text-align:center;">
+        <%= image_tag 'loading.gif' %>
+      </div>
+    </div>
     <div id="low" style="padding-top:30px"></div>
     <h3>First, let's check out the lower market segment.</h3>
   </div>
@@ -311,6 +316,14 @@
     google.setOnLoadCallback(drawChart);
 
     function drawChart() {
+
+      var data_breakdown = google.visualization.arrayToDataTable([
+        ['Market Segment', 'Average Price'],
+        ['low',  <%= @analysis.average_median_first_third %>],
+        ['middle',  <%= @analysis.average_median_second_third %>],
+        ['high',  <%= @analysis.average_median_third_third %>]
+      ]);
+
       var data_all = google.visualization.arrayToDataTable([
           ['Price', 'Listings'],
           <% min = @analysis.min_listing_price %>
@@ -359,6 +372,17 @@
         chartArea:{top:"5%", height:"85%"}
       };
 
+      var options_breakdown = {
+        title: 'Average Price by Market Segment',
+        hAxis: {title: 'Market Segment', showTextEvery: 1},
+        vAxis: {title: 'Average Price', showTextEvery: 1},
+        legend: {position: 'none'},
+        chartArea:{top:"5%", height:"85%"}
+      };
+
+      var chart_breakdown = new google.visualization.ColumnChart(document.getElementById('chart_breakdown'));
+      chart_breakdown.draw(data_breakdown, options_breakdown);
+
       var chart_all = new google.visualization.BarChart(document.getElementById('chart_div_all'));
       chart_all.draw(data_all, options);
 
@@ -375,7 +399,7 @@
 
   <!-- Scrollspy -->
   <script type="text/javascript">
-    $('#analysis_navbar').scrollspy();
+    $('body').scrollspy();
   </script>
 
   <!-- Google Maps -->
