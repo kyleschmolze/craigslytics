@@ -31,10 +31,21 @@ class AnalysesController < ApplicationController
     end
   end
 
+  # GET /analyses/home
+  # GET /analyses/home.json
+  def home
+    @analysis = Analysis.new
+
+    respond_to do |format|
+      format.html # home.html.erb
+      format.json { render json: @analysis }
+    end
+  end
+
   # GET /analyses/new
   # GET /analyses/new.json
   def new
-    @analysis = Analysis.new
+    @analysis = Analysis.new(params[:analysis])
     @body_class = 'homepage-body'
 
     respond_to do |format|

@@ -21,8 +21,8 @@ ActiveRecord::Schema.define(:version => 20130606180431) do
     t.string   "address"
     t.datetime "created_at",                       :null => false
     t.datetime "updated_at",                       :null => false
-    t.boolean  "processed",     :default => false
     t.integer  "average_price"
+    t.boolean  "processed",     :default => false
     t.boolean  "failed",        :default => false
   end
 

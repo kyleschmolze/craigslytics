@@ -39,9 +39,9 @@
     <link href="//netdna.bootstrapcdn.com/font-awesome/3.1.1/css/font-awesome.css" rel="stylesheet">
 
   </head>
-  <body class='application-body <%= @body_class %>'>
+  <body class='application-body <%= @body_class %>' data-spy="scroll" data-target="#analysis_navbar">
 
-    <div class="navbar navbar-fixed-top navbar-inverse">
+    <div class="navbar navbar-fixed-top navbar-inverse" id="analysis_navbar">
       <div class="navbar-inner">
         <div class="container-fluid">
           <a class="btn btn-navbar" data-target=".nav-collapse" data-toggle="collapse">
@@ -52,6 +52,18 @@
           <a class="brand" href="/">Rentalyzer</a>
           <div class="container-fluid nav-collapse">
             <ul class="nav">
+              <li>
+                <a href="#overview">overview</a>
+              </li>
+              <li>
+                <a href="#low">low</a>
+              </li>
+              <li>
+                <a href="#middle">middle</a>
+              </li>
+              <li>
+                <a href="#high">high</a>
+              </li>
             </ul>
           </div>
         </div>
