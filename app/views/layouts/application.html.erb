@@ -14,22 +14,24 @@
             <span class="icon-bar"></span>
           </a>
           <a class="brand" href="/">Rentalyzer</a>
-          <div class="container-fluid nav-collapse"> 
-            <ul class="nav">
-              <li>
-                <a href="#overview">overview</a>
-              </li>
-              <li>
-                <a href="#low">low</a>
-              </li>
-              <li>
-                <a href="#middle">middle</a>
-              </li>
-              <li>
-                <a href="#high">high</a>
-              </li>
-            </ul>
-          </div>
+          <% if params[:action] == 'show' %>
+            <div class="container-fluid nav-collapse"> 
+              <ul class="nav">
+                <li>
+                  <a href="#overview">overview</a>
+                </li>
+                <li>
+                  <a href="#low">low</a>
+                </li>
+                <li>
+                  <a href="#middle">middle</a>
+                </li>
+                <li>
+                  <a href="#high">high</a>
+                </li>
+              </ul>
+            </div>
+          <% end %>
         </div>
       </div>
     </div>
