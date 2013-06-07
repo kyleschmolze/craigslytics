@@ -26,6 +26,8 @@ class AnalysesController < ApplicationController
     @analysis = Analysis.find(params[:id])
     if @analysis.processed
       render text: '1'
+    elsif @analysis.failed
+      render text: '-1'
     else
       render text: '0'
     end

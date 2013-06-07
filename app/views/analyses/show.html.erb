@@ -505,11 +505,11 @@
     }
     google.maps.event.addDomListener(window, 'load', initialize);
   </script>
-<% elsif @analysis.processed %>
+<% elsif @analysis.failed %>
   <center>
-    <h2>Damn.</h2>
+    <h2>Analysis failed.</h2>
     <p>That analysis failed for some reason. We've been notified of the issue.</p>
-    <p>In the mean time, try starting again from the <%= link_to 'homepage', root_path %>.</p>
+    <p>In the mean time, try starting again from the <%= link_to 'homepage', root_path %>. Sorry!</p>
     <br>
     <i class='icon-frown icon-4x'></i>
   </center>
@@ -543,6 +543,8 @@
       App.Helpers.poll("<%= poll_analysis_path(@analysis) %>", function() {
         $(".action").html('<%= link_to "Continue to analysis", @analysis, class: "btn btn-primary" %>')
         $(".generating").html('Analysis complete!')
+      }, function() {
+        location.reload()
       })
     })
   </script>
