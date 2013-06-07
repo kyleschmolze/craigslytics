@@ -332,7 +332,7 @@ class Analysis < ActiveRecord::Base
             http.request(req)
           }
           response = JSON.parse(res.body)
-          for posting in response["postings"] 
+          for posting in response["postings"] do
             total_price += posting["price"].to_i
             self.listings.create(latitude: posting["location"]["lat"], 
                            longitude: posting["location"]["long"], 
@@ -342,8 +342,14 @@ class Analysis < ActiveRecord::Base
                            info: posting)
           end
         end
+
+        self.average_price = total_price/num_matches
+      else
+        #GOT NO MATCHES, DO NOTHING.  
       end
-      self.average_price = total_price/num_matches
+    else
+      analysis.update_column :processed, true
+      analysis.update_column :failed, true
     end
   end
 

@@ -2,7 +2,16 @@
   mixpanel.track("Analysis Page Loaded")
 </script>
 
-<% if @analysis.processed and !@analysis.failed %>
+<% if @analysis.processed and !@analysis.failed and @analysis.listings.count > 3%>
+  <% if @analysis.listings.count < 20 %>
+    <div class="row-fluid">
+      <div class="alert alert-error span8 offset2">
+        Hey! Just a heads up, we only managed to find a small number of listings in your area. 
+        As such, the analysis may not be as informative as we would have liked. 
+        Feel free to take a look at what we generated, but we apologize if the data is not helpful. 
+      </div>
+    </div>
+  <% end %>
   <div id="overview" style="padding-top:30px"></div>
   <h1>Your analysis is complete.</h1>
   <h3>Now let's take a look.</h3>
@@ -531,6 +540,19 @@
     }
     google.maps.event.addDomListener(window, 'load', initialize);
   </script>
+<% elsif @analysis.processed and !@analysis.failed %>
+  <div class="span8 offset2" style="text-align:center">
+    <h2>
+      Oh no!
+    </h2>
+    <h3>
+      Unfortunately the rentalyzer was unable to find a sufficient number of similar listings near your location.
+    </h3>
+    <img src="http://3.bp.blogspot.com/-GPguvgBycqA/UXZZinnRw2I/AAAAAAAAANc/6k8MIhBMrBU/s1600/sad-face-paper-bag.jpg" style="width:400px; height:300px">
+    <h4>We apologize and hope you will give it another chance at a different location</h4>
+    <%= link_to raw("<i class='icon-arrow-left'></i> Try again"), url_for(controller: 'analyses', action:'home'), class: "btn btn-large"  %>
+  </div>
+
 <% elsif @analysis.processed %>
   <center>
     <h2>Damn.</h2>
