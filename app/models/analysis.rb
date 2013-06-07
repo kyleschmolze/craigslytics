@@ -99,6 +99,9 @@ class Analysis < ActiveRecord::Base
   end
 
   def average_median
+    if self.min_listing_price == self.max_listing_price
+      return self.max_listing_price
+    end
     count = self.listings.count
     middle = count/2
     if count % 2
@@ -109,6 +112,9 @@ class Analysis < ActiveRecord::Base
   end
   
   def average_median_first_third
+    if self.min_listing_price == self.first_tertile
+      return self.first_tertile
+    end
     listings = self.listings.where("price > ? AND price <= ?", self.min_listing_price-1, self.first_tertile)
     count = listings.count
     middle = count/2 
@@ -120,6 +126,9 @@ class Analysis < ActiveRecord::Base
   end
   
   def average_median_second_third
+    if self.first_tertile == self.second_tertile
+      return self.second_tertile
+    end
     listings = self.listings.where("price > ? AND price <= ?", self.first_tertile, self.second_tertile)
     count = listings.count
     middle = count/2
@@ -131,6 +140,9 @@ class Analysis < ActiveRecord::Base
   end
 
   def average_median_third_third
+    if self.second_tertile == self.max_listing_price
+      return self.max_listing_price
+    end
     listings = self.listings.where("price > ? AND price <= ?", self.second_tertile, self.max_listing_price)
     count = listings.count
     middle = count/2 
@@ -260,7 +272,11 @@ class Analysis < ActiveRecord::Base
 
   def average_pictures_first_third
     count = 0
-    listings = self.listings.where("price > ? AND price <= ?", self.min_listing_price-1, self.first_tertile) 
+    if self.min_listing_price == self.first_tertile
+      listings = self.listings.where(:price => self.first_tertile)
+    else
+      listings = self.listings.where("price > ? AND price <= ?", self.min_listing_price-1, self.first_tertile) 
+    end
     for listing in listings 
       count += listing.info["images"].count if listing.info["images"].present?
     end
@@ -269,7 +285,11 @@ class Analysis < ActiveRecord::Base
 
   def average_pictures_second_third
     count = 0
-    listings = self.listings.where("price > ? AND price <= ?", self.first_tertile, self.second_tertile) 
+    if self.first_tertile == self.second_tertile
+      listings = self.listings.where(:price => self.second_tertile)
+    else
+      listings = self.listings.where("price > ? AND price <= ?", self.first_tertile, self.second_tertile) 
+    end
     for listing in listings do 
       count += listing.info["images"].count if listing.info["images"].present?
     end
@@ -278,7 +298,11 @@ class Analysis < ActiveRecord::Base
 
   def average_pictures_third_third
     count = 0
-    listings = self.listings.where("price > ? AND price <= ?", self.second_tertile, self.max_listing_price) 
+    if self.second_tertile == self.max_listing_price
+      listings = self.listings.where(:price => self.max_listing_price)
+    else
+      listings = self.listings.where("price > ? AND price <= ?", self.second_tertile, self.max_listing_price) 
+    end
     for listing in listings
       count += listing.info["images"].count if listing.info["images"].present?
     end
