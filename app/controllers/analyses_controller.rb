@@ -26,6 +26,8 @@ class AnalysesController < ApplicationController
     @analysis = Analysis.find(params[:id])
     if @analysis.processed
       render text: '1'
+    elsif @analysis.failed
+      render text: '-1'
     else
       render text: '0'
     end
@@ -35,6 +37,9 @@ class AnalysesController < ApplicationController
   # GET /analyses/home.json
   def home
     @analysis = Analysis.new
+    @analysis.bedrooms = params[:bedrooms] if params[:bedrooms]
+    @analysis.address = params[:address] if params[:address]
+
     @body_class = 'homepage-body'
 
     respond_to do |format|

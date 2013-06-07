@@ -359,7 +359,9 @@ class Analysis < ActiveRecord::Base
     if Rails.env.production?
       Resque.enqueue Analysis, self.id
     else
-      Analysis.perform(self.id)
+      self.analyze_and_store
+      self.processed = true
+      self.save!
     end
   end
   
