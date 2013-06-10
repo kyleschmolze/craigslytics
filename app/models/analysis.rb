@@ -9,44 +9,30 @@ class Analysis < ActiveRecord::Base
 
   RADIUS = '1'
   API_KEY = '166bb56dcaeba0c3c860981fd50917cd'
-  GRAPH_INCR_LARGE = 200
-  GRAPH_INCR_SMALL = 50
   after_create :enqueue
 
   def lat_lng_blank?
     return (latitude.blank? or longitude.blank?)
   end
 
-  def adjust_min_small(min)
-    return min - (min % GRAPH_INCR_SMALL)
+  def get_segments
+    segments = []
+    segments << get_segment(min_listing_price-1, first_tertile)
+    segments << get_segment(first_tertile, second_tertile)
+    segments << get_segment(second_tertile, max_listing_price)
+    return segments
   end
 
-  def adjust_min_large(min)
-    return min - (min % GRAPH_INCR_LARGE)
-  end
-  
-  def adjust_max_small(max)
-    return max + (max % GRAPH_INCR_SMALL)
-  end
-  
-  def adjust_max_large(max)
-    return max + (max % GRAPH_INCR_LARGE)
-  end
-
-  def adjust_min_smart(min, incr)
-    return min - (min % incr)
-  end
-
-  def adjust_max_smart(max, incr)
-    return max + (max % incr)
-  end
-
-  def determine_incr(min, max)
-    incr = 50
-    while (max-min)/incr > 14
-      incr += 50
+  def get_segment(min, max)
+    if min == max
+      return Segment.new(self.listings.where(:price => max)) 
+    else
+      return Segment.new(self.listings.where("price > ? AND price <= ?", min, max)) 
     end
-    return incr
+  end
+
+  def get_overview
+    return Segment.new(self.listings)
   end
 
   #listing_min
@@ -71,268 +57,13 @@ class Analysis < ActiveRecord::Base
     return self.listings.last.price
   end
 
-  def average_price_first_third
-    listings = self.listings.where("price > ? AND price <= ?", self.min_listing_price-1, self.first_tertile)
-    total = 0
-    for listing in listings do
-      total += listing.price
-    end
-    return total/listings.count
-  end
-  
-  def average_price_second_third
-    listings = self.listings.where("price > ? AND price <= ?", self.first_tertile, self.second_tertile)
-    total = 0
-    for listing in listings do
-      total += listing.price
-    end
-    return total/listings.count
-  end
-
-  def average_price_third_third
-    listings = self.listings.where("price > ? AND price <= ?", self.second_tertile, self.max_listing_price)
-    total = 0
-    for listing in listings do
-      total += listing.price
-    end
-    return total/listings.count
-  end
-
-  def average_median
-    if self.min_listing_price == self.max_listing_price
-      return self.max_listing_price
-    end
-    count = self.listings.count
-    middle = count/2
-    if count % 2
-      return self.listings[middle].price
-    else
-      return (self.listings[middle].price+self.listings[middle+1].price)/2
-    end
-  end
-  
-  def average_median_first_third
-    if self.min_listing_price == self.first_tertile
-      return self.first_tertile
-    end
-    listings = self.listings.where("price > ? AND price <= ?", self.min_listing_price-1, self.first_tertile)
-    count = listings.count
-    middle = count/2 
-    if count % 2
-      return listings[middle].price
-    else
-      return (listings[middle].price + listings[middle+1].price)/2
-    end
-  end
-  
-  def average_median_second_third
-    if self.first_tertile == self.second_tertile
-      return self.second_tertile
-    end
-    listings = self.listings.where("price > ? AND price <= ?", self.first_tertile, self.second_tertile)
-    count = listings.count
-    middle = count/2
-    if count % 2
-      return listings[middle].price
-    else
-      return (listings[middle].price + listings[middle+1].price)/2
-    end
-  end
-
-  def average_median_third_third
-    if self.second_tertile == self.max_listing_price
-      return self.max_listing_price
-    end
-    listings = self.listings.where("price > ? AND price <= ?", self.second_tertile, self.max_listing_price)
-    count = listings.count
-    middle = count/2 
-    if count % 2
-      return listings[middle].price
-    else
-      return (listings[middle].price + listings[middle+1].price)/2
-    end
-  end
-
+  #url of a static google map of the analyzed listing
   def get_self_map
     map = "http://maps.google.com/maps/api/staticmap?size=650x300&zoom=auto&center=#{self.latitude},#{self.longitude}&sensor=true&markers=color:red|#{self.latitude},#{self.longitude}"
     return map
   end
 
-  def get_low_listings
-    listings = []
-    for listing in self.listings.where("price > ? AND price <= ?", self.min_listing_price-1, self.first_tertile) do 
-      listings << listing
-    end
-    return listings
-  end
-
-  def get_low_map
-    markers = "center=#{self.latitude},#{self.longitude}&sensor=true&markers=color:red|#{self.latitude},#{self.longitude}&markers=color:blue|size:mid|" 
-    for listing in self.listings.where("price > ? AND price <= ?", self.min_listing_price-1, self.first_tertile) do 
-      markers += "|#{listing.latitude},#{listing.longitude}" 
-    end 
-    map = "http://maps.google.com/maps/api/staticmap?size=850x300&zoom=auto&#{markers}"
-    if map.length > 1850 
-      split = map.split("|") 
-      map = split[0].to_s + "|" + split[1].to_s 
-      (2..split.length).each do |i| 
-        if (map + "|" + split[i].to_s).length < 1850
-          map = map + "|" + split[i].to_s 
-        else 
-          break 
-        end 
-      end 
-    end 
-    return map
-  end
-
-  def get_middle_listings
-    listings = []
-    for listing in self.listings.where("price > ? AND price <= ?", self.first_tertile, self.second_tertile) do 
-      listings << listing
-    end
-    return listings
-  end
-  
-  def get_middle_map
-    markers = "center=#{self.latitude},#{self.longitude}&sensor=true&markers=color:red|#{self.latitude},#{self.longitude}&markers=color:blue|size:mid|" 
-    for listing in self.listings.where("price > ? AND price <= ?", self.first_tertile, self.second_tertile) do 
-      markers += "|#{listing.latitude},#{listing.longitude}" 
-    end 
-    map = "http://maps.google.com/maps/api/staticmap?size=850x300&zoom=auto&#{markers}"
-    if map.length > 1850 
-      split = map.split("|") 
-      map = split[0].to_s + "|" + split[1].to_s 
-      (2..split.length).each do |i| 
-        if (map + "|" + split[i].to_s).length < 1850
-          map = map + "|" + split[i].to_s 
-        else 
-          break 
-        end 
-      end 
-    end 
-    return map
-  end
-
-  def get_high_listings
-    listings = []
-    for listing in self.listings.where("price > ? AND price <= ?", self.second_tertile, self.max_listing_price) do 
-      listings << listing
-    end
-    return listings
-  end
-
-  def get_high_map
-    markers = "center=#{self.latitude},#{self.longitude}&sensor=true&markers=color:red|#{self.latitude},#{self.longitude}&markers=color:blue|size:mid|" 
-    for listing in self.listings.where("price > ? AND price <= ?", self.second_tertile, self.max_listing_price) do 
-      markers += "|#{listing.latitude},#{listing.longitude}" 
-    end 
-    map = "http://maps.google.com/maps/api/staticmap?size=850x300&zoom=auto&#{markers}"
-    if map.length > 1850 
-      split = map.split("|") 
-      map = split[0].to_s + "|" + split[1].to_s 
-      (2..split.length).each do |i| 
-        if (map + "|" + split[i].to_s).length < 1850
-          map = map + "|" + split[i].to_s 
-        else 
-          break 
-        end 
-      end 
-    end 
-    return map
-  end
-
-  def get_listings_map
-    markers = "center=#{self.latitude},#{self.longitude}&sensor=true&markers=color:blue|size:mid|" 
-    for listing in self.listings do 
-      markers += "|#{listing.latitude},#{listing.longitude}" 
-    end 
-    map = "http://maps.google.com/maps/api/staticmap?size=850x300&zoom=auto&#{markers}"
-    if map.length > 1850 
-      split = map.split("|") 
-      map = split[0].to_s + "|" + split[1].to_s 
-      (2..split.length).each do |i| 
-        if (map + "|" + split[i].to_s).length < 1850
-          map = map + "|" + split[i].to_s 
-        else 
-          break 
-        end 
-      end 
-    end 
-    return map + "&markers=color:red|#{self.latitude},#{self.longitude}"
-  end
-
-  def average_pictures
-    count = 0
-    for listing in self.listings do
-      count += listing.info["images"].count if listing.info["images"].present?
-    end
-    return count/(self.listings.count)
-  end
-
-  def average_pictures_first_third
-    count = 0
-    if self.min_listing_price == self.first_tertile
-      listings = self.listings.where(:price => self.first_tertile)
-    else
-      listings = self.listings.where("price > ? AND price <= ?", self.min_listing_price-1, self.first_tertile) 
-    end
-    for listing in listings 
-      count += listing.info["images"].count if listing.info["images"].present?
-    end
-    return count/(listings.count)
-  end
-
-  def average_pictures_second_third
-    count = 0
-    if self.first_tertile == self.second_tertile
-      listings = self.listings.where(:price => self.second_tertile)
-    else
-      listings = self.listings.where("price > ? AND price <= ?", self.first_tertile, self.second_tertile) 
-    end
-    for listing in listings do 
-      count += listing.info["images"].count if listing.info["images"].present?
-    end
-    return count/(listings.count)
-  end
-
-  def average_pictures_third_third
-    count = 0
-    if self.second_tertile == self.max_listing_price
-      listings = self.listings.where(:price => self.max_listing_price)
-    else
-      listings = self.listings.where("price > ? AND price <= ?", self.second_tertile, self.max_listing_price) 
-    end
-    for listing in listings
-      count += listing.info["images"].count if listing.info["images"].present?
-    end
-    return count/(listings.count)
-  end
-
-  def pictures_first_third
-    images = []
-    for listing in self.listings.where("price > ? AND price <= ?", self.min_listing_price-1, self.first_tertile) do 
-      images << listing.info["images"].sample["full"] if listing.info["images"].present?
-    end
-    return images.uniq {|i| i.gsub(/https?:\/\//, '').gsub(/^.*\//, '') }
-  end
-
-  def pictures_second_third
-    images = []
-    for listing in self.listings.where("price > ? AND price <= ?", self.first_tertile, self.second_tertile) do 
-      images << listing.info["images"].sample["full"] if listing.info["images"].present?
-    end
-    return images.uniq {|i| i.gsub(/https?:\/\//, '').gsub(/^.*\//, '') }
-  end
-
-  def pictures_third_third
-    images = []
-    for listing in self.listings.where("price > ? AND price <= ?", self.second_tertile, self.max_listing_price) do
-      images << listing.info["images"].sample["full"] if listing.info["images"].present?
-    end
-    return images.uniq {|i| i.gsub(/https?:\/\//, '').gsub(/^.*\//, '') }
-  end
-
+  #scrapes 3-taps data and stores all similar listings
   def analyze_and_store
     url = URI.parse("http://search.3taps.com")
     params = "?rpp=100&lat=#{self.latitude}&long=#{self.longitude}&radius=#{RADIUS}mi&category=RHFR&retvals=id,account_id,source,category,category_group,location,external_id,external_url,heading,body,html,timestamp,expires,language,price,currency,images,annotations,status,immortal&annotations={bedrooms:#{self.bedrooms}br}&source=CRAIG&auth_token=#{API_KEY}"
