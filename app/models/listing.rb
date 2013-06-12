@@ -17,6 +17,10 @@ class Listing < ActiveRecord::Base
   def parse
   end
 
+  def parse_utilites
+    #Search for /not includ/, match 'util' within 20 chars => Nothing included for sheezy. Par cheezey.
+  end
+
   def create_comparison_with(a_listing, options)
     if options 
       # WEIGHTS
