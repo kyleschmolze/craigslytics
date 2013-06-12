@@ -14,6 +14,8 @@ class AnalysesController < ApplicationController
   # GET /analyses/1.json
   def show
     @analysis = Analysis.find(params[:id])
+    @segments = @analysis.get_segments
+    @overview = @analysis.get_overview
     @body_class = 'analysis-show'
 
     respond_to do |format|

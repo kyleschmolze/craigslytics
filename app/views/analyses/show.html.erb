@@ -28,64 +28,7 @@
   <br>
   <br>
 
-  <div class="row-fluid">
-    <div class="span6">
-      <p>
-        We looked for <strong><%= @analysis.bedrooms %> bedroom</strong>  apartments 
-        within <strong><%= pluralize Analysis::RADIUS, 'mile' %></strong> 
-        of <strong><%= @analysis.address %></strong>. 
-      </p>
-      <p>
-        There were <strong><%= @analysis.listings.count %> similar listings</strong>. 
-        You can see them on the map (the red pin represents your listing). 
-        Here are a few quick facts about these listings:
-      </p>
-      <table class='table'>
-        <tr>
-          <td> Total number of listings found </td>
-          <td> <%= @analysis.listings.count %> </td>
-        </tr>
-        <tr>
-          <td> Highest price we found </td>
-          <td> $<%= @analysis.max_listing_price %> / month </td>
-        </tr>
-        <tr>
-          <td> Lowest price we found </td>
-          <td> $<%= @analysis.min_listing_price %> / month </td>
-        </tr>
-        <tr>
-          <td> Median price </td>
-          <td> $<%= @analysis.average_median %> / month </td>
-        </tr>
-        <tr>
-          <td> Average number of pictures </td>
-          <td> <%= @analysis.average_pictures %> </td>
-        </tr>
-      </table>
-    </div>
-    <div class="span6">
-      <div id="map_canvas_all" style="height:300px;text-align:center;">
-        <%= image_tag 'loading.gif' %>
-      </div>
-    </div>
-  </div>
-
-  <br>
-  <br>
-
-  <div class="row-fluid">
-    <div class="span6 offset3">
-      <h3>We put together a cool graph, too.</h3>
-      <p>
-        Here's a graph showing the distribution of prices for these listings.
-        Each bar represents a price range, and the size of the bar tells you how many
-        listings we found inside that range.
-      </p>
-      <div id="chart_div_all" style="height:400px;text-align:center;">
-        <%= image_tag 'loading.gif' %>
-      </div>
-    </div>
-  </div>
+  <%= render partial: "overview", locals: {analysis: @analysis, segment: @overview} %>
 
   <div class="row-fluid">
     <h1>
@@ -101,235 +44,22 @@
       </div>
     </div>
 
-    <div id="low" style="padding-top:30px"></div>
-    <h3>First, let's check out the lower market segment.</h3>
+    <div id="low" style="padding-top:30px">
+      <h3>First, let's check out the lower market segment.</h3>
 
-    <div class="row-fluid">
-      <div class="span6">
-        <p>
-          Of the <strong><%= @analysis.listings.count %> similar listings</strong>,
-          there are <strong><%= @analysis.listings.where("price > ? AND price <= ?", @analysis.min_listing_price-1, @analysis.first_tertile).count %> listings</strong> in the lower market segment.
-          You can see them on the map (the red pin represents your listing). 
-          Here are a few quick facts about this market segment:
-        </p>
-        <table class='table'>
-          <tr>
-            <td> Number of listings </td>
-            <td> <%= @analysis.listings.where("price > ? AND price <= ?", @analysis.min_listing_price-1, @analysis.first_tertile).count %> </td>
-          </tr>
-          <tr>
-            <td> Highest price </td>
-            <td> $<%= @analysis.first_tertile %> / month </td>
-          </tr>
-          <tr>
-            <td> Lowest price </td>
-            <td> $<%= @analysis.min_listing_price %> / month </td>
-          </tr>
-          <tr>
-            <td> Median price </td>
-            <td> $<%= @analysis.average_median_first_third %> / month </td>
-          </tr>
-          <tr>
-            <td> Average number of pictures </td>
-            <td> <%= @analysis.average_pictures_first_third %> </td>
-          </tr>
-        </table>
-      </div>
-      <div class="span6">
-        <div id="map_canvas_first_third" style="height:300px;text-align:center;">
-          <%= image_tag 'loading.gif' %>
-        </div>
-      </div>
+      <%= render partial: "segment", locals: {analysis: @analysis, segment: @segments[0]} %>
     </div>
+    <div id="middle" style="padding-top:30px">
+      <h3>Now, let's check out the middle market segment.</h3>
 
-    <br>
-    <br>
-
-    <div class="row-fluid">
-      <div class="span6 offset3">
-        <h3>Here's the distribution graph, again.</h3>
-        <p>
-          This graph shows the distribution of prices for these listings.
-          Each bar represents a price range, and the size of the bar tells you how many
-          listings we found inside that range.
-        </p>
-        <div id="chart_div_first_third" style="height:400px;text-align:center;">
-          <%= image_tag 'loading.gif' %>
-        </div>
-      </div>
+      <%= render partial: "segment", locals: {analysis: @analysis, segment: @segments[1]} %>
     </div>
+    <div id="high" style="padding-top:30px">
+      <h3>Finally, the higher market segment.</h3>
 
-    <br>
-    <br>
-    <h3>And here are some pictures from listings in the lower market segment.</h3>
-    <p class='text-center'>
-      You can scroll to the right to see more. Sorry if we picked up some pictures of other stuff along the way.
-    </p>
-    <br>
-
-    <div class="row-fluid">
-      <div class="span12" style="position:relative; margin:0 auto; overflow: auto;">
-        <ul style="position:relative; left:0; top:0; white-space:nowrap">
-          <% for image in @analysis.pictures_first_third do %>
-            <li style="display:inline; width:200px; height:200px"><img style="width:200px; height:200px" src="<%= image %>" alt="" onError="imgerror(this);" /></li> 
-          <% end %>
-        </ul>
-      </div>
+      <%= render partial: "segment", locals: {analysis: @analysis, segment: @segments[2]} %>
     </div>
   </div>
-  <div id="middle" style="padding-top:30px">
-    <h3>Now, let's check out the middle market segment.</h3>
-
-    <div class="row-fluid">
-      <div class="span6">
-        <p>
-          Of the <strong><%= @analysis.listings.count %> similar listings</strong>,
-          there are <strong><%= @analysis.listings.where("price > ? AND price <= ?", @analysis.first_tertile, @analysis.second_tertile).count %> similar listings</strong> in the middle market segment.
-          You can see them on the map (the red pin represents your listing). 
-          Here are a few quick facts about this market segment:
-        </p>
-        <table class='table'>
-          <tr>
-            <td> Number of listings </td>
-            <td> <%= @analysis.listings.where("price > ? AND price <= ?", @analysis.first_tertile, @analysis.second_tertile).count %> </td>
-          </tr>
-          <tr>
-            <td> Highest price </td>
-            <td> $<%= @analysis.second_tertile %> / month </td>
-          </tr>
-          <tr>
-            <td> Lowest price </td>
-            <td> $<%= @analysis.first_tertile %> / month </td>
-          </tr>
-          <tr>
-            <td> Median price </td>
-            <td> $<%= @analysis.average_median_second_third %> / month </td>
-          </tr>
-          <tr>
-            <td> Average number of pictures </td>
-            <td> <%= @analysis.average_pictures_second_third %> </td>
-          </tr>
-        </table>
-      </div>
-      <div class="span6">
-        <div id="map_canvas_second_third" style="height:300px;text-align:center;">
-          <%= image_tag 'loading.gif' %>
-        </div>
-      </div>
-    </div>
-
-    <br>
-    <br>
-
-    <div class="row-fluid">
-      <div class="span6 offset3">
-        <h3>Here's the distribution graph, again.</h3>
-        <p>
-          This graph shows the distribution of prices for these listings.
-          Each bar represents a price range, and the size of the bar tells you how many
-          listings we found inside that range.
-        </p>
-        <div id="chart_div_second_third" style="height:400px;text-align:center;">
-          <%= image_tag 'loading.gif' %>
-        </div>
-      </div>
-    </div>
-
-    <br>
-    <br>
-    <h3>And here are some pictures from listings in the middle market segment.</h3>
-    <p class='text-center'>
-      You can scroll to the right to see more. Sorry if we picked up some pictures of other stuff along the way.
-    </p>
-    <br>
-
-    <div class="row-fluid">
-      <div class="span12" style="position:relative; margin:0 auto; overflow: auto;">
-        <ul style="position:relative; left:0; top:0; white-space:nowrap">
-          <% for image in @analysis.pictures_second_third do %>
-            <li style="display:inline; width:200px; height:200px"><img style="width:200px; height:200px" src="<%= image %>" alt="" onError="imgerror(this);" /></li> 
-          <% end %>
-        </ul>
-      </div>
-    </div>
-  </div>
-  <div id="high" style="padding-top:30px">
-    <h3>Finally, the higher market segment.</h3>
-
-    <div class="row-fluid">
-      <div class="span6">
-        <p>
-          Of the <strong><%= @analysis.listings.count %> similar listings</strong>,
-          there are <strong><%= @analysis.listings.where("price > ? AND price <= ?", @analysis.second_tertile, @analysis.max_listing_price).count %> similar listings</strong> in the higher market segment.
-          You can see them on the map (the red pin represents your listing). 
-          Here are a few quick facts about this market segment:
-        </p>
-        <table class='table'>
-          <tr>
-            <td> Number of listings </td>
-            <td> <%= @analysis.listings.where("price > ? AND price <= ?", @analysis.second_tertile, @analysis.max_listing_price).count %> </td>
-          </tr>
-          <tr>
-            <td> Highest price </td>
-            <td> $<%= @analysis.max_listing_price %> / month </td>
-          </tr>
-          <tr>
-            <td> Lowest price </td>
-            <td> $<%= @analysis.second_tertile %> / month </td>
-          </tr>
-          <tr>
-            <td> Median price </td>
-            <td> $<%= @analysis.average_median_third_third %> / month </td>
-          </tr>
-          <tr>
-            <td> Average number of pictures </td>
-            <td> <%= @analysis.average_pictures_third_third %> </td>
-          </tr>
-        </table>
-      </div>
-      <div class="span6">
-        <div id="map_canvas_third_third" style="height:300px;text-align:center;">
-          <%= image_tag 'loading.gif' %>
-        </div>
-      </div>
-    </div>
-
-    <br>
-    <br>
-
-    <div class="row-fluid">
-      <div class="span6 offset3">
-        <h3>Here's the distribution graph, again.</h3>
-        <p>
-          This graph shows the distribution of prices for these listings.
-          Each bar represents a price range, and the size of the bar tells you how many
-          listings we found inside that range.
-        </p>
-        <div id="chart_div_third_third" style="height:400px;text-align:center;">
-          <%= image_tag 'loading.gif' %>
-        </div>
-      </div>
-    </div>
-
-    <br>
-    <br>
-    <h3>And here are some pictures from listings in the higher market segment.</h3>
-    <p class='text-center'>
-      You can scroll to the right to see more. Sorry if we picked up some pictures of other stuff along the way.
-    </p>
-    <br>
-
-    <div class="row-fluid">
-      <div class="span12" style="position:relative; margin:0 auto; overflow: auto;">
-        <ul style="position:relative; left:0; top:0; white-space:nowrap">
-          <% for image in @analysis.pictures_third_third do %>
-            <li style="display:inline; width:200px; height:200px"><img style="width:200px; height:200px" src="<%= image %>" alt="" onError="imgerror(this);" /></li> 
-          <% end %>
-        </ul>
-      </div>
-    </div>
-  </div>
-
   <br>
   <br>
 
@@ -361,7 +91,6 @@
       })
     })
   </script>
-  
 
   <!-- Google Charts -->
   <script type="text/javascript">
@@ -369,61 +98,12 @@
     google.setOnLoadCallback(drawChart);
 
     function drawChart() {
-
       var data_breakdown = google.visualization.arrayToDataTable([
         ['Market Segment', 'Average Price'],
-        ['low',  <%= @analysis.average_median_first_third %>],
-        ['middle',  <%= @analysis.average_median_second_third %>],
-        ['high',  <%= @analysis.average_median_third_third %>]
+        ['low',  <%= @segments[0].median %>],
+        ['middle',  <%= @segments[1].median %>],
+        ['high',  <%= @segments[2].median %>]
       ]);
-
-      var data_all = google.visualization.arrayToDataTable([
-          ['Price', 'Listings'],
-          <% min = @analysis.min_listing_price %>
-          <% max = @analysis.max_listing_price %>
-          <% incr = @analysis.determine_incr(min, max) %>
-          <% (@analysis.adjust_min_smart(min, incr)..@analysis.adjust_max_smart(max, incr)).step(incr) do |i| %>
-          ["<%= "$#{i} - $#{i+incr-1}" %>", <%= @analysis.listings.where("price >= ? AND price < ?", i, i+incr).count %>],
-          <% end %>
-          ]);
-
-      var data_first_third = google.visualization.arrayToDataTable([
-          ['Price', 'Listings'],
-          <% min = @analysis.min_listing_price %>
-          <% max = @analysis.first_tertile %>
-          <% incr = @analysis.determine_incr(min, max) %>
-          <% (@analysis.adjust_min_smart(min, incr)..@analysis.adjust_max_smart(max, incr)).step(incr) do |i| %>
-          ["<%= "$#{i} - $#{i+incr-1}" %>", <%= @analysis.listings.where("price >= ? AND price < ?", i, i+incr).count %>],
-          <% end %>
-          ]);
-
-      var data_second_third = google.visualization.arrayToDataTable([
-          ['Price', 'Listings'],
-          <% min = @analysis.first_tertile %>
-          <% max = @analysis.second_tertile %>
-          <% incr = @analysis.determine_incr(min, max) %>
-          <% (@analysis.adjust_min_smart(min, incr)..@analysis.adjust_max_smart(max, incr)).step(incr) do |i| %>
-          ["<%= "$#{i} - $#{i+incr-1}" %>", <%= @analysis.listings.where("price >= ? AND price < ?", i, i+incr).count %>],
-          <% end %>
-          ]);
-
-      var data_third_third = google.visualization.arrayToDataTable([
-          ['Price', 'Listings'],
-          <% min = @analysis.second_tertile %>
-          <% max = @analysis.max_listing_price %>
-          <% incr = @analysis.determine_incr(min, max) %>
-          <% (@analysis.adjust_min_smart(min, incr)..@analysis.adjust_max_smart(max, incr)+1).step(incr) do |i| %>
-          ["<%= "$#{i} - $#{i+incr-1}" %>", <%= @analysis.listings.where("price >= ? AND price < ?", i, i+incr).count %>],
-          <% end %>
-          ]);
-
-      var options = {
-        title: 'Number of Listings by Price Range',
-        hAxis: {title: 'Number of Listings', showTextEvery: 1},
-        vAxis: {title: 'Price Range', showTextEvery: 1},
-        legend: {position: 'none'},
-        chartArea:{top:"5%", height:"85%"}
-      };
 
       var options_breakdown = {
         title: 'Average Price by Market Segment',
@@ -435,126 +115,12 @@
 
       var chart_breakdown = new google.visualization.ColumnChart(document.getElementById('chart_breakdown'));
       chart_breakdown.draw(data_breakdown, options_breakdown);
-
-      var chart_all = new google.visualization.BarChart(document.getElementById('chart_div_all'));
-      chart_all.draw(data_all, options);
-
-      var chart_first_third = new google.visualization.BarChart(document.getElementById('chart_div_first_third'));
-      chart_first_third.draw(data_first_third, options);
-      
-      var chart_second_third = new google.visualization.BarChart(document.getElementById('chart_div_second_third'));
-      chart_second_third.draw(data_second_third, options);
-
-      var chart_third_third = new google.visualization.BarChart(document.getElementById('chart_div_third_third'));
-      chart_third_third.draw(data_third_third, options);
     }
   </script>
 
   <!-- Scrollspy -->
   <script type="text/javascript">
     $('body').scrollspy();
-  </script>
-
-  <!-- Google Maps -->
-  <script type="text/javascript">
-    function initialize() {
-      var analysis_lat_lng = new google.maps.LatLng(<%= @analysis.latitude %>, <%= @analysis.longitude %>);
-      var mapOptions = {
-        scrollwheel: false,
-        center: analysis_lat_lng,
-        zoom: 14,
-        mapTypeId: google.maps.MapTypeId.ROADMAP
-      };
-      var map_all = new google.maps.Map(document.getElementById("map_canvas_all"), mapOptions);
-      var map_first = new google.maps.Map(document.getElementById("map_canvas_first_third"), mapOptions);
-      var map_second = new google.maps.Map(document.getElementById("map_canvas_second_third"), mapOptions);
-      var map_third = new google.maps.Map(document.getElementById("map_canvas_third_third"), mapOptions);
-      var analysis_lat_lng = new google.maps.LatLng(<%= @analysis.latitude %>, <%= @analysis.longitude %>);
-      var map_all_bounds = new google.maps.LatLngBounds(analysis_lat_lng, analysis_lat_lng)
-      var map_first_bounds = new google.maps.LatLngBounds(analysis_lat_lng, analysis_lat_lng)
-      var map_second_bounds = new google.maps.LatLngBounds(analysis_lat_lng, analysis_lat_lng)
-      var map_third_bounds = new google.maps.LatLngBounds(analysis_lat_lng, analysis_lat_lng)
-
-      var image = new google.maps.MarkerImage(
-        'http://maps.google.com/mapfiles/ms/micons/blue.png',
-        new google.maps.Size(32, 32), // size
-        new google.maps.Point(0,0), // origin
-        new google.maps.Point(16, 32) // anchor
-      );
-
-      var shadow = new google.maps.MarkerImage(
-        'http://maps.google.com/mapfiles/ms/micons/msmarker.shadow.png',
-        new google.maps.Size(59, 32), // size
-        new google.maps.Point(0,0), // origin
-        new google.maps.Point(16, 32) // anchor
-      );
-
-      <% for listing in @analysis.listings %>
-        var pos = new google.maps.LatLng(<%= listing.latitude %>, <%= listing.longitude %>);
-        var marker = new google.maps.Marker({
-          position: new google.maps.LatLng(<%= listing.latitude %>, <%= listing.longitude %>),
-          map: map_all,
-          icon: image,
-          shadow: shadow
-        });
-        map_all_bounds.extend(pos);
-      <% end %>
-      var marker = new google.maps.Marker({
-        position: analysis_lat_lng,
-        map: map_all,
-      });
-      
-      <% for listing in @analysis.get_low_listings %>
-        var pos = new google.maps.LatLng(<%= listing.latitude %>, <%= listing.longitude %>);
-        var marker = new google.maps.Marker({
-          position: pos,
-          map: map_first,
-          icon: image,
-          shadow: shadow
-        });
-        map_first_bounds.extend(pos);
-      <% end %>
-      var marker = new google.maps.Marker({
-        position: analysis_lat_lng,
-        map: map_first,
-      });
-      
-      <% for listing in @analysis.get_middle_listings %>
-        var pos = new google.maps.LatLng(<%= listing.latitude %>, <%= listing.longitude %>);
-        var marker = new google.maps.Marker({
-          position: new google.maps.LatLng(<%= listing.latitude %>, <%= listing.longitude %>),
-          map: map_second,
-          icon: image,
-          shadow: shadow
-        });
-        map_second_bounds.extend(pos);
-      <% end %>
-      var marker = new google.maps.Marker({
-        position: analysis_lat_lng,
-        map: map_second,
-      });
-      
-      <% for listing in @analysis.get_high_listings %>
-        var pos = new google.maps.LatLng(<%= listing.latitude %>, <%= listing.longitude %>);
-        var marker = new google.maps.Marker({
-          position: new google.maps.LatLng(<%= listing.latitude %>, <%= listing.longitude %>),
-          map: map_third,
-          icon: image,
-          shadow: shadow
-        });
-        map_third_bounds.extend(pos);
-      <% end %>
-      var marker = new google.maps.Marker({
-        position: analysis_lat_lng,
-        map: map_third,
-      });
-
-      map_all.fitBounds(map_all_bounds);
-      map_first.fitBounds(map_first_bounds);
-      map_second.fitBounds(map_second_bounds);
-      map_third.fitBounds(map_third_bounds);
-    }
-    google.maps.event.addDomListener(window, 'load', initialize);
   </script>
 
 <% elsif @analysis.processed and !@analysis.failed %>
@@ -615,7 +181,6 @@
     })
   </script>
 <% end %>
-
 
 <script>
   function bounce(){
