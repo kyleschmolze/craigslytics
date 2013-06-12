@@ -5,6 +5,18 @@ class Listing < ActiveRecord::Base
   has_and_belongs_to_many :analyses
   validates_presence_of :price, :bedrooms, :latitude, :longitude
 
+  #url of a static google map of the analyzed listing
+  def get_self_map
+    map = "http://maps.google.com/maps/api/staticmap?size=450x450&zoom=auto&center=#{self.latitude},#{self.longitude}&sensor=true&markers=color:blue|#{self.latitude},#{self.longitude}"
+    return map
+  end
+
+  def pictures
+    pics = self.info["images"].map{|p| p["full"]}
+    pics = pics.uniq {|i| i.gsub(/https?:\/\//, '').gsub(/^.*\//, '') }
+    return pics
+  end
+
   def create_comparison_with(a_listing, options)
     if options 
       # WEIGHTS

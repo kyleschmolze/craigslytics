@@ -14,8 +14,6 @@ class ListingsController < ApplicationController
   # GET /listings/:id.json
   def show
     @listing = Listing.find(params[:id])
-    @analytics = @listing.get_analytics(2)
-    @results = @listing.get_similar_listings(2)
 
     respond_to do |format|
       format.html # show.html.erb
