@@ -1,0 +1,28 @@
+<script type="text/javascript">
+  mixpanel.track("Home")
+</script>
+<div style="text-align:center;">
+  <h1>Not sure what to charge for your apartment?</h1>
+  <h4>The rentalyzer will scan comparable listings to help you figure it out.</h4>
+
+  <div class="analyze-bar">
+    <%= render 'form' %>
+  </div>
+  <div class='error hide'>
+    <h4>Both fields are required.</h4>
+  </div>
+</div>
+<script>
+  $(function() {
+    $("form").submit(function() {
+      if($("#analysis_address").val() == "" || $("#analysis_bedrooms").val() == "") {
+        $(".error").show()
+        return false
+      }
+      else {
+        return true
+      }
+    })
+  })
+</script>
+

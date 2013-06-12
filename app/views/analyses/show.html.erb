@@ -158,24 +158,27 @@
     <div class='row-fluid'>
     <div class='span8 offset2 '>
       <div class='span8 offset2 well'>
-      <h2>While You Wait --</h2>
-      <h4>Help Us Make Our Product Better</h4>
-      <p>After looking over the analysis, don't hesitate to give us feedback. We recognize that the Rentalyzer has a lot of potential, but wanted to ask you, our users, what new features would be helpful.  So take the time to tell us, we are always looking to improve our service!</p>
-      <br>
-      <p>Simply click the purple tab at the bottom right of your screen whenever you are done viewing our analysis.</p>
+        <h3>-- While You Wait --</h3>
+      <h4>Give us a call at 855-633-2267</h4>
+      <p>We can answer any questions you have, and are always looking for feedback. When you're done viewing the analysis, tell us what you thought by clicking the purple tab in the corner.</p>
     </div>
     </div>
     </div>
-    <i class="icon-large icon-arrow-down" style="font-size:75px;position: fixed;bottom: 40px;right: 80px;"></i>
+    <!--i class="icon-large icon-arrow-down" style="font-size:75px;position: fixed;bottom: 40px;right: 80px;"></i-->
   </center>
   <script>
     $(function() {
-      App.Helpers.poll("<%= poll_analysis_path(@analysis) %>", function() {
-        $(".action").html('<%= link_to "Continue to analysis", @analysis, class: "btn btn-primary" %>')
-        $(".generating").html('Analysis complete!')
-      }, function() {
-        location.reload()
-      })
+      setTimeout(function() {
+        console.log("polling..");
+        App.Helpers.poll("<%= poll_analysis_path(@analysis) %>", function() {
+            $(".action").html('<%= link_to "Continue to analysis", @analysis, class: "btn-large btn-primary" %>')
+            $(".generating").html('Analysis complete!')
+          }, function() {
+            console.log("reloading");
+            location.reload();
+          }
+        )
+      }, 5000)
     })
   </script>
 <% end %>
@@ -184,7 +187,7 @@
   function bounce(){
     a = $("#uvTabLabel");
     //a.animate({ 'padding-bottom': '20', 'padding-top': '20'}, 320, function(){ a.animate({'padding-bottom': '10', 'padding-top': '10'}, 200)});
-    a.animate({ 'padding-bottom': '20px'}, 320, function(){ a.animate({'padding-bottom': '2px'}, 200)});
+    a.animate({ 'padding-bottom': '20px'}, 320, function(){ a.animate({'padding-bottom': '10px'}, 200)});
   }
 
   function bounce_thrice(){
@@ -193,12 +196,12 @@
     setTimeout(bounce, 900);
   }
 
-  INIT = 8;
+  INIT = 15;
   wait = INIT;
 
-    window.onscroll = function (e) {
-      wait = INIT;
-    }
+  window.onscroll = function (e) {
+    wait = INIT;
+  }
 
   function expo_bounce(){
     e = 2;
@@ -212,6 +215,5 @@
     }, 1000);
   }
 
-expo_bounce();
-</script>
+  expo_bounce(); </script>
 
