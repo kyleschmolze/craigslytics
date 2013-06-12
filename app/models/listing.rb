@@ -5,6 +5,18 @@ class Listing < ActiveRecord::Base
   has_and_belongs_to_many :analyses
   validates_presence_of :price, :bedrooms, :latitude, :longitude
 
+  before_create :parse
+
+  def self.parse_all
+    Listing.find_each do |listing|
+      listing.parse
+      listing.save
+    end
+  end
+
+  def parse
+  end
+
   def create_comparison_with(a_listing, options)
     if options 
       # WEIGHTS
