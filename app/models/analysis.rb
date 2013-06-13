@@ -72,14 +72,17 @@ class Analysis < ActiveRecord::Base
       http.request(req)
     }
     response = JSON.parse(res.body)
+    puts "Starting Search"
     if response["success"]
       anchor = response["anchor"]
       num_matches = response["num_matches"]
       if !(num_matches == 0 or num_matches == nil)
+        puts "Goin"
         num_pages = 1
         num_pages = (num_matches/100)+1 if num_matches > 100
         total_price = 0
         (0..num_pages-1).each do |i|
+          puts "Polling 3taps, page: #{i} / #{num_pages}"
           url = URI.parse("http://search.3taps.com")
           params = "?rpp=100&lat=#{self.latitude}&long=#{self.longitude}&radius=#{RADIUS}mi&category=RHFR&retvals=id,account_id,source,category,category_group,location,external_id,external_url,heading,body,html,timestamp,expires,language,price,currency,images,annotations,status,immortal&annotations={bedrooms:#{self.bedrooms}br}&anchor=#{anchor}&page=#{i}&source=CRAIG&auth_token=#{API_KEY}"
           req = Net::HTTP::Get.new(url.to_s + params)
