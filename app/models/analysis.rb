@@ -101,8 +101,8 @@ class Analysis < ActiveRecord::Base
         #GOT NO MATCHES, DO NOTHING.  
       end
     else
-      analysis.update_column :processed, true
-      analysis.update_column :failed, true
+      self.update_column :processed, true
+      self.update_column :failed, true
     end
   end
 

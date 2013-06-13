@@ -1,13 +1,14 @@
 <br>
 <div style="text-align:center">
-  <%= form_tag listings_path, method: "GET", html: {class: "form-inline"} do %>
+  <%= form_tag listings_path, method: "GET", class: "form-inline" do %>
     
-    <%= search :tags, prompt: "Select Attribute" %>
-    <%= submit_tag "GO" %>
+    <%= search_field_tag "tags", @tags, placeholder: "Filter by Tags" %>
+    <%= submit_tag "GO", class: "btn btn-danger" %>
   <% end %>
 </div>
 
 <br>
+<%= paginate @listings %>
 <% for listing in @listings do%>
   <%= render partial: "show", locals: {listing: listing} %>
 <% end %>

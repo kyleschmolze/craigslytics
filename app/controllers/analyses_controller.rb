@@ -14,8 +14,8 @@ class AnalysesController < ApplicationController
   # GET /analyses/1.json
   def show
     @analysis = Analysis.find(params[:id])
-    @segments = @analysis.get_segments
-    @overview = @analysis.get_overview
+    @segments = @analysis.get_segments if (@analysis.processed and !@analysis.failed and @analysis.listings.count > 3)
+    @overview = @analysis.get_overview if (@analysis.processed and !@analysis.failed and @analysis.listings.count > 3)
     @body_class = 'analysis-show'
 
     respond_to do |format|

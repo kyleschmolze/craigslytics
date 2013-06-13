@@ -45,8 +45,9 @@
         <div style="text-align:center">
           <h5>Bedrooms: <%= listing.bedrooms %></h5>
           <h5>Price: $<%= listing.price %></h5>
-          <h5>Dogs: <%= listing.dogs ? "True" : "False" %></h5>
-          <h5>Cats: <%= listing.cats ? "True" : "False" %></h5>
+          <% for tag in listing.tags do %>
+            <span class="badge badge-info"><%= tag.name %></span>
+          <% end %>
         </div>
       </div>
       <div class="span9">
