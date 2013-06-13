@@ -1,19 +1,20 @@
 class Tag < ActiveRecord::Base
   attr_accessible :listing_id, :name
+  belongs_to :listing
 
   NAMES = [
     "Garden",
-    "Patio"
+    "Patio",
+    "Window",
+    "Stove",
+    "Hardwood",
+    "View"
   ]
 
   UTILITIES = [
     elec: "Electricity",
-    water: "Water"
+    water: "Water",
+    heat: "Heat"
   ]
 
-  #within listing.parse
-  #for name in Tag::NAMES
-    #if listing.whatever.match name
-      #Tag.create
-  #scan 
 end

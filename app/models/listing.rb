@@ -3,6 +3,7 @@ class Listing < ActiveRecord::Base
   serialize :info
 
   has_and_belongs_to_many :analyses
+  has_many :tags
   validates_presence_of :price, :bedrooms, :latitude, :longitude
 
   before_create :parse
@@ -26,14 +27,50 @@ class Listing < ActiveRecord::Base
     end
   end
 
+  def self.generate_all
+    Listing.find_each do |listing|
+      listing.generate_tags
+    end
+  end
+
+  def self.clear_tags
+    Listing.find_each do |listing|
+      listing.tags.destroy_all
+    end
+  end
+
+  def clear_tags
+    self.tags.destroy_all
+  end
+
+  def self.clear_and_generate
+    Listing.clear_tags
+    Listing.generate_all
+  end
+
+  def generate_tags
+    self.tags.create(name: "Dog") if self.info["annotations"]["dogs"].downcase == "yes"
+    self.tags.create(name: "Cat") if self.info["annotations"]["cats"].downcase == "yes"
+
+    #Simple tag parsing
+    for name in Tag::NAMES do
+      if self.info["body"].present?
+        if (self.info["body"] =~ /#{name}/i)
+          self.tags.create(name: name)
+        end
+      end
+    end
+
+    #Complex tag parsing. IE utilities
+  end
+
   def parse
     self.latitude = self.info["location"]["lat"]
     self.longitude = self.info["location"]["long"]
     self.price = self.info["price"]
     self.bedrooms = self.info["annotations"]["bedrooms"][0]
     self.address = self.info["location"]["formatted_address"]
-    self.dogs = self.info["annotations"]["dogs"].downcase == "yes"
-    self.cats = self.info["annotations"]["cats"].downcase == "yes"
+    self.generate_tags
   end
 
   def parse_utilites

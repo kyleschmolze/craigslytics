@@ -2,7 +2,7 @@
 <div style="text-align:center">
   <%= form_tag listings_path, method: "GET", html: {class: "form-inline"} do %>
     
-    <%= select_tag :attribute, options_for_select([["Dogs", "Dogs"],["Cats", "Cats"]]), prompt: "Select Attribute" %>
+    <%= search :tags, prompt: "Select Attribute" %>
     <%= submit_tag "GO" %>
   <% end %>
 </div>
