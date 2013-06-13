@@ -92,7 +92,10 @@ class Analysis < ActiveRecord::Base
           response = JSON.parse(res.body)
           for posting in response["postings"] do
             total_price += posting["price"].to_i
-            self.listings.create(info: posting)
+            l = self.listings.create(info: posting)
+            if l.errors.any?
+              puts l.errors.full_messages
+            end
           end
         end
 

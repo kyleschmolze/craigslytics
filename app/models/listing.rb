@@ -6,7 +6,8 @@ class Listing < ActiveRecord::Base
   has_many :tags
   validates_presence_of :price, :bedrooms, :latitude, :longitude
 
-  before_create :parse
+  before_validation :parse
+  after_create :generate_tags
 
   #url of a static google map of the analyzed listing
   def get_self_map
@@ -65,12 +66,13 @@ class Listing < ActiveRecord::Base
   end
 
   def parse
-    self.latitude = self.info["location"]["lat"]
-    self.longitude = self.info["location"]["long"]
-    self.price = self.info["price"]
-    self.bedrooms = self.info["annotations"]["bedrooms"][0]
-    self.address = self.info["location"]["formatted_address"]
-    self.generate_tags
+    if self.new_record?
+      self.latitude = self.info["location"]["lat"]
+      self.longitude = self.info["location"]["long"]
+      self.price = self.info["price"]
+      self.bedrooms = self.info["annotations"]["bedrooms"][0]
+      self.address = self.info["location"]["formatted_address"]
+    end
   end
 
   def parse_utilites
