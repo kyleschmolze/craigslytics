@@ -1,9 +1,11 @@
 class Listing < ActiveRecord::Base
-  attr_accessible :address, :bedrooms, :latitude, :longitude, :price, :analysis_id, :info
+  attr_accessible :address, :bedrooms, :latitude, :longitude, :price, :analysis_id, :info, :dogs, :cats
   serialize :info
 
   has_and_belongs_to_many :analyses
   validates_presence_of :price, :bedrooms, :latitude, :longitude
+
+  before_create :parse
 
   #url of a static google map of the analyzed listing
   def get_self_map
@@ -15,6 +17,23 @@ class Listing < ActiveRecord::Base
     pics = self.info["images"].map{|p| p["full"]}
     pics = pics.uniq {|i| i.gsub(/https?:\/\//, '').gsub(/^.*\//, '') }
     return pics
+  end
+
+  def self.parse_all
+    Listing.find_each do |listing|
+      listing.parse
+      listing.save
+    end
+  end
+
+  def parse
+    self.latitude = self.info["location"]["lat"]
+    self.longitude = self.info["location"]["long"]
+    self.price = self.info["price"]
+    self.bedrooms = self.info["annotations"]["bedrooms"][0]
+    self.address = self.info["location"]["formatted_address"]
+    self.dogs = self.info["annotations"]["dogs"].downcase == "yes"
+    self.cats = self.info["annotations"]["cats"].downcase == "yes"
   end
 
   def create_comparison_with(a_listing, options)

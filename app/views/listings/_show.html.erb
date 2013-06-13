@@ -42,11 +42,11 @@
     </div>
     <div class="row-fluid">
       <div class="span3">
-        <div>
-          <h4>Bedrooms: <%= listing.bedrooms %></h4>
-        </div>
-        <div>
-          <h4>Price: $<%= listing.price %></h4>
+        <div style="text-align:center">
+          <h5>Bedrooms: <%= listing.bedrooms %></h5>
+          <h5>Price: $<%= listing.price %></h5>
+          <h5>Dogs: <%= listing.dogs ? "True" : "False" %></h5>
+          <h5>Cats: <%= listing.cats ? "True" : "False" %></h5>
         </div>
       </div>
       <div class="span9">

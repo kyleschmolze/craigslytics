@@ -2,6 +2,13 @@
   mixpanel.track("Analysis Page Loaded")
 </script>
 
+<!-- Image Load Error -->
+<script type="text/javascript">
+  function imgerror(element) {
+    $(element).parent().remove();
+  }
+</script>
+
 <% if @analysis.processed and !@analysis.failed and @analysis.listings.count > 3%>
   <% if @analysis.listings.count < 20 %>
     <br>
@@ -66,13 +73,8 @@
 
   <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 
-  <!-- Image Load Error -->
+  <!-- Remove the tiny images -->
   <script type="text/javascript">
-    function imgerror(element) {
-      $(element).parent().remove();
-    }
-
-    //Remove the tiny images
     $(function() {
       $("ul img").each(function(i, img) {
         var pic_real_width, pic_real_height;

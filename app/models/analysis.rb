@@ -89,12 +89,7 @@ class Analysis < ActiveRecord::Base
           response = JSON.parse(res.body)
           for posting in response["postings"] do
             total_price += posting["price"].to_i
-            self.listings.create(latitude: posting["location"]["lat"], 
-                           longitude: posting["location"]["long"], 
-                           price: posting["price"], 
-                           bedrooms: posting["annotations"]["bedrooms"][0],
-                           address: posting["location"]["formatted_address"],
-                           info: posting)
+            self.listings.create(info: posting)
           end
         end
 
