@@ -60,6 +60,23 @@ class Listing < ActiveRecord::Base
         end
       end
     end
+  end
+
+  def find_utilities 
+    min_dist = 25
+    max_dist = 30
+
+    if self.info["body"].present?
+      if (self.info["body"] =~ /includ/i)
+        Tag::UTILITIES.each do |name, matcher| 
+
+          m1 = (self.info["body"].match /\binclud.{#{min_dist},#{max_dist}}\b#{matcher}\b/i)
+          m2 = (self.info["body"].match /..............................\b#{matcher}\b.{#{min_dist},#{max_dist}}\binclud/i)
+          puts m1[0] if m1
+          puts m2[0] if m2
+
+      end
+    end
 
     #Complex tag parsing. IE utilities
   end

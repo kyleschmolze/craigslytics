@@ -11,10 +11,10 @@ class Tag < ActiveRecord::Base
     "View"
   ]
 
-  UTILITIES = [
-    elec: "Electricity",
-    water: "Water",
-    heat: "Heat"
-  ]
+  #name[matcher]
+
+  UTILITIES = {
+    water: "water"
+  }
 
 end
