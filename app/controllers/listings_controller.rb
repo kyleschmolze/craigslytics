@@ -2,7 +2,13 @@ class ListingsController < ApplicationController
   # GET /listings
   # GET /listings.json
   def index
-    @listings = Listing.order(:price).all
+    if params[:tags].present?
+      tags = params[:tags].split(',').map(&:strip).map(&:titleize)
+      puts tags
+      @listings = Listing.includes(:tags).where("tags.name IN (?)", tags).order(:price).page(params[:page]).per(50)
+    else
+      @listings = Listing.order(:price).page(params[:page]).per(50)
+    end
 
     respond_to do |format|
       format.html # index.html.erb

@@ -92,7 +92,10 @@ class Analysis < ActiveRecord::Base
           response = JSON.parse(res.body)
           for posting in response["postings"] do
             total_price += posting["price"].to_i
-            self.listings.create(info: posting)
+            l = self.listings.create(info: posting)
+            if l.errors.any?
+              puts l.errors.full_messages
+            end
           end
         end
 
@@ -101,8 +104,8 @@ class Analysis < ActiveRecord::Base
         #GOT NO MATCHES, DO NOTHING.  
       end
     else
-      analysis.update_column :processed, true
-      analysis.update_column :failed, true
+      self.update_column :processed, true
+      self.update_column :failed, true
     end
   end
 

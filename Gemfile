@@ -11,6 +11,7 @@ gem 'hirefire-resource'
 gem 'thin'
 gem 'exceptional'
 gem 'newrelic_rpm'
+gem 'kaminari'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'

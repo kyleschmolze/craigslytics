@@ -9,7 +9,7 @@
   }
 </script>
 
-<% if @analysis.processed and !@analysis.failed and @analysis.listings.count > 3%>
+<% if @segments.present? %> 
   <% if @analysis.listings.count < 20 %>
     <br>
     <div class="row-fluid">

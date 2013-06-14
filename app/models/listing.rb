@@ -6,7 +6,8 @@ class Listing < ActiveRecord::Base
   has_many :tags
   validates_presence_of :price, :bedrooms, :latitude, :longitude
 
-  before_create :parse
+  before_validation :first_parse
+  after_create :generate_tags
 
   #url of a static google map of the analyzed listing
   def get_self_map
@@ -81,13 +82,19 @@ class Listing < ActiveRecord::Base
     #Complex tag parsing. IE utilities
   end
 
+  def first_parse
+    if self.new_record?
+      self.parse
+    end
+  end
+
   def parse
     self.latitude = self.info["location"]["lat"]
     self.longitude = self.info["location"]["long"]
     self.price = self.info["price"]
     self.bedrooms = self.info["annotations"]["bedrooms"][0]
     self.address = self.info["location"]["formatted_address"]
-    self.generate_tags
+    self.body = "#{self.info["body"]}".gsub(/&\w{1,5};/, '')
   end
 
   def parse_utilites
@@ -137,7 +144,7 @@ class Listing < ActiveRecord::Base
                                :address_score=>address_score, :bedrooms_score=>bedrooms_score, :location_score=>location_score, 
                                :price_score=>price_score})
     end
-    end
+  end
 
   def self.generate_all_comparisons(options)
     Listing.all.each do |i|
