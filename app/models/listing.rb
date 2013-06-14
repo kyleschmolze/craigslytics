@@ -4,7 +4,7 @@ class Listing < ActiveRecord::Base
 
   has_and_belongs_to_many :analyses
   has_many :tags
-  validates_presence_of :price, :bedrooms, :latitude, :longitude
+  validates_presence_of :price, :bedrooms, :latitude, :longitude, :u_id
 
   before_validation :first_parse
   after_create :generate_tags
@@ -50,15 +50,21 @@ class Listing < ActiveRecord::Base
   end
 
   def generate_tags
-    self.tags.create(name: "Dog") if self.info["annotations"]["dogs"].downcase == "yes"
-    self.tags.create(name: "Cat") if self.info["annotations"]["cats"].downcase == "yes"
+    self.tags.create(name: "Dogs") if self.info["annotations"]["dogs"].downcase == "yes"
+    self.tags.create(name: "Cats") if self.info["annotations"]["cats"].downcase == "yes"
 
     #Simple tag parsing
     for name in Tag::NAMES do
-      if self.info["body"].present?
-        if (self.info["body"] =~ /#{name}/i)
+      if name == "Stove"
+        if self.body =~ /\bGas #{name}s?\b/i
+          self.tags.create(name: "Gas Stove")
+        elsif  self.body =~ /\bElectric #{name}s?\b/i
+          self.tags.create(name: "Electric Stove")
+        elsif self.body =~ /\b#{name}s?\b/i
           self.tags.create(name: name)
         end
+      elsif (self.body =~ /\b#{name}s?\b/i)
+        self.tags.create(name: name)
       end
     end
 
@@ -78,6 +84,7 @@ class Listing < ActiveRecord::Base
     self.bedrooms = self.info["annotations"]["bedrooms"][0]
     self.address = self.info["location"]["formatted_address"]
     self.body = "#{self.info["body"]}".gsub(/&\w{1,5};/, '')
+    self.u_id = self.info["id"]
   end
 
   def parse_utilites

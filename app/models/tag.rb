@@ -5,7 +5,6 @@ class Tag < ActiveRecord::Base
   NAMES = [
     "Garden",
     "Patio",
-    "Window",
     "Stove",
     "Hardwood",
     "View"

@@ -4,8 +4,12 @@ class ListingsController < ApplicationController
   def index
     if params[:tags].present?
       tags = params[:tags].split(',').map(&:strip).map(&:titleize)
-      puts tags
-      @listings = Listing.includes(:tags).where("tags.name IN (?)", tags).order(:price).page(params[:page]).per(50)
+      tables = []
+      for tag in tags do
+        tables << Tag.where(name: tag).pluck(:listing_id)
+      end
+      ids = tables.inject(:&)
+      @listings = Listing.where("id IN (?)", ids).order(:price).page(params[:page]).per(50)
     else
       @listings = Listing.order(:price).page(params[:page]).per(50)
     end

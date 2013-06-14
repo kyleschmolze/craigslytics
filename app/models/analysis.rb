@@ -65,6 +65,7 @@ class Analysis < ActiveRecord::Base
 
   #scrapes 3-taps data and stores all similar listings
   def analyze_and_store
+    puts "Starting Analysis"
     url = URI.parse("http://search.3taps.com")
     params = "?rpp=100&lat=#{self.latitude}&long=#{self.longitude}&radius=#{RADIUS}mi&category=RHFR&retvals=id,account_id,source,category,category_group,location,external_id,external_url,heading,body,html,timestamp,expires,language,price,currency,images,annotations,status,immortal&annotations={bedrooms:#{self.bedrooms}br}&source=CRAIG&auth_token=#{API_KEY}"
     req = Net::HTTP::Get.new(url.to_s + params)
@@ -78,34 +79,58 @@ class Analysis < ActiveRecord::Base
       num_matches = response["num_matches"]
       if !(num_matches == 0 or num_matches == nil)
         puts "Goin"
-        num_pages = 1
-        num_pages = (num_matches/100)+1 if num_matches > 100
-        total_price = 0
-        (0..num_pages-1).each do |i|
-          puts "Polling 3taps, page: #{i} / #{num_pages}"
-          url = URI.parse("http://search.3taps.com")
-          params = "?rpp=100&lat=#{self.latitude}&long=#{self.longitude}&radius=#{RADIUS}mi&category=RHFR&retvals=id,account_id,source,category,category_group,location,external_id,external_url,heading,body,html,timestamp,expires,language,price,currency,images,annotations,status,immortal&annotations={bedrooms:#{self.bedrooms}br}&anchor=#{anchor}&page=#{i}&source=CRAIG&auth_token=#{API_KEY}"
-          req = Net::HTTP::Get.new(url.to_s + params)
-          res = Net::HTTP.start(url.host, url.port) {|http|
-            http.request(req)
-          }
-          response = JSON.parse(res.body)
-          for posting in response["postings"] do
-            total_price += posting["price"].to_i
+        puts "Polling 3taps, tier: 0 page: 0"
+        for posting in response["postings"] do
+          throw 'Kyle wrote this code and didnt test it. look it over plz. Analysis: line 84'
+          listing = Listing.where(:u_id => posting["id"]).first
+          if listing
+            if !self.listings.include? listing
+              self.listings << Listing.where(:u_id => posting["id"]) 
+            end
+          else
             l = self.listings.create(info: posting)
             if l.errors.any?
               puts l.errors.full_messages
             end
           end
         end
-
-        self.average_price = total_price/num_matches
+        next_page = response["next_page"]
+        next_tier = response["next_tier"]
+        while (next_tier != -1) do 
+          puts "Polling 3taps, tier: #{next_tier} page: #{next_page}"
+          url = URI.parse("http://search.3taps.com")
+          params = "?rpp=100&lat=#{self.latitude}&long=#{self.longitude}&radius=#{RADIUS}mi&category=RHFR&retvals=id,account_id,source,category,category_group,location,external_id,external_url,heading,body,html,timestamp,expires,language,price,currency,images,annotations,status,immortal&annotations={bedrooms:#{self.bedrooms}br}&anchor=#{anchor}&page=#{next_page}&tier=#{next_tier}&source=CRAIG&auth_token=#{API_KEY}"
+          req = Net::HTTP::Get.new(url.to_s + params)
+          res = Net::HTTP.start(url.host, url.port) {|http|
+            http.request(req)
+          }
+          response = JSON.parse(res.body)
+          if response["success"]
+            if Listing.where(:u_id => posting["id"]).present?
+              self.listings << Listing.where(:u_id => posting["id"])
+            else
+              for posting in response["postings"] do
+                l = self.listings.create(info: posting)
+                if l.errors.any?
+                  puts l.errors.full_messages
+                end
+              end
+            end
+          else
+            self.update_column :processed, true
+            self.update_column :failed, true
+            throw response["error"]
+          end
+          next_page = response["next_page"]
+          next_tier = response["next_tier"]
+        end
       else
         #GOT NO MATCHES, DO NOTHING.  
       end
     else
       self.update_column :processed, true
       self.update_column :failed, true
+      throw response["error"]
     end
   end
 
