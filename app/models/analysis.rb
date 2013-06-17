@@ -81,12 +81,8 @@ class Analysis < ActiveRecord::Base
         puts "Goin"
         puts "Polling 3taps, tier: 0 page: 0"
         for posting in response["postings"] do
-          throw 'Kyle wrote this code and didnt test it. look it over plz. Analysis: line 84'
-          listing = Listing.where(:u_id => posting["id"]).first
-          if listing
-            if !self.listings.include? listing
-              self.listings << Listing.where(:u_id => posting["id"]) 
-            end
+          if Listing.where(:u_id => posting["id"]).present? 
+            self.listings << Listing.where(:u_id => posting["id"]) 
           else
             l = self.listings.create(info: posting)
             if l.errors.any?
@@ -106,10 +102,10 @@ class Analysis < ActiveRecord::Base
           }
           response = JSON.parse(res.body)
           if response["success"]
-            if Listing.where(:u_id => posting["id"]).present?
-              self.listings << Listing.where(:u_id => posting["id"])
-            else
-              for posting in response["postings"] do
+            for posting in response["postings"] do
+              if Listing.where(:u_id => posting["id"]).present? 
+                self.listings << Listing.where(:u_id => posting["id"])
+              else
                 l = self.listings.create(info: posting)
                 if l.errors.any?
                   puts l.errors.full_messages
