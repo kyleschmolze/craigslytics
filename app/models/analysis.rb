@@ -8,6 +8,7 @@ class Analysis < ActiveRecord::Base
   has_and_belongs_to_many :listings, :order=>:price
 
   API_KEY = '166bb56dcaeba0c3c860981fd50917cd'
+  INITIAL_RADIUS = "1"
   after_create :enqueue
 
   def lat_lng_blank?
@@ -89,9 +90,9 @@ class Analysis < ActiveRecord::Base
   #scrapes 3-taps data and stores all similar listings
   def analyze_and_store
     if self.radius.blank?
-      self.radius = 1
+      self.radius = INITIAL_RADIUS
       puts "Starting Analysis"
-      puts "Initial radius, 1 mile"
+      puts "Initial radius, #{INITIAL_RADIUS}"
       puts "Starting Search"
     end
     response = self.search_3taps
@@ -125,7 +126,7 @@ class Analysis < ActiveRecord::Base
           next_tier = response["next_tier"]
         end
       else
-        if self.radius < 10
+        if self.radius < (INITIAL_RADIUS + 10)
           puts "Not enough listings. Increasing radius"
           self.radius += 1
           puts "Radius is now #{self.radius} miles"
