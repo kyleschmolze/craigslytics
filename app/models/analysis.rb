@@ -8,7 +8,7 @@ class Analysis < ActiveRecord::Base
   has_and_belongs_to_many :listings, :order=>:price
 
   API_KEY = '166bb56dcaeba0c3c860981fd50917cd'
-  INITIAL_RADIUS = "2"
+  INITIAL_RADIUS = "1"
   after_create :enqueue
 
   def lat_lng_blank?
