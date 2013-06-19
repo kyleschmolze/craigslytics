@@ -33,27 +33,61 @@
 </div> -->
 
 
-<div class="row-fluid" id="listing<%=listing.id%>">
+<div class="row" id="listing<%=listing.id%>">
 
-  <div class="well span8 offset2">
-    <div class="row-fluid">
-      <h2><%= listing.address %></h2>
-      <h4><%= listing.info["heading"] %></h4>
-      <a href="<%= listing.info["external_url"] %>"> <%= listing.info["external_url"] %></a>
-    </div>
-    <div class="row-fluid">
-      <div class="span3">
-        <div style="text-align:center">
-          <h5>Bedrooms: <%= listing.bedrooms %></h5>
-          <h5>Price: $<%= listing.price %></h5>
-          <% for tag in listing.tags do %>
-            <span class="badge badge-info"><%= tag.name %></span>
+  <div class="well well-small span12">
+    <h4><%= listing.address %></h4>
+    <p>
+      <%= pluralize listing.bedrooms, 'bedroom' %><br>
+      $<%= listing.price %> / month
+    </p>
+
+    <p>
+      <% for tag in listing.tags do %>
+        <span class="badge badge-info"><%= tag.name %></span>
+      <% end %>
+    </p>
+
+    <% if listing.pictures.present? %>
+      <div class='row-fluid pictures'>
+        <ul class='thumbnails'>
+          <% listing.pictures.each_with_index do |picture, index| %>
+            <% if index != 0 and index % 6 == 0 %>
+              </ul><ul class='thumbnails'>
+            <% end %>
+            <li class='span2'>
+              <%= image_tag picture, onerror: 'imgerror(this);' %>
+            </li>
           <% end %>
-        </div>
+        </ul>
       </div>
-      <div class="span9">
-        <%= listing.body %>
-      </div>
+    <% end %>
+
+    <br>
+    <%= link_to 'Show full listing', 'javascript:void(0);', class: 'show-full-listing' %>
+    <div class="hide full-listing">
+      <h4><%= listing.info["heading"] %></h4>
+      <%= listing.body %>
     </div>
   </div>
 </div>
+
+<script>
+  $(function() {
+    $('.show-full-listing').click(function() {
+      $(this).closest(".well").find(".full-listing").show('blind')
+      $(this).hide()
+    })
+
+    /*
+       $(".reveal-pic").click(function() {
+      $(this).closest("li").css({
+        'height': 'auto',
+        'max-height': '999px'
+      })
+      $(this).closest(".read-more").remove()
+    })
+    */
+
+  })
+</script>

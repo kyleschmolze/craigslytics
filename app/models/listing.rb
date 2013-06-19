@@ -25,6 +25,8 @@ class Listing < ActiveRecord::Base
     Listing.find_each do |listing|
       listing.parse
       listing.save
+      listing.tags.delete_all
+      listing.generate_tags
     end
   end
 

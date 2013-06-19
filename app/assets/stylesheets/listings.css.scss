@@ -1,3 +1,24 @@
 // Place all the styles related to the Listings controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+.pictures {
+  .thumbnails li {
+    max-height:120px;
+    overflow:hidden;
+  }
+
+  .thumbnails .read-more { 
+    position: absolute; 
+    bottom: 0; left: 0;
+    width: 100%; 
+    text-align: center; 
+    margin: 0; padding: 20px 0 0; 
+
+    /* "transparent" only works here because == rgba(0,0,0,0) */ 
+    //background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, transparent),color-stop(1, black));
+    background-image: -webkit-linear-gradient(top, rgba(245, 245, 245, 0), rgba(245, 245, 245, 1));
+    background-image: -moz-linear-gradient(top, transparent, black);
+    background-image: -ms-linear-gradient(top, transparent, black);
+    background-image: -o-linear-gradient(top, transparent, black);
+  }
+}

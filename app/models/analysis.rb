@@ -1,7 +1,7 @@
 require 'net/http' 
 
 class Analysis < ActiveRecord::Base
-  attr_accessible :address, :bedrooms, :latitude, :longitude, :price, :average_price
+  attr_accessible :address, :bedrooms, :latitude, :longitude, :price, :average_price, :tags
 
   geocoded_by :address   # can also be an IP address
   after_validation :geocode, :if => :lat_lng_blank?          # auto-fetch coordinates
@@ -29,6 +29,10 @@ class Analysis < ActiveRecord::Base
     else
       return Segment.new(self.listings.where("price > ? AND price <= ?", min, max)) 
     end
+  end
+
+  def get_segment_with_listings(some_listings)
+    return Segment.new(some_listings)
   end
 
   def get_overview

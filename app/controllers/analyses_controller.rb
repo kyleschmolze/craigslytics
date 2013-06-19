@@ -14,6 +14,9 @@ class AnalysesController < ApplicationController
   # GET /analyses/1.json
   def show
     @analysis = Analysis.find(params[:id])
+    redirect_to listings_path(analysis_id: @analysis.id)
+    return
+
     @segments = @analysis.get_segments if (@analysis.processed and !@analysis.failed and @analysis.listings.count > 3)
     @overview = @analysis.get_overview if (@analysis.processed and !@analysis.failed and @analysis.listings.count > 3)
     @body_class = 'analysis-show'
@@ -54,6 +57,10 @@ class AnalysesController < ApplicationController
   # GET /analyses/new.json
   def new
     @analysis = Analysis.new(params[:analysis])
+    if params[:tags]
+      @analysis.tags = params[:tags].select{|k,v| v == "1"}.keys.join(',')
+    end
+    p @analysis.tags
 
     respond_to do |format|
       if @analysis.valid?

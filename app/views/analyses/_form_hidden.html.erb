@@ -11,9 +11,10 @@
     </div>
   <% end %>
 
-    <%= f.hidden_field :address, placeholder:"Address" %>
-    <%= f.hidden_field :bedrooms, placeholder:"Number of Bedrooms" %>
+  <%= f.hidden_field :address %>
+  <%= f.hidden_field :tags %>
+  <%= f.hidden_field :bedrooms %>
  
-    <%= link_to raw("<i class='icon-arrow-left'></i> That's not it, try again."), url_for(controller: 'analyses', action:'home'), class: "btn"  %>
-    <%= f.submit "That's the one, continue!", class: "btn btn-primary" %>
+  <%= link_to raw("<i class='icon-arrow-left'></i> That's not it, try again."), url_for(controller: 'analyses', action:'home'), class: "btn"  %>
+  <%= f.submit "That's the one, continue!", class: "btn btn-primary" %>
 <% end %>

@@ -1,14 +1,61 @@
 <br>
-<div style="text-align:center">
-  <%= form_tag listings_path, method: "GET", class: "form-inline" do %>
-    
-    <%= search_field_tag "tags", @tags, placeholder: "Filter by Tags" %>
-    <%= submit_tag "GO", class: "btn btn-danger" %>
+<% if @analysis %>
+  <h2>
+    <%= @analysis.address %>
+    <small>
+      <%= pluralize @analysis.bedrooms, 'bedroom' %>
+      <% for tag in @analysis.tags.split(',') %>
+        <span class="badge badge-info"><%= tag %></span>
+      <% end %>
+    </small>
+  </h2>
+  <%= link_to root_path do %>
+    <i class='icon-arrow-left'></i> Run another analysis
   <% end %>
-</div>
+  <br>
 
-<br>
+  <br>
+  <%= render partial: "overview", locals: {analysis: @analysis, segment: @overview} %>
+  <br>
+<% else %>
+  <div style="text-align:center">
+    <%= form_tag listings_path, method: "GET", class: "form-inline" do %>
+      
+      <%= search_field_tag "tags", @tags, placeholder: "Filter by Tags" %>
+      <%= submit_tag "GO", class: "btn btn-danger" %>
+    <% end %>
+  </div>
+<% end %>
+<h3>Listings</h3>
+
+<!-- Image Load Error -->
+<script type="text/javascript">
+  function imgerror(element) {
+    $(element).closest('li').remove();
+    console.log('removing failed');
+  }
+</script>
+
 <%= paginate @listings %>
+
 <% for listing in @listings do%>
   <%= render partial: "show", locals: {listing: listing} %>
 <% end %>
+
+<script type="text/javascript">
+  $(function() {
+    $("ul img").each(function(i, img) {
+      var pic_real_width, pic_real_height;
+      $("<img/>") // Make in memory copy of image to avoid css issues
+      .attr("src", $(img).attr("src"))
+      .load(function() {
+        pic_real_width = this.width;   // Note: $(this).width() will not
+        pic_real_height = this.height; // work for in memory images.
+        if((pic_real_width < 250) || (pic_real_height < 250)) {
+          $(img).parent().remove();
+          console.log('removing');
+        }
+      })
+    })
+  })
+</script>

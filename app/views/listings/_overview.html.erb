@@ -1,0 +1,68 @@
+<div class="row">
+  <div class="span6">
+    <p>
+      We looked for <strong><%= analysis.bedrooms %> bedroom</strong>  apartments 
+      within <strong><%= pluralize analysis.radius, 'mile' %></strong> 
+      of <strong><%= analysis.address %></strong> that had the following tags:
+      <%= @analysis.tags.split(',').to_sentence %>.
+    </p>
+    <table class='table'>
+      <tr>
+        <td> Total number of listings found </td>
+        <td> <%= segment.listings.count %> </td>
+      </tr>
+      <tr>
+        <td> Lowest price we found </td>
+        <td> $<%= segment.min_price %> / month </td>
+      </tr>
+      <tr>
+        <td> Median price </td>
+        <td> $<%= segment.median %> / month </td>
+      </tr>
+      <tr>
+        <td> Highest price we found </td>
+        <td> $<%= segment.max_price %> / month </td>
+      </tr>
+      <tr>
+        <td> Average number of pictures </td>
+        <td> <%= segment.average_pictures %> </td>
+      </tr>
+    </table>
+  </div>
+  <div class="span6">
+    <p>
+      And here's a graph showing the distribution of prices for these listings.
+      Each bar represents a price range, and the size of the bar tells you how many
+      listings we found inside that range.
+    </p>
+    <div id="chart_div_<%= segment.unique_id %>" style="height:400px;text-align:center;">
+      <%= image_tag 'loading.gif' %>
+    </div>
+  </div>
+</div>
+
+<!-- Google Charts -->
+<script type="text/javascript">
+  google.load("visualization", "1", {packages:["corechart"]});
+  google.setOnLoadCallback(drawChart);
+
+  function drawChart() {
+    var data = google.visualization.arrayToDataTable([
+        ['Price', 'Listings'],
+        <% (segment.adjusted_min..segment.adjusted_max+1).step(segment.increment) do |i| %>
+        ["<%= "$#{i} - $#{i+segment.increment-1}" %>", <%= segment.within_price_range(i, i + segment.increment).length %>],
+        <% end %>
+        ]);
+
+    var options = {
+      title: 'Number of Listings by Price Range',
+      hAxis: {title: 'Number of Listings', showTextEvery: 1},
+      vAxis: {title: 'Price Range', showTextEvery: 1},
+      legend: {position: 'none'},
+      chartArea:{top:"5%", height:"85%"}
+    };
+
+    var chart = new google.visualization.BarChart(document.getElementById('chart_div_<%= segment.unique_id %>'));
+    chart.draw(data, options);
+  }
+</script>

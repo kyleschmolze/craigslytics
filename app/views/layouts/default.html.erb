@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%= render partial: 'layouts/head' %>
+  </head>
+  <body class='application-body <%= @body_class %>'> 
+
+    <div class="navbar navbar-fixed-top navbar-inverse" id="analysis_navbar">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="brand" href="/">Rentalyzer</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="row">
+        <div class="span12" data-spy="scroll" data-target="#analysis_navbar" data-offset="30">
+          <%= yield %>
+        </div>
+      </div>
+    </div>
+
+  </body>
+</html>

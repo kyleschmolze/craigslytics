@@ -27,4 +27,10 @@ class Segment
     @unique_id = SecureRandom.uuid
   end
 
+  def within_price_range(min, max)
+    @listings.select do |listing|
+      listing.price >= min and listing.price < max
+    end
+  end
+
 end

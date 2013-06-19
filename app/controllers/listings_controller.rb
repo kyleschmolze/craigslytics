@@ -9,13 +9,26 @@ class ListingsController < ApplicationController
         tables << Tag.where(name: tag).pluck(:listing_id)
       end
       ids = tables.inject(:&)
-      @listings = Listing.where("id IN (?)", ids).order(:price).page(params[:page]).per(50)
+      @listings = Listing.where("id IN (?)", ids).order(:price).includes(:tags).page(params[:page]).per(50)
+    elsif params[:analysis_id].present?
+
+      @analysis = Analysis.find(params[:analysis_id])
+      tags = "#{@analysis.tags}".split(',').map(&:strip).map(&:titleize)
+      tables = []
+      for tag in tags do
+        tables << Tag.where(name: tag).pluck(:listing_id)
+      end
+      ids = tables.inject(:&)
+      @listings = @analysis.listings.where("id IN (?)", ids).order(:price).includes(:tags).page(params[:page]).per(50)
+
+      all_listings = @analysis.listings.where("id IN (?)", ids).order(:price).includes(:tags)
+      @overview = @analysis.get_segment_with_listings(all_listings)
     else
-      @listings = Listing.order(:price).page(params[:page]).per(50)
+      @listings = Listing.order(:price).includes(:tags).page(params[:page]).per(50)
     end
 
     respond_to do |format|
-      format.html # index.html.erb
+      format.html { render layout: 'default' }
       format.json { render json: @listings }
     end
   end

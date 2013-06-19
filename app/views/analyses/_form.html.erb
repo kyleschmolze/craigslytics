@@ -12,7 +12,34 @@
   <% end %>
 
     <%= f.text_field :address, placeholder:"Address" %>
-    <%= f.number_field :bedrooms, placeholder:"Number of Bedrooms" %>
+    <%= f.number_field :bedrooms, placeholder:"Number of Bedrooms" %><br>
+    <label class='checkbox'>
+      <%= check_box_tag "tags[Dogs]" %> Dogs are allowed
+    </label>
+    <label class='checkbox'>
+      <%= check_box_tag "tags[Cats]" %> Cats are allowed
+    </label>
+    <label class='checkbox'>
+      <%= check_box_tag "tags[Hardwood]" %> Hardwood floors
+    </label>
+    <br>
+    <label class='checkbox'>
+      <%= check_box_tag "tags[Electric Stove]" %> Electric Stove
+    </label>
+    <label class='checkbox'>
+      <%= check_box_tag "tags[Gas stove]" %> Gas stove
+    </label>
+    <br>
+    <label class='checkbox'>
+      <%= check_box_tag "tags[View]" %> Great view
+    </label>
+    <label class='checkbox'>
+      <%= check_box_tag "tags[Patio]" %> Has a patio
+    </label>
+    <label class='checkbox'>
+      <%= check_box_tag "tags[Garden]" %> Has a garden
+    </label>
+
  
-    <%= f.submit "Rentalyze!", class: "btn btn-danger" %>
+    <%= f.submit "Rentalyze!", class: "btn btn-danger btn-block" %>
 <% end %>
