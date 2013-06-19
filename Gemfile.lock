@@ -66,8 +66,8 @@ GEM
       treetop (~> 1.4.8)
     mime-types (1.23)
     multi_json (1.7.3)
+    mysql2 (0.3.11)
     newrelic_rpm (3.5.6.55)
-    pg (0.15.1)
     polyglot (0.3.3)
     rack (1.4.5)
     rack-cache (1.2)
@@ -154,8 +154,8 @@ DEPENDENCIES
   hirefire-resource
   jquery-rails
   less-rails
+  mysql2
   newrelic_rpm
-  pg
   rails (= 3.2.12)
   redis (>= 2.0, < 3.0.0)
   resque
