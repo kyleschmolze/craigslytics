@@ -39,7 +39,7 @@
 <%= paginate @listings %>
 
 <% for listing in @listings do%>
-  <%= render partial: "show", locals: {listing: listing} %>
+  <%= render partial: "show", locals: {listing: listing, median: @overview ? @overview.median : nil} %>
 <% end %>
 
 <script type="text/javascript">

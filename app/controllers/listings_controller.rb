@@ -19,9 +19,9 @@ class ListingsController < ApplicationController
         tables << Tag.where(name: tag).pluck(:listing_id)
       end
       ids = tables.inject(:&)
-      @listings = @analysis.listings.where("id IN (?)", ids).order(:price).includes(:tags).page(params[:page]).per(50)
+      @listings = @analysis.listings.where("id IN (?)", ids).order(:u_id).includes(:tags).page(params[:page]).per(50)
 
-      all_listings = @analysis.listings.where("id IN (?)", ids).order(:price).includes(:tags)
+      all_listings = @analysis.listings.where("id IN (?)", ids).order(:u_id).includes(:tags)
       @overview = @analysis.get_segment_with_listings(all_listings)
     else
       @listings = Listing.order(:price).includes(:tags).page(params[:page]).per(50)
