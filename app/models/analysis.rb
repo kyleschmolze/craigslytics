@@ -7,8 +7,8 @@ class Analysis < ActiveRecord::Base
   after_validation :geocode, :if => :lat_lng_blank?          # auto-fetch coordinates
   has_and_belongs_to_many :listings, :order=>:price
 
-  RADIUS = '1'
   API_KEY = '166bb56dcaeba0c3c860981fd50917cd'
+  INITIAL_RADIUS = "1"
   after_create :enqueue
 
   def lat_lng_blank?
@@ -63,51 +63,82 @@ class Analysis < ActiveRecord::Base
     return map
   end
 
-  #scrapes 3-taps data and stores all similar listings
-  def analyze_and_store
+  def search_3taps
     url = URI.parse("http://search.3taps.com")
-    params = "?rpp=100&lat=#{self.latitude}&long=#{self.longitude}&radius=#{RADIUS}mi&category=RHFR&retvals=id,account_id,source,category,category_group,location,external_id,external_url,heading,body,html,timestamp,expires,language,price,currency,images,annotations,status,immortal&annotations={bedrooms:#{self.bedrooms}br}&source=CRAIG&auth_token=#{API_KEY}"
+    params = "?rpp=100&lat=#{self.latitude}&long=#{self.longitude}&radius=#{self.radius}mi&category=RHFR&retvals=id,account_id,source,category,category_group,location,external_id,external_url,heading,body,html,timestamp,expires,language,price,currency,images,annotations,status,immortal&annotations={bedrooms:#{self.bedrooms}br}&source=CRAIG&auth_token=#{API_KEY}"
     req = Net::HTTP::Get.new(url.to_s + params)
     res = Net::HTTP.start(url.host, url.port) {|http|
       http.request(req)
     }
     response = JSON.parse(res.body)
-    puts "Starting Search"
+    return response
+  end
+
+  def save_listings(postings)
+    for posting in postings do
+      if Listing.where(:u_id => posting["id"]).present? 
+        self.listings << Listing.where(:u_id => posting["id"]) 
+      else
+        l = self.listings.create(info: posting)
+        if l.errors.any?
+          puts l.errors.full_messages
+        end
+      end
+    end
+  end
+
+  #scrapes 3-taps data and stores all similar listings
+  def analyze_and_store
+    if self.radius.blank?
+      self.radius = INITIAL_RADIUS
+      puts "Starting Analysis"
+      puts "Initial radius, #{INITIAL_RADIUS}"
+      puts "Starting Search"
+    end
+    response = self.search_3taps
     if response["success"]
-      anchor = response["anchor"]
+      puts "Success"
+      anchor = response["anchor"] 
       num_matches = response["num_matches"]
-      if !(num_matches == 0 or num_matches == nil)
+      if !(num_matches < 20 or num_matches == nil)
         puts "Goin"
-        num_pages = 1
-        num_pages = (num_matches/100)+1 if num_matches > 100
-        total_price = 0
-        (0..num_pages-1).each do |i|
-          puts "Polling 3taps, page: #{i} / #{num_pages}"
+        puts "Polling 3taps, tier: 0 page: 0"
+        self.save_listings(response["postings"])
+        next_page = response["next_page"]
+        next_tier = response["next_tier"]
+        while (next_tier != -1) do 
+          puts "Polling 3taps, tier: #{next_tier} page: #{next_page}"
           url = URI.parse("http://search.3taps.com")
-          params = "?rpp=100&lat=#{self.latitude}&long=#{self.longitude}&radius=#{RADIUS}mi&category=RHFR&retvals=id,account_id,source,category,category_group,location,external_id,external_url,heading,body,html,timestamp,expires,language,price,currency,images,annotations,status,immortal&annotations={bedrooms:#{self.bedrooms}br}&anchor=#{anchor}&page=#{i}&source=CRAIG&auth_token=#{API_KEY}"
+          params = "?rpp=100&lat=#{self.latitude}&long=#{self.longitude}&radius=#{self.radius}mi&category=RHFR&retvals=id,account_id,source,category,category_group,location,external_id,external_url,heading,body,html,timestamp,expires,language,price,currency,images,annotations,status,immortal&annotations={bedrooms:#{self.bedrooms}br}&anchor=#{anchor}&page=#{next_page}&tier=#{next_tier}&source=CRAIG&auth_token=#{API_KEY}"
           req = Net::HTTP::Get.new(url.to_s + params)
           res = Net::HTTP.start(url.host, url.port) {|http|
             http.request(req)
           }
           response = JSON.parse(res.body)
-          for posting in response["postings"] do
-            total_price += posting["price"].to_i
-            self.listings.create(latitude: posting["location"]["lat"], 
-                           longitude: posting["location"]["long"], 
-                           price: posting["price"], 
-                           bedrooms: posting["annotations"]["bedrooms"][0],
-                           address: posting["location"]["formatted_address"],
-                           info: posting)
+          if response["success"]
+            self.save_listings(response["postings"])
+          else
+            self.update_column :processed, true
+            self.update_column :failed, true
+            throw response["error"]
           end
+          next_page = response["next_page"]
+          next_tier = response["next_tier"]
         end
-
-        self.average_price = total_price/num_matches
       else
-        #GOT NO MATCHES, DO NOTHING.  
+        if self.radius < (INITIAL_RADIUS + 10)
+          puts "Not enough listings. Increasing radius"
+          self.radius += 1
+          puts "Radius is now #{self.radius} miles"
+          self.analyze_and_store
+        else
+          puts "Not enough listings found!"
+        end
       end
     else
-      analysis.update_column :processed, true
-      analysis.update_column :failed, true
+      self.update_column :processed, true
+      self.update_column :failed, true
+      throw response["error"]
     end
   end
 

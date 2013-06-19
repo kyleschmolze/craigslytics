@@ -1,11 +1,25 @@
 class Listing < ActiveRecord::Base
-  attr_accessible :address, :bedrooms, :latitude, :longitude, :price, :analysis_id, :info
+  attr_accessible :address, :bedrooms, :latitude, :longitude, :price, :analysis_id, :info, :dogs, :cats
   serialize :info
 
   has_and_belongs_to_many :analyses
-  validates_presence_of :price, :bedrooms, :latitude, :longitude
+  has_many :tags
+  validates_presence_of :price, :bedrooms, :latitude, :longitude, :u_id
 
-  before_create :parse
+  before_validation :first_parse
+  after_create :generate_tags
+
+  #url of a static google map of the analyzed listing
+  def get_self_map
+    map = "http://maps.google.com/maps/api/staticmap?size=450x450&zoom=auto&center=#{self.latitude},#{self.longitude}&sensor=true&markers=color:blue|#{self.latitude},#{self.longitude}"
+    return map
+  end
+
+  def pictures
+    pics = self.info["images"].map{|p| p["full"]}
+    pics = pics.uniq {|i| i.gsub(/https?:\/\//, '').gsub(/^.*\//, '') }
+    return pics
+  end
 
   def self.parse_all
     Listing.find_each do |listing|
@@ -14,7 +28,63 @@ class Listing < ActiveRecord::Base
     end
   end
 
+  def self.generate_all
+    Listing.find_each do |listing|
+      listing.generate_tags
+    end
+  end
+
+  def self.clear_tags
+    Listing.find_each do |listing|
+      listing.tags.destroy_all
+    end
+  end
+
+  def clear_tags
+    self.tags.destroy_all
+  end
+
+  def self.clear_and_generate
+    Listing.clear_tags
+    Listing.generate_all
+  end
+
+  def generate_tags
+    self.tags.create(name: "Dogs") if self.info["annotations"]["dogs"].downcase == "yes"
+    self.tags.create(name: "Cats") if self.info["annotations"]["cats"].downcase == "yes"
+
+    #Simple tag parsing
+    for name in Tag::NAMES do
+      if name == "Stove"
+        if self.body =~ /\bGas #{name}s?\b/i
+          self.tags.create(name: "Gas Stove")
+        elsif  self.body =~ /\bElectric #{name}s?\b/i
+          self.tags.create(name: "Electric Stove")
+        elsif self.body =~ /\b#{name}s?\b/i
+          self.tags.create(name: name)
+        end
+      elsif (self.body =~ /\b#{name}s?\b/i)
+        self.tags.create(name: name)
+      end
+    end
+
+    #Complex tag parsing. IE utilities
+  end
+
+  def first_parse
+    if self.new_record?
+      self.parse
+    end
+  end
+
   def parse
+    self.latitude = self.info["location"]["lat"]
+    self.longitude = self.info["location"]["long"]
+    self.price = self.info["price"]
+    self.bedrooms = self.info["annotations"]["bedrooms"][0]
+    self.address = self.info["location"]["formatted_address"]
+    self.body = "#{self.info["body"]}".gsub(/&\w{1,5};/, '')
+    self.u_id = self.info["id"]
   end
 
   def parse_utilites
@@ -64,7 +134,7 @@ class Listing < ActiveRecord::Base
                                :address_score=>address_score, :bedrooms_score=>bedrooms_score, :location_score=>location_score, 
                                :price_score=>price_score})
     end
-    end
+  end
 
   def self.generate_all_comparisons(options)
     Listing.all.each do |i|

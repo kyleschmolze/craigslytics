@@ -2,7 +2,17 @@ class ListingsController < ApplicationController
   # GET /listings
   # GET /listings.json
   def index
-    @listings = Listing.order(:price).all
+    if params[:tags].present?
+      tags = params[:tags].split(',').map(&:strip).map(&:titleize)
+      tables = []
+      for tag in tags do
+        tables << Tag.where(name: tag).pluck(:listing_id)
+      end
+      ids = tables.inject(:&)
+      @listings = Listing.where("id IN (?)", ids).order(:price).page(params[:page]).per(50)
+    else
+      @listings = Listing.order(:price).page(params[:page]).per(50)
+    end
 
     respond_to do |format|
       format.html # index.html.erb
@@ -14,8 +24,6 @@ class ListingsController < ApplicationController
   # GET /listings/:id.json
   def show
     @listing = Listing.find(params[:id])
-    @analytics = @listing.get_analytics(2)
-    @results = @listing.get_similar_listings(2)
 
     respond_to do |format|
       format.html # show.html.erb

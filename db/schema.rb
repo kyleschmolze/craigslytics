@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130613153605) do
+ActiveRecord::Schema.define(:version => 20130617154853) do
 
   create_table "analyses", :force => true do |t|
     t.float    "latitude"
@@ -24,6 +24,7 @@ ActiveRecord::Schema.define(:version => 20130613153605) do
     t.boolean  "processed",     :default => false
     t.integer  "average_price"
     t.boolean  "failed",        :default => false
+    t.integer  "radius"
   end
 
   create_table "analyses_listings", :id => false, :force => true do |t|
@@ -53,6 +54,10 @@ ActiveRecord::Schema.define(:version => 20130613153605) do
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
     t.text     "info"
+    t.boolean  "dogs"
+    t.boolean  "cats"
+    t.text     "body"
+    t.string   "u_id"
   end
 
   create_table "tags", :force => true do |t|

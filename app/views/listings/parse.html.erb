@@ -1,0 +1,7 @@
+<ul>
+  <% for listing in @listings do%>
+  <li>
+    <%= render partial: show, locals: {listing: listing} %>
+  </li>
+  <% end %>
+</ul>
