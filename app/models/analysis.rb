@@ -8,7 +8,7 @@ class Analysis < ActiveRecord::Base
   has_and_belongs_to_many :listings, :order=>:price
 
   API_KEY = '166bb56dcaeba0c3c860981fd50917cd'
-  INITIAL_RADIUS = "1"
+  INITIAL_RADIUS = "2"
   after_create :enqueue
 
   def lat_lng_blank?
@@ -75,10 +75,15 @@ class Analysis < ActiveRecord::Base
   end
 
   def save_listings(postings)
+    puts "saving listings"
+    puts "#{postings.count}"
     for posting in postings do
+      puts "here"
       if Listing.where(:u_id => posting["id"]).present? 
+        puts "listing exists!"
         self.listings << Listing.where(:u_id => posting["id"]) 
       else
+        puts "listing is new!"
         l = self.listings.create(info: posting)
         if l.errors.any?
           puts l.errors.full_messages
@@ -95,6 +100,7 @@ class Analysis < ActiveRecord::Base
       puts "Initial radius, #{INITIAL_RADIUS}"
       puts "Starting Search"
     end
+    puts self.radius
     response = self.search_3taps
     if response["success"]
       puts "Success"
@@ -103,9 +109,11 @@ class Analysis < ActiveRecord::Base
       if !(num_matches < 20 or num_matches == nil)
         puts "Goin"
         puts "Polling 3taps, tier: 0 page: 0"
-        self.save_listings(response["postings"])
         next_page = response["next_page"]
         next_tier = response["next_tier"]
+        puts "Next_page: #{next_page}"
+        puts "Next_tier: #{next_tier}"
+        self.save_listings(response["postings"])
         while (next_tier != -1) do 
           puts "Polling 3taps, tier: #{next_tier} page: #{next_page}"
           url = URI.parse("http://search.3taps.com")
@@ -126,7 +134,7 @@ class Analysis < ActiveRecord::Base
           next_tier = response["next_tier"]
         end
       else
-        if self.radius < (INITIAL_RADIUS + 10)
+        if self.radius < (INITIAL_RADIUS.to_i + 10)
           puts "Not enough listings. Increasing radius"
           self.radius += 1
           puts "Radius is now #{self.radius} miles"
