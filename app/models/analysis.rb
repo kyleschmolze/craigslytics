@@ -83,9 +83,11 @@ class Analysis < ActiveRecord::Base
     puts "#{postings.count}"
     for posting in postings do
       puts "here"
-      if Listing.where(:u_id => posting["id"]).present? 
+      if Listing.where(:u_id => posting["id"]).exists? 
         puts "listing exists!"
-        self.listings << Listing.where(:u_id => posting["id"]) 
+        if !self.listings.where(u_id: posting["id"]).exists?
+          self.listings << Listing.where(:u_id => posting["id"]) 
+        end
       else
         puts "listing is new!"
         l = self.listings.create(info: posting)
@@ -104,6 +106,7 @@ class Analysis < ActiveRecord::Base
       puts "Initial radius, #{INITIAL_RADIUS}"
       puts "Starting Search"
     end
+
     puts self.radius
     response = self.search_3taps
     if response["success"]

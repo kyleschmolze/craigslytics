@@ -172,7 +172,7 @@
     $(function() {
       setTimeout(function() {
         App.Helpers.poll("<%= poll_analysis_path(@analysis) %>", function() {
-            $(".action").html('<%= link_to "Continue to analysis", listings_path(analysis_id: @analysis_id), class: "btn-large btn-primary" %>')
+            $(".action").html('<%= link_to "Continue to analysis", listings_path(analysis_id: @analysis.id), class: "btn-large btn-primary" %>')
             $(".generating").html('Analysis complete!')
           }, function() {
             location.reload();
