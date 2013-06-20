@@ -14,8 +14,10 @@ class AnalysesController < ApplicationController
   # GET /analyses/1.json
   def show
     @analysis = Analysis.find(params[:id])
-    redirect_to listings_path(analysis_id: @analysis.id)
-    return
+    if (@analysis.processed and !@analysis.failed and @analysis.listings.count > 3)
+      redirect_to listings_path(analysis_id: @analysis.id)
+      return
+    end
 
     @segments = @analysis.get_segments if (@analysis.processed and !@analysis.failed and @analysis.listings.count > 3)
     @overview = @analysis.get_overview if (@analysis.processed and !@analysis.failed and @analysis.listings.count > 3)
