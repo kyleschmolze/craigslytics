@@ -51,9 +51,19 @@ class Listing < ActiveRecord::Base
     Listing.generate_all
   end
 
+  def annotations
+    if self.info["annotations"].is_a?(Array)
+      return self.info["annotations"][0]
+    elsif self.info["annotations"].is_a?(Hash)
+      return self.info["annotations"]
+    else
+      return nil
+    end
+  end
+
   def generate_tags
-    self.tags.create(name: "Dogs") if self.info["annotations"]["dogs"].downcase == "yes"
-    self.tags.create(name: "Cats") if self.info["annotations"]["cats"].downcase == "yes"
+    self.tags.create(name: "Dogs") if self.annotations["dogs"].downcase == "yes"
+    self.tags.create(name: "Cats") if self.annotations["cats"].downcase == "yes"
 
     #Simple tag parsing
     for name in Tag::NAMES do
@@ -83,7 +93,7 @@ class Listing < ActiveRecord::Base
     self.latitude = self.info["location"]["lat"]
     self.longitude = self.info["location"]["long"]
     self.price = self.info["price"]
-    self.bedrooms = self.info["annotations"]["bedrooms"][0]
+    self.bedrooms = self.annotations["bedrooms"]
     self.address = self.info["location"]["formatted_address"]
     self.body = "#{self.info["body"]}".gsub(/&\w{1,5};/, '')
     self.u_id = self.info["id"]
