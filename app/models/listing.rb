@@ -63,24 +63,90 @@ class Listing < ActiveRecord::Base
     end
   end
 
+=begin
   def find_utilities 
-    min_dist = 25
+    # works for simple utilities
+    min_dist = 20
     max_dist = 30
-
-    if self.info["body"].present?
-      if (self.info["body"] =~ /includ/i)
+    if self.body.present?
+      if (self.body =~ /includ/i)
         Tag::UTILITIES.each do |name, matcher| 
-
-          m1 = (self.info["body"].match /\binclud.{#{min_dist},#{max_dist}}\b#{matcher}\b/i)
-          m2 = (self.info["body"].match /..............................\b#{matcher}\b.{#{min_dist},#{max_dist}}\binclud/i)
-          puts m1[0] if m1
-          puts m2[0] if m2
-
+          m1 = (self.body.match /\binclud.{0,#{max_dist}}\b#{matcher}\b.................................../i)
+          m2 = (self.body.match /\b#{matcher}\b.{0,#{max_dist}}\binclud/i)
       end
     end
-
-    #Complex tag parsing. IE utilities
   end
+
+  if gas 
+    matcher = "gas"
+    if self.body.present?
+      if (self.body =~ /includ/i)
+        m1 = (self.body.match /\binclud.{0,#{max_dist}}\b#{matcher}\b............................................................../i)
+          m2 = (self.body.match /..............................................................\b#{matcher}\b.{0,#{max_dist}}\binclud/i)
+          # if !m1.match /\bgas.{0,3}range/
+          # if !m1.match /\bgas.{0,3}stove/
+          # if !m1.match /\bgas.{0,3}fireplace/
+          # if !m1.match /pay.{0,30}gas/
+      end
+    end
+  end
+  
+  if internet 
+    min_dist = 20
+    max_dist = 50
+    matcher = "wi-fi" # 'internet', 'wifi', 'wi-fi' 
+    if self.body.present?
+      if (self.body =~ /includ/i)
+        m1 = (self.body.match /\binclud.{0,#{max_dist}}\b#{matcher}\b............................................................../i)
+        m2 = (self.body.match /..............................................................\b#{matcher}\b.{0,#{max_dist}}\binclud/i)
+        puts m1[0] if m1
+        puts m2[0] if m2
+      end
+    end
+  end
+
+
+#  if furnished,
+    min_dist = 20
+    max_dist = 50
+    matcher = "furnished" 
+    if self.body.present?
+        m1 = (self.body.match /.........................................\b#{matcher}......................................................./i)
+        puts m1[0] if m1
+    end
+    
+# if furnished, else if partially furnished
+  
+  # if partially furnished 
+    min_dist = 20
+    max_dist = 50
+    matcher = "partially furnished" 
+    if self.body.present?
+        m2 = (self.body.match /..........................#{matcher}..................................../i)
+        puts m2[0] if m2
+    end
+
+ 
+
+=end 
+
+
+
+  def find_utilities 
+    # works for simple utilities
+    min_dist = 20
+    max_dist = 30
+    if self.body.present?
+      m1 = (self.body.match /.......................apartment......................................................................................................./i)
+      m2 = (self.body.match /..............................
+      puts m1[0] if m1
+      puts "\n========================================================================\n" if m1
+    end
+  end
+  # types : apartment/apt/aptmt, condo/condominium, house/family home/, 
+    # if house else if condo else if apartment building, else apartment
+
+#  end
 
   def first_parse
     if self.new_record?
