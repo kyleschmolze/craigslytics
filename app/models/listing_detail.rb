@@ -53,7 +53,6 @@ class ListingDetail < ActiveRecord::Base
       :price => raw["price"],
       :bedrooms => three_taps_annotations["bedrooms"],
       :address => raw["location"]["formatted_address"],
-      :body => "#{raw["body"]}".gsub(/&\w{1,5};/, ''),
       :timestamp => raw["timestamp"],
       :u_id => raw["id"]
     }
@@ -62,7 +61,7 @@ class ListingDetail < ActiveRecord::Base
   def zillow_attributes
     #integer, latitude: float, longitude: float, bedrooms: integer, price: integer, address: string, created_at: datetime, updated_at: datetime, info: text, dogs: boolean, cats: boolean, body: text, u_id: string, listing_detail_id: integer, user_id: integer, expired_at: datetime)
 
-    noko = Nokogiri::XML(self.body)
+    noko = Nokogiri::XML(self.raw_body)
     {
       :latitude => noko.css("latitude").text,
       :longitude => noko.css("longitude").text,

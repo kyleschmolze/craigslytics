@@ -1,6 +1,6 @@
 class Listing < ActiveRecord::Base
   attr_accessible :address, :bedrooms, :latitude, :longitude, :price, :analysis_id, 
-                  :info, :dogs, :cats, :body, :u_id, :listing_detail_id, :user_id, :timestamp
+                  :info, :dogs, :cats, :u_id, :listing_detail_id, :user_id, :timestamp
 
   has_and_belongs_to_many :analyses
   has_many :tags
@@ -52,36 +52,8 @@ class Listing < ActiveRecord::Base
     Listing.generate_all
   end
 
-  def annotations
-    if self.listing_detail.body["annotations"].is_a?(Array)
-      return self.listing_detail.body["annotations"][0]
-    elsif self.listing_detail.body["annotations"].is_a?(Hash)
-      return self.listing_detail.body["annotations"]
-    else
-      return nil
-    end
-  end
-
   def generate_tags
-    self.tags.create(name: "Dogs") if self.listing_detail.three_taps_annotations["dogs"].downcase == "yes"
-    self.tags.create(name: "Cats") if self.listing_detail.three_taps_annotations["cats"].downcase == "yes"
-
-    #Simple tag parsing
-    for name in Tag::NAMES do
-      if name == "Stove"
-        if self.body =~ /\bGas #{name}s?\b/i
-          self.tags.create(name: "Gas Stove")
-        elsif  self.body =~ /\bElectric #{name}s?\b/i
-          self.tags.create(name: "Electric Stove")
-        elsif self.body =~ /\b#{name}s?\b/i
-          self.tags.create(name: name)
-        end
-      elsif (self.body =~ /\b#{name}s?\b/i)
-        self.tags.create(name: name)
-      end
-    end
-
-    #Complex tag parsing. IE utilities
+    #go away
   end
 
   def parse_utilites

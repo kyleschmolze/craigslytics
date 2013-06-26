@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130626181233) do
+ActiveRecord::Schema.define(:version => 20130626185420) do
 
   create_table "analyses", :force => true do |t|
     t.float    "latitude"
@@ -47,7 +47,6 @@ ActiveRecord::Schema.define(:version => 20130626181233) do
   end
 
   create_table "listing_details", :force => true do |t|
-    t.integer  "listing_id"
     t.string   "source"
     t.text     "body"
     t.string   "body_type"
@@ -72,15 +71,12 @@ ActiveRecord::Schema.define(:version => 20130626181233) do
     t.string   "address"
     t.datetime "created_at",        :null => false
     t.datetime "updated_at",        :null => false
-    t.text     "info"
-    t.boolean  "dogs"
-    t.boolean  "cats"
-    t.text     "body"
     t.string   "u_id"
     t.integer  "listing_detail_id"
     t.integer  "user_id"
     t.datetime "expired_at"
     t.integer  "timestamp"
+    t.string   "bathrooms"
   end
 
   add_index "listings", ["u_id"], :name => "index_listings_on_u_id"
