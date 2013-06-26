@@ -37,7 +37,7 @@ class Tag < ActiveRecord::Base
   }
 
   TYPES = {
-    house: "single family",
+    house: "single family", 
     condo: "condo",
     apartment_building: "complex", # or "building"
     apartment: "" 
@@ -71,7 +71,8 @@ class Tag < ActiveRecord::Base
   def detect_complex(l)
     range = 40 
 
-    if self.name == "gas" 
+    if self.category == "unit_type" then detect_unit_type l
+    elsif self.name == "gas" 
       m1 = (l.listing_detail.raw_body["body"].match /\binclud.{0,#{range}}\b#{self.search_term}\b/i)
       m2 = (l.listing_detail.raw_body["body"].match /\b#{self.search_term}\b.{0,#{range}}\binclud/i)
       if m1 and m2
@@ -80,9 +81,8 @@ class Tag < ActiveRecord::Base
           ListingTag.create({listing_id: l.id, tag_id: self.id}) 
         end
       end
-    end
 
-    if self.name == "internet"      # 'internet', 'wifi', 'wi-fi' 
+    elsif self.name == "internet"      # 'internet', 'wifi', 'wi-fi' 
       p1 = (l.listing_detail.raw_body["body"].match /\binclud.{0,#{range}}\binternet\b/i)
       p2 = (l.listing_detail.raw_body["body"].match /\binternet\b.{0,#{range}}\binclud/i)
       p3 = (l.listing_detail.raw_body["body"].match /\binclud.{0,#{range}}\bwifi\b/i)
@@ -90,13 +90,29 @@ class Tag < ActiveRecord::Base
       p5 = (l.listing_detail.raw_body["body"].match /\binclud.{0,#{range}}\bwi-fi\b/i)
       p6 = (l.listing_detail.raw_body["body"].match /\bwi-fi\b.{0,#{range}}\binclud/i)
       ListingTag.create({listing_id: l.id, tag_id: self.id}) if p1 or p2 or p3 or p4 or p5 or p6
-    end
 
-    if self.name == "furnished"
+    elsif self.name == "furnished"
       q1 = (l.listing_detail.raw_body["body"].match /.{25}\b#{self.search_term}/i)
       if q1
         ListingTag.create({listing_id: l.id, tag_id: self.id}) unless q1.match /partially/i
       end
+    end
+  end
+
+  # validation in listing_tag only allows 1 unit_type
+  def detect_unit_type(l)
+    if self.name == "house" or self.name == "condo" # search for these first
+      m = l.listing_detail.raw_body["body"].match /\b#{self.search_term}/i   # searches for "condominuim" as well
+      ListingTag.create({listing_id: l.id, tag_id: self.id}) if m
+    elsif self.name == "building"
+      m1 = l.listing_detail.raw_body["body"].match /\bcomplex\b/i
+      m2 = l.listing_detail.raw_body["body"].match /\bbuilding\b/i
+      ListingTag.create({listing_id: l.id, tag_id: self.id}) if m1 or m2
+
+    # assuming there are no complete bullshit listings that aren't anything,
+    # everything else should be listed as just an 'apartment'
+    elsif self.name == "apartment"
+      ListingTag.create({listing_id: l.id, tag_id: self.id}) 
     end
   end
 
