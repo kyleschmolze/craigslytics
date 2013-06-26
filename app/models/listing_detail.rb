@@ -59,8 +59,6 @@ class ListingDetail < ActiveRecord::Base
   end
 
   def zillow_attributes
-    #integer, latitude: float, longitude: float, bedrooms: integer, price: integer, address: string, created_at: datetime, updated_at: datetime, info: text, dogs: boolean, cats: boolean, body: text, u_id: string, listing_detail_id: integer, user_id: integer, expired_at: datetime)
-
     noko = Nokogiri::XML(self.raw_body)
     {
       :latitude => noko.css("latitude").text,

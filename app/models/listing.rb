@@ -1,11 +1,11 @@
 class Listing < ActiveRecord::Base
   attr_accessible :address, :bedrooms, :latitude, :longitude, :price, :analysis_id, 
-                  :info, :dogs, :cats, :u_id, :listing_detail_id, :user_id, :timestamp
+                  :dogs, :cats, :u_id, :listing_detail_id, :user_id, :timestamp
 
+  has_many :listing_tags 
+  has_many :tags, through: :listing_tags
   has_and_belongs_to_many :analyses
-  has_many :tags
   belongs_to :listing_detail
-
   validates_presence_of :price, :bedrooms, :latitude, :longitude, :u_id
 
   after_create :generate_tags
@@ -53,11 +53,15 @@ class Listing < ActiveRecord::Base
   end
 
   def generate_tags
-    #go away
+    Tag.all.each do |t|
+      t.detect_in_listing self
+    end
   end
 
-  def parse_utilites
-    #Search for /not includ/, match 'util' within 20 chars => Nothing included for sheezy. Par cheezey.
+  def first_parse
+    if self.new_record?
+      self.parse
+    end
   end
 
   def create_comparison_with(a_listing, options)

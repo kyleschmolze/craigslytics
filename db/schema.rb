@@ -63,6 +63,13 @@ ActiveRecord::Schema.define(:version => 20130626185420) do
     t.datetime "updated_at", :null => false
   end
 
+  create_table "listing_tags", :force => true do |t|
+    t.integer  "listing_id"
+    t.integer  "tag_id"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
   create_table "listings", :force => true do |t|
     t.float    "latitude"
     t.float    "longitude"
@@ -82,10 +89,13 @@ ActiveRecord::Schema.define(:version => 20130626185420) do
   add_index "listings", ["u_id"], :name => "index_listings_on_u_id"
 
   create_table "tags", :force => true do |t|
-    t.integer  "listing_id"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+    t.string   "display"
+    t.string   "search_term"
+    t.integer  "complexity"
     t.string   "name"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.string   "category"
   end
 
 end
