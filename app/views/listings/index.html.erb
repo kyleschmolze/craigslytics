@@ -13,9 +13,17 @@
     <i class='icon-arrow-left'></i> Run another analysis
   <% end %>
   <br>
-
   <br>
-  <%= render partial: "overview", locals: {analysis: @analysis, segment: @overview} %>
+
+  <% if @overview %>
+    <%= render partial: "overview", locals: {analysis: @analysis, segment: @overview} %>
+  <% else %>
+    <h3>
+      <i class='icon-warning-sign'></i> No results!
+    </h3>
+    Unfortunately, we weren't able to find any comparable listings.
+    Consider <%= link_to "running another analysis ", root_path %> with fewer options.
+  <% end %>
   <br>
 <% else %>
   <div style="text-align:center">
@@ -26,20 +34,22 @@
     <% end %>
   </div>
 <% end %>
-<h3>Listings</h3>
+<% if @listings.present? %>
+  <h3>Listings</h3>
 
-<!-- Image Load Error -->
-<script type="text/javascript">
-  function imgerror(element) {
-    $(element).closest('li').remove();
-    console.log('removing failed');
-  }
-</script>
+  <!-- Image Load Error -->
+  <script type="text/javascript">
+    function imgerror(element) {
+      $(element).closest('li').remove();
+      console.log('removing failed');
+    }
+  </script>
 
-<%= paginate @listings %>
+  <%= paginate @listings %>
 
-<% for listing in @listings do%>
-  <%= render partial: "show", locals: {listing: listing} %>
+  <% for listing in @listings do%>
+    <%= render partial: "show", locals: {listing: listing, median: @overview ? @overview.median : nil} %>
+  <% end %>
 <% end %>
 
 <script type="text/javascript">

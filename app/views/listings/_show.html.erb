@@ -39,7 +39,17 @@
     <h4><%= listing.address %></h4>
     <p>
       <%= pluralize listing.bedrooms, 'bedroom' %><br>
-      $<%= listing.price %> / month
+      <% if median %>
+        <% if listing.price < median %>
+          <span class='text-success'>$<%= listing.price %> / month</span>
+        <% elsif listing.price > median %>
+          <span class='text-error'>$<%= listing.price %> / month</span>
+        <% else %>
+          $<%= listing.price %> / month
+        <% end %>
+      <% else %>
+        $<%= listing.price %> / month
+      <% end %>
     </p>
 
     <p>
