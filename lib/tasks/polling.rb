@@ -57,9 +57,8 @@ class Polling
     end
   end
 
-  def self.three_taps(metro, datetime)
+  def self.three_taps(metro, timestamp)
     metro = metro.upcase
-    timestamp = datetime.to_i
     anchor = get_anchor(timestamp)
     response = poll(anchor, metro)
     while response["postings"].present? do

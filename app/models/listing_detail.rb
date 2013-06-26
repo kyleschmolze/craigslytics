@@ -4,14 +4,14 @@ class ListingDetail < ActiveRecord::Base
 
   has_one :listing
 
+  after_initialize :set_raw_body
   before_validation :store
   before_create :make_listing
   
   validate do |listing|
-    b = listing.load_body
     if listing.source == "craigslist"
       if listing.body_type == "JSON"
-        if Listing.where(:u_id => b["id"]).present? 
+        if Listing.where(:u_id => listing.raw_body["id"]).present? 
            listing.errors[:base] << "Not unique -- Already in database"
         end
       end
@@ -22,8 +22,8 @@ class ListingDetail < ActiveRecord::Base
     self.body = Marshal.dump(self.raw_body)
   end
 
-  def raw_body
-    Marshal.load(self.body)
+  def set_raw_body
+    self.raw_body ||= Marshal.load(self.body)
   end
 
   def make_listing

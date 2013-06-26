@@ -41,7 +41,7 @@ class ZillowImporter
     return if stats[:total] >= 100 #First runs
 
     detail = ListingDetail.new(
-      body: listing.to_s,
+      raw_body: listing.to_s,
       body_type: 'xml',
       source: 'zillow',
       user_id: self.listing_importer.user_id
