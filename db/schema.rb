@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130625163209) do
+ActiveRecord::Schema.define(:version => 20130626181233) do
 
   create_table "analyses", :force => true do |t|
     t.float    "latitude"
@@ -69,6 +69,7 @@ ActiveRecord::Schema.define(:version => 20130625163209) do
     t.text     "body"
     t.string   "u_id"
     t.integer  "listing_detail_id"
+    t.integer  "timestamp"
   end
 
   add_index "listings", ["u_id"], :name => "index_listings_on_u_id"

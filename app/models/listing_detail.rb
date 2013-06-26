@@ -1,28 +1,53 @@
 class ListingDetail < ActiveRecord::Base
-  attr_accessible :body, :body_type, :source
+  attr_accessible :body, :body_type, :source, :raw_body
+  attr_accessor :raw_body
+
   has_one :listing
+
+  before_validation :store
   before_create :make_listing
-  serialize :body
+  
+  validate do |listing|
+    b = listing.load_body
+    if listing.source == "craigslist"
+      if listing.body_type == "JSON"
+        if Listing.where(:u_id => b["id"]).present? 
+           listing.errors[:base] << "Not unique -- Already in database"
+        end
+      end
+    end
+  end 
+
+  def store
+    self.body = Marshal.dump(self.raw_body)
+  end
+
+  def load_body
+    Marshal.load(self.body)
+  end
 
   def make_listing
+    b = self.load_body
     if self.source == "craigslist"
       if self.body_type == "JSON"
-        self.build_listing(:latitude => self.body["location"]["lat"],
-                           :longitude => self.body["location"]["long"],
-                           :price => self.body["price"],
+        self.build_listing(:latitude => b["location"]["lat"],
+                           :longitude => b["location"]["long"],
+                           :price => b["price"],
                            :bedrooms => three_taps_annotations["bedrooms"],
-                           :address => self.body["location"]["formatted_address"],
-                           :body => "#{self.body["body"]}".gsub(/&\w{1,5};/, ''),
-                           :u_id => self.body["id"])
+                           :address => b["location"]["formatted_address"],
+                           :body => "#{b["body"]}".gsub(/&\w{1,5};/, ''),
+                           :timestamp => b["timestamp"],
+                           :u_id => b["id"])
       end
     end
   end
 
   def three_taps_annotations
-    if self.body["annotations"].is_a?(Array)
-      return self.body["annotations"][0]
-    elsif self.body["annotations"].is_a?(Hash)
-      return self.body["annotations"]
+    b = self.load_body
+    if b["annotations"].is_a?(Array)
+      return b["annotations"][0]
+    elsif b["annotations"].is_a?(Hash)
+      return b["annotations"]
     else
       return nil
     end
