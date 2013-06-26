@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130625184542) do
+ActiveRecord::Schema.define(:version => 20130626173845) do
 
   create_table "analyses", :force => true do |t|
     t.float    "latitude"
@@ -71,6 +71,8 @@ ActiveRecord::Schema.define(:version => 20130625184542) do
     t.string   "display"
     t.string   "search_term"
     t.integer  "complexity"
+    t.string   "name"
+    t.string   "category"
   end
 
 end

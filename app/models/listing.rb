@@ -53,14 +53,8 @@ class Listing < ActiveRecord::Base
   def generate_tags
     self.tags.create(name: "Dog") if self.info["annotations"]["dogs"].downcase == "yes"
     self.tags.create(name: "Cat") if self.info["annotations"]["cats"].downcase == "yes"
-
-    #Simple tag parsing
-    for name in Tag::NAMES do
-      if self.info["body"].present?
-        if (self.info["body"] =~ /#{name}/i)
-          self.tags.create(name: name)
-        end
-      end
+    Tag.all.each do |t|
+      t.detect_in_listing self
     end
   end
 
@@ -77,10 +71,6 @@ class Listing < ActiveRecord::Base
     self.bedrooms = self.info["annotations"]["bedrooms"][0]
     self.address = self.info["location"]["formatted_address"]
     self.body = "#{self.info["body"]}".gsub(/&\w{1,5};/, '')
-  end
-
-  def parse_utilites
-    #Search for /not includ/, match 'util' within 20 chars => Nothing included for sheezy. Par cheezey.
   end
 
   def create_comparison_with(a_listing, options)
