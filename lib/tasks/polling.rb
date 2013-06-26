@@ -24,12 +24,12 @@ class Polling
     end
   end
 
-  def self.poll(anchor, state)
+  def self.poll(anchor, metro)
     puts "Polling 3taps --"
     puts "    anchor: #{anchor}"
-    puts "    state: #{state}"
+    puts "    metro: #{metro}"
     url = URI.parse("http://polling.3taps.com")
-    params = "/poll/?state=#{state}&anchor=#{anchor}&category=RHFR&retvals=id,account_id,source,category,category_group,location,external_id,external_url,heading,body,html,timestamp,expires,language,price,currency,images,annotations,status,immortal&source=CRAIG&auth_token=#{API_KEY}"
+    params = "/poll/?metro=#{metro}&anchor=#{anchor}&category=RHFR&retvals=id,account_id,source,category,category_group,location,external_id,external_url,heading,body,html,timestamp,expires,language,price,currency,images,annotations,status,immortal&source=CRAIG&auth_token=#{API_KEY}"
     req = Net::HTTP::Get.new(url.to_s + params)
     puts "    request: #{url.to_s + params}"
     res = Net::HTTP.start(url.host, url.port) {|http|
@@ -44,7 +44,7 @@ class Polling
     end
   end
 
-  def self.save_listings(postings)
+  def self.save_listings(postings, source, type)
     puts "Saving Listings --"
     counter = 1
     for posting in postings do
@@ -54,7 +54,9 @@ class Polling
         puts "    listing exists!"
       else
         puts "    listing is new!"
-        l = Listing.create(info: posting)
+        if type == "JSON"
+          l = ListingDetail.create(body: posting, body_type: type, source: source)
+        end
         if l.errors.any?
           puts l.errors.full_messages
         end
@@ -62,16 +64,16 @@ class Polling
     end
   end
 
-  def self.three_taps(state, datetime)
-    state = state.upcase
+  def self.three_taps(metro, datetime)
+    metro = metro.upcase
     timestamp = datetime.to_i
     anchor = get_anchor(timestamp)
-    response = poll(anchor, state)
+    response = poll(anchor, metro)
     while response["postings"].present? do
       postings = response["postings"]
-      save_listings(postings)
+      save_listings(postings, "craigslist", "JSON")
       anchor = response["anchor"]
-      response = poll(anchor, state)
+      response = poll(anchor, metro)
     end
   end
 

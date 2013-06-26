@@ -1,12 +1,12 @@
 class Listing < ActiveRecord::Base
-  attr_accessible :address, :bedrooms, :latitude, :longitude, :price, :analysis_id, :info, :dogs, :cats
+  attr_accessible :address, :bedrooms, :latitude, :longitude, :price, :analysis_id, :info, :dogs, :cats, :body, :u_id, :listing_detail_id
   serialize :info
 
   has_and_belongs_to_many :analyses
   has_many :tags
+  belongs_to :listing_detail
   validates_presence_of :price, :bedrooms, :latitude, :longitude, :u_id
 
-  before_validation :first_parse
   after_create :generate_tags
 
   #url of a static google map of the analyzed listing
@@ -16,7 +16,7 @@ class Listing < ActiveRecord::Base
   end
 
   def pictures
-    pics = self.info["images"].map{|p| p["full"]}
+    pics = self.listing_detail.body["images"].map{|p| p["full"]}
     pics = pics.uniq {|i| i.gsub(/https?:\/\//, '').gsub(/^.*\//, '') }
     return pics
   end
@@ -52,18 +52,18 @@ class Listing < ActiveRecord::Base
   end
 
   def annotations
-    if self.info["annotations"].is_a?(Array)
-      return self.info["annotations"][0]
-    elsif self.info["annotations"].is_a?(Hash)
-      return self.info["annotations"]
+    if self.listing_detail.body["annotations"].is_a?(Array)
+      return self.listing_detail.body["annotations"][0]
+    elsif self.listing_detail.body["annotations"].is_a?(Hash)
+      return self.listing_detail.body["annotations"]
     else
       return nil
     end
   end
 
   def generate_tags
-    self.tags.create(name: "Dogs") if self.annotations["dogs"].downcase == "yes"
-    self.tags.create(name: "Cats") if self.annotations["cats"].downcase == "yes"
+    self.tags.create(name: "Dogs") if self.listing_detail.three_taps_annotations["dogs"].downcase == "yes"
+    self.tags.create(name: "Cats") if self.listing_detail.three_taps_annotations["cats"].downcase == "yes"
 
     #Simple tag parsing
     for name in Tag::NAMES do
@@ -81,22 +81,6 @@ class Listing < ActiveRecord::Base
     end
 
     #Complex tag parsing. IE utilities
-  end
-
-  def first_parse
-    if self.new_record?
-      self.parse
-    end
-  end
-
-  def parse
-    self.latitude = self.info["location"]["lat"]
-    self.longitude = self.info["location"]["long"]
-    self.price = self.info["price"]
-    self.bedrooms = self.annotations["bedrooms"]
-    self.address = self.info["location"]["formatted_address"]
-    self.body = "#{self.info["body"]}".gsub(/&\w{1,5};/, '')
-    self.u_id = self.info["id"]
   end
 
   def parse_utilites

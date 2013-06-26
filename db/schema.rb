@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130619171009) do
+ActiveRecord::Schema.define(:version => 20130625163209) do
 
   create_table "analyses", :force => true do |t|
     t.float    "latitude"
@@ -46,19 +46,29 @@ ActiveRecord::Schema.define(:version => 20130619171009) do
     t.float    "price_score"
   end
 
+  create_table "listing_details", :force => true do |t|
+    t.integer  "listing_id"
+    t.string   "source"
+    t.text     "body"
+    t.string   "body_type"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
   create_table "listings", :force => true do |t|
     t.float    "latitude"
     t.float    "longitude"
     t.integer  "bedrooms"
     t.integer  "price"
     t.string   "address"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",        :null => false
+    t.datetime "updated_at",        :null => false
     t.text     "info"
     t.boolean  "dogs"
     t.boolean  "cats"
     t.text     "body"
     t.string   "u_id"
+    t.integer  "listing_detail_id"
   end
 
   add_index "listings", ["u_id"], :name => "index_listings_on_u_id"
