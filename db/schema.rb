@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130625163209) do
+ActiveRecord::Schema.define(:version => 20130626174550) do
 
   create_table "analyses", :force => true do |t|
     t.float    "latitude"
@@ -53,6 +53,15 @@ ActiveRecord::Schema.define(:version => 20130625163209) do
     t.string   "body_type"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
+    t.integer  "user_id"
+  end
+
+  create_table "listing_importers", :force => true do |t|
+    t.integer  "user_id"
+    t.string   "api_key"
+    t.string   "source"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
   end
 
   create_table "listings", :force => true do |t|
@@ -69,6 +78,8 @@ ActiveRecord::Schema.define(:version => 20130625163209) do
     t.text     "body"
     t.string   "u_id"
     t.integer  "listing_detail_id"
+    t.integer  "user_id"
+    t.datetime "expired_at"
   end
 
   add_index "listings", ["u_id"], :name => "index_listings_on_u_id"

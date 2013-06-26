@@ -14,6 +14,10 @@ gem 'exceptional'
 gem 'newrelic_rpm'
 gem 'kaminari'
 
+git "git://github.com/gregwebs/sax-machine.git" do
+  gem 'sax-machine'
+end
+
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 

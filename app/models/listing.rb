@@ -1,5 +1,6 @@
 class Listing < ActiveRecord::Base
-  attr_accessible :address, :bedrooms, :latitude, :longitude, :price, :analysis_id, :info, :dogs, :cats, :body, :u_id, :listing_detail_id
+  attr_accessible :address, :bedrooms, :latitude, :longitude, :price, :analysis_id, 
+                  :info, :dogs, :cats, :body, :u_id, :listing_detail_id, :user_id
   serialize :info
 
   has_and_belongs_to_many :analyses

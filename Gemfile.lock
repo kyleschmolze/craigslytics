@@ -1,3 +1,10 @@
+GIT
+  remote: git://github.com/gregwebs/sax-machine.git
+  revision: 2891845660c6ed3f8fb91e2b2563429f3e3d3a69
+  specs:
+    sax-machine (0.0.16)
+      nokogiri (> 0.0.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -68,9 +75,12 @@ GEM
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
     mime-types (1.23)
+    mini_portile (0.5.0)
     multi_json (1.7.3)
     mysql2 (0.3.11)
     newrelic_rpm (3.5.6.55)
+    nokogiri (1.6.0)
+      mini_portile (~> 0.5.0)
     polyglot (0.3.3)
     rack (1.4.5)
     rack-cache (1.2)
@@ -164,6 +174,7 @@ DEPENDENCIES
   redis (>= 2.0, < 3.0.0)
   resque
   sass-rails (~> 3.2.3)
+  sax-machine!
   sqlite3
   therubyracer
   thin
