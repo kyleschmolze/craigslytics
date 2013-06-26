@@ -50,16 +50,9 @@ class Polling
     for posting in postings do
       puts "    #{counter}/#{postings.count}"
       counter += 1
-      if Listing.where(:u_id => posting["id"]).present? 
-        puts "    listing exists!"
-      else
-        puts "    listing is new!"
-        if type == "JSON"
-          l = ListingDetail.create(body: posting, body_type: type, source: source)
-        end
-        if l.errors.any?
-          puts l.errors.full_messages
-        end
+      l = ListingDetail.create(raw_body: posting, body_type: type, source: source)
+      if l.errors.any?
+        puts l.errors.full_messages
       end
     end
   end

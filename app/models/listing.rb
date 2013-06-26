@@ -1,11 +1,11 @@
 class Listing < ActiveRecord::Base
   attr_accessible :address, :bedrooms, :latitude, :longitude, :price, :analysis_id, 
-                  :info, :dogs, :cats, :body, :u_id, :listing_detail_id, :user_id
-  serialize :info
+                  :info, :dogs, :cats, :body, :u_id, :listing_detail_id, :user_id, :timestamp
 
   has_and_belongs_to_many :analyses
   has_many :tags
   belongs_to :listing_detail
+
   validates_presence_of :price, :bedrooms, :latitude, :longitude, :u_id
 
   after_create :generate_tags
