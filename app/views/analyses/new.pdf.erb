@@ -9,10 +9,13 @@
   </h2>
   <br>
   <div>
-    <%= render 'form_hidden' %>
+    Hide me
   </div>
   <br>
   <div>
     <img src="<%= @analysis.get_self_map %>">
   </div>
 </div>
+<script>
+  document.getElementById('h2').innerText = "something";
+</script>

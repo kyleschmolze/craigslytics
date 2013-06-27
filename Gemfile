@@ -13,6 +13,7 @@ gem 'thin'
 gem 'exceptional'
 gem 'newrelic_rpm'
 gem 'kaminari'
+gem 'wicked_pdf'
 
 git "git://github.com/gregwebs/sax-machine.git" do
   gem 'sax-machine'

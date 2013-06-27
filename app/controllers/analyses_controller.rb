@@ -68,6 +68,9 @@ class AnalysesController < ApplicationController
       if @analysis.valid?
         format.html # new.html.erb
         format.json { render json: @analysis }
+        format.pdf {
+          render :pdf => "new.pdf"
+        }
       else
         format.html { 
           @body_class = 'homepage-body'
