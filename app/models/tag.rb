@@ -4,6 +4,7 @@ class Tag < ActiveRecord::Base
   has_many :listings, through: :listing_tags
 
   validate do |t| 
+    t.errors[:base] << "cannot create duplicate tags" if Tag.where(:name => t.name).exists?
     t.errors[:complexity] << "must be 1, 2, or 3" if !self.complexity.between?(1,3)
   end
 
@@ -36,12 +37,13 @@ class Tag < ActiveRecord::Base
     gas: "gas" # complex
   }
 
-  TYPES = {
-    house: "single family", 
-    condo: "condo",
-    apartment_building: "complex", # or "building"
-    apartment: "" 
-  }
+  UNIT_TYPES = [   # could be used for recursive looping, order of priority
+    "house",  
+    "condo",
+    "building",
+    "townhouse", # brownstone
+    "apartment" 
+  ]
 
   def detect_in_listing(l)
     if l.listing_detail.raw_body["body"].present?
@@ -71,7 +73,8 @@ class Tag < ActiveRecord::Base
   def detect_complex(l)
     range = 40 
 
-    if self.category == "unit_type" then detect_unit_type l
+    if self.category == "unit_type" 
+      detect_unit_type l
 
     elsif self.name == "gas" 
       m1 = (l.listing_detail.raw_body["body"].match /\binclud.{0,#{range}}\b#{self.search_term}\b/i)
@@ -100,37 +103,50 @@ class Tag < ActiveRecord::Base
 
 
 
-  # TODO make a class method, call from Listing.generate_tags
   # validation in listing_tag only allows 1 unit_type
-  def detect_unit_type(l)
-    
-    if self.name == "house" or self.name == "condo" # search for these first
-      m = l.listing_detail.raw_body["body"].match /\b#{self.search_term}/i   # searches for "condominuim" as well
-      ListingTag.create({listing_id: l.id, tag_id: self.id}) if m
-    elsif self.name == "building"
-      m1 = l.listing_detail.raw_body["body"].match /\bcomplex\b/i
-      m2 = l.listing_detail.raw_body["body"].match /\bbuilding\b/i
-      ListingTag.create({listing_id: l.id, tag_id: self.id}) if m1 or m2
+  # could also be done recursively, the future is wide open
+  def self.detect_unit_type(l)
+    found = false
+    found = detect_unit('house', l)
+    found = detect_unit('condo', l) if !found
+    found = detect_unit('building', l) if !found
+    found = detect_unit('townhouse', l) if !found
+    if !found 
+      ListingTag.create({listing_id: l.id, tag_id: self.where(:name => 'apartment').id})
+      # assumes there are no bs listings, al undefined are just apartments 
+    end
+  end
 
-    # assuming there are no complete bullshit listings that aren't anything,
-    # everything else should be listed as just an 'apartment'
-    elsif self.name == "apartment"
-      ListingTag.create({listing_id: l.id, tag_id: self.id}) 
+  def detect_unit(u, l)
+    utag = Tag.where(:name => u)
+    if u == "building"
+      if l.listing_detail.raw_body["body"].match /#{utag.search_term}/i or l.listing_detail.raw_body["body"].match /complex/i
+        ListingTag.create({listing_id: l.id, tag_id: utag.id})
+        return true
+      end
+    elsif u == "townhouse"
+      if l.listing_detail.raw_body["body"].match /#{utag.search_term}/i or l.listing_detail.raw_body["body"].match /brownstone/i
+        ListingTag.create({listing_id: l.id, tag_id: utag.id})
+        return true
+      end
+    elsif l.listing_detail.raw_body["body"].match /#{utag.search_term}/i
+      ListingTag.create({listing_id: l.id, tag_id: utag.id})
+      return true
+    else
+      return false
     end
   end
 
   def extract_field(l)
-    puts 'extracting.........'
     noko = Nokogiri::XML(l.listing_detail.raw_body)
+
+    # parse for fields we know are there; i.e. parking
+    extract_specific_fields l
+
     if self.category == "amenity"
       features = noko.css("features")
       features.each do |f|
-        puts "==============================\n"
-        puts f.text
-        puts "\n" + self.search_term
-        puts "==============================\n"
         if f.text.match /#{self.search_term}/i
-          puts 'success!'
           ListingTag.create({listing_id: l.id, tag_id: self.id}) 
         end
       end
@@ -140,11 +156,26 @@ class Tag < ActiveRecord::Base
         ListingTag.create({listing_id: l.id, tag_id: self.id}) if t.text.match /#{self.search_term}/i
       end
     elsif self.category == "unit_type"
-      variable = "variable"
-      # property_type
-      # building_name
-      # description
-      # received_description
+      prop_type = noko.at_css("property_type") 
+      if prop_type.text.match /#{self.search_term}/i
+        ListingTag.create({listing_id: l.id, tag_id: self.id}) 
+      else
+        desc = noko.at_css("description")
+        received_desc = noko.at_css("received_description")
+        if desc.text.match /#{self.search_term}/i or received_desc.text.match /#{self.search_term}/i
+          ListingTag.create({listing_id: l.id, tag_id: self.id}) 
+        end
+      end
     end
   end
+
+  def extract_specific_fields(l)
+    # parking
+    if self.name == "parking"
+      if !(noko.at_css("parking").text.blank? and noko.at_css("parking_space_type").text.blank?)
+        ListingTag.create({listing_id: l.id, tag_id: self.id}) 
+      end
+    end
+  end
+
 end

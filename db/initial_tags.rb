@@ -8,4 +8,5 @@ Tag.create({name:'house', display:'house', search_term:'single family', complexi
 Tag.create({name:'condo', display:'condo', search_term:'condo', complexity:'3', category:'unit_type'})
 Tag.create({name:'building', display:'apartment (in complex)', search_term:'building', complexity:'3', category:'unit_type'})
 Tag.create({name:'apartment', display:'apartment', search_term:'', complexity:'3', category:'unit_type'})
+Tag.create({name:'townhouse', display:'townhouse/brownstone', search_term:'townhouse', complexity:'3', category:'unit_type'})
 
