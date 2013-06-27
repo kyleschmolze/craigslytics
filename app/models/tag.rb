@@ -4,7 +4,7 @@ class Tag < ActiveRecord::Base
   has_many :listings, through: :listing_tags
 
   validate do |t| 
-    t.errors[:complexity] << "tag complexity must be 1, 2, or 3" if !self.complexity.between?(1,3)
+    t.errors[:complexity] << "must be 1, 2, or 3" if !self.complexity.between?(1,3)
   end
 
   NAMES = [
@@ -72,12 +72,13 @@ class Tag < ActiveRecord::Base
     range = 40 
 
     if self.category == "unit_type" then detect_unit_type l
+
     elsif self.name == "gas" 
       m1 = (l.listing_detail.raw_body["body"].match /\binclud.{0,#{range}}\b#{self.search_term}\b/i)
       m2 = (l.listing_detail.raw_body["body"].match /\b#{self.search_term}\b.{0,#{range}}\binclud/i)
       if m1 and m2
         # a little DeMorgan -- if any are true, don't do it
-        if !(m1.match /\bgas.{0,3}range/ or m1.match /\bgas.{0,3}stove/ or m1.match /\bgas.{0,3}fireplace/ or m1.match /pay.{0,30}gas/)
+        if !(m1[0].match /\bgas.{0,3}range/ or m1[0].match /\bgas.{0,3}stove/ or m1[0].match /\bgas.{0,3}fireplace/ or m1[0].match /pay.{0,30}gas/)
           ListingTag.create({listing_id: l.id, tag_id: self.id}) 
         end
       end
@@ -85,22 +86,24 @@ class Tag < ActiveRecord::Base
     elsif self.name == "internet"      # 'internet', 'wifi', 'wi-fi' 
       p1 = (l.listing_detail.raw_body["body"].match /\binclud.{0,#{range}}\binternet\b/i)
       p2 = (l.listing_detail.raw_body["body"].match /\binternet\b.{0,#{range}}\binclud/i)
-      p3 = (l.listing_detail.raw_body["body"].match /\binclud.{0,#{range}}\bwifi\b/i)
-      p4 = (l.listing_detail.raw_body["body"].match /\bwifi\b.{0,#{range}}\binclud/i)
-      p5 = (l.listing_detail.raw_body["body"].match /\binclud.{0,#{range}}\bwi-fi\b/i)
-      p6 = (l.listing_detail.raw_body["body"].match /\bwi-fi\b.{0,#{range}}\binclud/i)
-      ListingTag.create({listing_id: l.id, tag_id: self.id}) if p1 or p2 or p3 or p4 or p5 or p6
+      p3 = (l.listing_detail.raw_body["body"].match /\binclud.{0,#{range}}\bwi-?fi\b/i)
+      p4 = (l.listing_detail.raw_body["body"].match /\bwi-?fi\b.{0,#{range}}\binclud/i)
+      ListingTag.create({listing_id: l.id, tag_id: self.id}) if p1 or p2 or p3 or p4
 
     elsif self.name == "furnished"
       q1 = (l.listing_detail.raw_body["body"].match /.{25}\b#{self.search_term}/i)
       if q1
-        ListingTag.create({listing_id: l.id, tag_id: self.id}) unless q1.match /partially/i
+        ListingTag.create({listing_id: l.id, tag_id: self.id}) unless q1[0].match /partially/i
       end
     end
   end
 
+
+
+  # TODO make a class method, call from Listing.generate_tags
   # validation in listing_tag only allows 1 unit_type
   def detect_unit_type(l)
+    
     if self.name == "house" or self.name == "condo" # search for these first
       m = l.listing_detail.raw_body["body"].match /\b#{self.search_term}/i   # searches for "condominuim" as well
       ListingTag.create({listing_id: l.id, tag_id: self.id}) if m
@@ -116,4 +119,32 @@ class Tag < ActiveRecord::Base
     end
   end
 
+  def extract_field(l)
+    puts 'extracting.........'
+    noko = Nokogiri::XML(l.listing_detail.raw_body)
+    if self.category == "amenity"
+      features = noko.css("features")
+      features.each do |f|
+        puts "==============================\n"
+        puts f.text
+        puts "\n" + self.search_term
+        puts "==============================\n"
+        if f.text.match /#{self.search_term}/i
+          puts 'success!'
+          ListingTag.create({listing_id: l.id, tag_id: self.id}) 
+        end
+      end
+    elsif self.category == "utility"
+      terms = noko.css("rental_terms")
+      terms.each do |t|
+        ListingTag.create({listing_id: l.id, tag_id: self.id}) if t.text.match /#{self.search_term}/i
+      end
+    elsif self.category == "unit_type"
+      variable = "variable"
+      # property_type
+      # building_name
+      # description
+      # received_description
+    end
+  end
 end

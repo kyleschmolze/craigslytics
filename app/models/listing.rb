@@ -54,7 +54,11 @@ class Listing < ActiveRecord::Base
 
   def generate_tags
     Tag.all.each do |t|
-      t.detect_in_listing self
+      if self.listing_detail.source == "craigslist"
+        t.detect_in_listing self
+      elsif self.listing_detail.source == "zillow"
+        t.extract_field self
+      end
     end
   end
 
