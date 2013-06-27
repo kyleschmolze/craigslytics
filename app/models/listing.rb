@@ -52,9 +52,14 @@ class Listing < ActiveRecord::Base
     Listing.generate_all
   end
 
-  def generate_tags
+  def generate_tags 
+    Tag.detect_unit_type self if self.listing_detail.source == "craigslist"
     Tag.all.each do |t|
-      t.detect_in_listing self
+      if self.listing_detail.source == "craigslist"
+        t.detect_in_listing self
+      elsif self.listing_detail.source == "zillow"
+        t.extract_field self
+      end
     end
   end
 
