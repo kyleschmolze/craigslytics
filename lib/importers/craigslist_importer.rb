@@ -1,20 +1,20 @@
 require 'net/http' 
 
 class CraigslistImporter
+  attr_accessor :listing_importer
 
   @queue = :importing
 
   API_KEY = '166bb56dcaeba0c3c860981fd50917cd'
 
-  def self.perform
-    listing = Listing.order('timestamp DESC').first
-    start = listing ? listing.timestamp : (DateTime.now - 2.hour).to_i
-    CraigslistImporter.import 'USA-BOS', start
-  end
+  def import(importer)
+    self.listing_importer = importer
+    metro = "#{self.listing_importer.metro}".upcase
 
-  def self.import(metro, timestamp)
-    metro = metro.upcase
+    listing = Listing.where(user_id: nil).order('timestamp DESC').first
+    timestamp = listing ? listing.timestamp : (DateTime.now - 2.hour).to_i
     anchor = get_anchor(timestamp)
+
     response = poll(anchor, metro)
     while response["postings"].present? do
       postings = response["postings"]
@@ -24,11 +24,11 @@ class CraigslistImporter
     end
   end
 
-  def self.get_anchor(timestamp)
+  def get_anchor(timestamp)
     puts "Getting Anchor --"
     puts "    timestamp: #{timestamp}"
     url = URI.parse("http://polling.3taps.com")
-    params = "/anchor/?timestamp=#{timestamp}&auth_token=#{API_KEY}"
+    params = "/anchor/?timestamp=#{timestamp}&auth_token=#{self.listing_importer.api_key}"
     req = Net::HTTP::Get.new(url.to_s + params)
     puts "    request: #{url.to_s + params}"
     res = Net::HTTP.start(url.host, url.port) {|http|
@@ -44,7 +44,7 @@ class CraigslistImporter
     end
   end
 
-  def self.poll(anchor, metro)
+  def poll(anchor, metro)
     puts "Polling 3taps --"
     puts "    anchor: #{anchor}"
     puts "    metro: #{metro}"
@@ -64,14 +64,14 @@ class CraigslistImporter
     end
   end
 
-  def self.save_listings(postings, source, type)
+  def save_listings(postings, source, type)
     puts "Saving Listings --"
     counter = 1
     for posting in postings do
       puts "    #{counter}/#{postings.count}"
       counter += 1
-      l = ListingDetail.create(raw_body: posting, body_type: type, source: source)
-      if l.errors.any?
+      l = ListingDetail.where(source: source, u_id: posting["id"]).first_or_initialize
+      if !l.update_attributes(raw_body: posting, body_type: type)
         puts l.errors.full_messages
       end
     end

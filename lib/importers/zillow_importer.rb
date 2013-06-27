@@ -4,18 +4,8 @@ require 'open-uri'
 class ZillowImporter
   attr_accessor :listing_importer, :use_feed_with_invalid_listing_for_test
 
-  @queue = :importing
-
-  def self.perform(listing_importer_id)
-    #create instance
-    zillow_importer = ZillowImporter.new
-    zillow_importer.listing_importer = ListingImporter.find listing_importer_id
-
-    #run!
-    zillow_importer.import
-  end
-
-  def import
+  def import(importer)
+    self.listing_importer = importer
 
     start = Time.now
 
@@ -23,12 +13,17 @@ class ZillowImporter
       for page in 1..self.num_pages
         self.feed(:page => page).each do |listing|
           self.save_listing(listing)
+
+          if Rails.env.development? and stats[:total] >= 100 #testing
+            p stats
+            return 
+          end
+
         end
       end
     end
 
     Listing.where(user_id: self.listing_importer.user_id).where("updated_at < ?", start).update_all(expired_at: 1.minute.ago)
-    p stats
   end
 
   def save_listing(listing)
@@ -38,17 +33,22 @@ class ZillowImporter
       2.times {p "####################"}
     end
 
-    return if stats[:total] >= 100 #First runs
 
-    detail = ListingDetail.new(
+
+    detail = ListingDetail.where(source: 'zillow', u_id: listing.css("rentjuice_id").text).first_or_initialize
+
+    new = detail.new_record?
+    if detail.update_attributes(
       raw_body: listing.to_s,
-      body_type: 'xml',
-      source: 'zillow',
+      body_type: 'XML',
       user_id: self.listing_importer.user_id
     )
-
-    if detail.save
       stats[:saved] += 1
+      if !new
+        stats[:errors]['changed attrs'] << "body #{detail.id}," if detail.body_changed?
+        stats[:errors]['changed attrs'] << "body_type #{detail.id}," if detail.body_type_changed?
+        stats[:errors]['changed attrs'] << "user_id #{detail.id}," if detail.user_id_changed?
+      end
     else
       for e in detail.errors.full_messages
         stats[:errors][e] ||= 0
@@ -57,24 +57,6 @@ class ZillowImporter
     end
 
     stats[:total] += 1
-
-    return
-
-    #TODO merge into cenzo's listing.rb
-    #already exists?
-    if match = user.listings.where(:external_id => listings.external_id).first
-
-      attrs = listings.attributes
-      for i in ['id', 'created_at', 'updated_at', 'cluster_id']
-        attrs.delete(i)
-      end
-
-      #TODO not sure about setting expired_at 1 day away, could be of variable length? Might not matter.
-
-      match.touch #so that later, stats[:deactivated] can use where(updated_at < start)
-      match.update_column(:expired_at, 1.day.from_now)
-
-    end
   end
 
   def feed(options = {})

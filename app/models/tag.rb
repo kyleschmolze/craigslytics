@@ -76,7 +76,7 @@ class Tag < ActiveRecord::Base
       m2 = (l.listing_detail.raw_body["body"].match /\b#{self.search_term}\b.{0,#{range}}\binclud/i)
       if m1 and m2
         # a little DeMorgan -- if any are true, don't do it
-        if !(m1.match /\bgas.{0,3}range/ or m1.match /\bgas.{0,3}stove/ or m1.match /\bgas.{0,3}fireplace/ or m1.match /pay.{0,30}gas/)
+        if !(m1[0].match /\bgas.{0,3}range/ or m1[0].match /\bgas.{0,3}stove/ or m1[0].match /\bgas.{0,3}fireplace/ or m1[0].match /pay.{0,30}gas/)
           ListingTag.create({listing_id: l.id, tag_id: self.id}) 
         end
       end
@@ -95,7 +95,7 @@ class Tag < ActiveRecord::Base
     if self.name == "furnished"
       q1 = (l.listing_detail.raw_body["body"].match /.{25}\b#{self.search_term}/i)
       if q1
-        ListingTag.create({listing_id: l.id, tag_id: self.id}) unless q1.match /partially/i
+        ListingTag.create({listing_id: l.id, tag_id: self.id}) unless q1[0].match /partially/i
       end
     end
   end

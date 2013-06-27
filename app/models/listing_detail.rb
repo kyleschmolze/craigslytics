@@ -1,36 +1,36 @@
 class ListingDetail < ActiveRecord::Base
-  attr_accessible :body, :body_type, :source, :raw_body, :user_id
+  attr_accessible :body, :body_type, :source, :raw_body, :user_id, :u_id
   attr_accessor :raw_body
 
-  has_one :listing
+  has_one :listing, :autosave => true
 
   after_initialize :set_raw_body
-  before_validation :store
-  before_create :make_listing
+  before_validation :store_body_and_description
+  before_save :update_listing
   
-  validate do |listing|
-    if listing.source == "craigslist"
-      if listing.body_type == "JSON"
-        if Listing.where(:u_id => listing.raw_body["id"]).present? 
-           listing.errors[:base] << "Not unique -- Already in database"
-        end
-      end
-    end
-  end 
+  validates_presence_of :body, :u_id
+  validates_uniqueness_of :u_id, scope: 'source'
 
-  def store
+  def store_body_and_description
     self.body = Marshal.dump(self.raw_body)
+    if source == "craigslist"
+      self.description = self.raw_body["body"]
+    elsif source == "zillow"
+      noko = Nokogiri::XML(self.raw_body)
+      self.description = noko.css("description").text
+    end
   end
 
   def set_raw_body
-    self.raw_body ||= Marshal.load(self.body)
+    self.raw_body ||= Marshal.load(self.body) rescue nil
   end
 
-  def make_listing
+  def update_listing
+    self.build_listing if self.listing.nil?
     if self.source == "craigslist" and self.body_type == "JSON"
-      self.build_listing(self.craigslist_attributes)
+      self.listing.assign_attributes(self.craigslist_attributes)
     elsif self.source == "zillow" and self.body_type.match(/xml/i)
-      self.build_listing(self.zillow_attributes)
+      self.listing.assign_attributes(self.zillow_attributes)
     end
   end
 
@@ -47,28 +47,46 @@ class ListingDetail < ActiveRecord::Base
 
   def craigslist_attributes
     raw = self.raw_body
+    expired_at = DateTime.strptime(raw["expires"],'%s') rescue nil
     {
       :latitude => raw["location"]["lat"],
       :longitude => raw["location"]["long"],
       :price => raw["price"],
       :bedrooms => three_taps_annotations["bedrooms"],
       :address => raw["location"]["formatted_address"],
-      :timestamp => raw["timestamp"],
-      :u_id => raw["id"]
+      :expired_at => expired_at,
+      :timestamp => raw["timestamp"]
     }
   end
 
   def zillow_attributes
     noko = Nokogiri::XML(self.raw_body)
+    expired_at = noko.css("status").text.match(/active/i) ? 1.day.from_now : 1.minute.ago
     {
       :latitude => noko.css("latitude").text,
       :longitude => noko.css("longitude").text,
       :price => noko.css("rent").text,
       :bedrooms => noko.css("bedrooms").text,
-      :address => noko.css("address").text,
-      :u_id => noko.css("rentjuice_id").text,
+      :address => "#{noko.css("address").text} #{noko.css("city").text} #{noko.css("state").text} #{noko.css("zip_code").text}",
+      :expired_at => expired_at,
       :user_id => self.user_id
     }
+  end
+
+  def self.del_all
+    Listing.delete_all
+    ListingTag.delete_all
+    ListingDetail.delete_all
+  end
+
+  def self.quick_import
+    require 'importers/zillow_importer'; require 'importers/craigslist_importer'
+    ZillowImporter.perform 1
+    #CraigslistImporter.perform
+  end
+
+  def self.quick_cl
+    CraigslistImporter.perform
   end
 
 end
