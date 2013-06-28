@@ -28,6 +28,10 @@
   <% end %>
 </div>
 <% if @listings.present? %>
+  
+  <%= render partial: "segments/overview", locals: {segment: @segment, utilities: @utilities} %>
+  <br>
+
   <h3>Listings</h3>
 
   <!-- Image Load Error -->
@@ -41,7 +45,7 @@
   <%= paginate @listings %>
 
   <% for listing in @listings do%>
-    <%= render partial: "show", locals: {listing: listing, median: @overview ? @overview.median : nil} %>
+    <%= render partial: "show", locals: {listing: listing, median: @segment ? @segment.median : nil} %>
   <% end %>
 <% else %>
   <h3>

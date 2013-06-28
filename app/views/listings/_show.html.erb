@@ -43,16 +43,17 @@
       <% else %>
         <%= pluralize listing.bedrooms, 'bedroom' %><br>
       <% end %>
+      <% price = listing.price || 0 %>
       <% if median %>
-        <% if listing.price < median %>
-          <span class='text-success'>$<%= listing.price %> / month</span>
-        <% elsif listing.price > median %>
-          <span class='text-error'>$<%= listing.price %> / month</span>
+        <% if price < median %>
+          <span class='text-success'>$<%= price %> / month</span>
+        <% elsif price > median %>
+          <span class='text-error'>$<%= price %> / month</span>
         <% else %>
-          $<%= listing.price %> / month
+          $<%= price %> / month
         <% end %>
       <% else %>
-        $<%= listing.price %> / month
+        $<%= price %> / month
       <% end %>
     </p>
 
