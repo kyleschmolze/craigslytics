@@ -2,7 +2,7 @@ class ListingDetail < ActiveRecord::Base
   attr_accessible :body, :body_type, :source, :raw_body, :user_id
   attr_accessor :raw_body
 
-  has_one :listing
+  has_one :listing, autosave: true
 
   after_initialize :set_raw_body
   before_validation :store

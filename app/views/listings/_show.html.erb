@@ -33,12 +33,16 @@
 </div> -->
 
 
-<div class="row" id="listing<%=listing.id%>">
+<div class="row-fluid" id="listing<%=listing.id%>">
 
   <div class="well well-small span12">
     <h4><%= listing.address %></h4>
     <p>
-      <%= pluralize listing.bedrooms, 'bedroom' %><br>
+      <% if listing.bedrooms == nil or listing.bedrooms == 0 %>
+        Studio<br>
+      <% else %>
+        <%= pluralize listing.bedrooms, 'bedroom' %><br>
+      <% end %>
       <% if median %>
         <% if listing.price < median %>
           <span class='text-success'>$<%= listing.price %> / month</span>
@@ -77,8 +81,8 @@
       <%= link_to 'Show Full Listing', 'javascript:void(0);', class: 'btn span12 show-full-listing', style: "text-align:center;" %>
     </div>
     <div class="hide full-listing">
-      <h4><%= listing.info["heading"] %></h4>
-      <%= listing.body %>
+      <h4><%= listing.listing_detail.raw_body["heading"] %></h4>
+      <%= listing.listing_detail.raw_body["body"] %>
     </div>
   </div>
 </div>

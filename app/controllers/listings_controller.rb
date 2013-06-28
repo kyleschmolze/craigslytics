@@ -2,30 +2,35 @@ class ListingsController < ApplicationController
   # GET /listings
   # GET /listings.json
   def index
+    @listings = Listing
+    # If tags are set, 
+      # only grab listings that contain all the tags (intersection of all selected tags)
     if params[:tags].present?
-      tags = params[:tags].split(',').map(&:strip).map(&:titleize)
+      tags = params[:tags].keys
       tables = []
       for tag in tags do
-        tables << Tag.where(name: tag).pluck(:listing_id)
+        tables << Tag.where(search_term: tag).first.listings.map{|l| l.id}
       end
       ids = tables.inject(:&)
-      @listings = Listing.where("id IN (?)", ids).order(:price).includes(:tags).page(params[:page]).per(50)
-    elsif params[:analysis_id].present?
-
-      @analysis = Analysis.find(params[:analysis_id])
-      tags = "#{@analysis.tags}".split(',').map(&:strip).map(&:titleize)
-      tables = []
-      for tag in tags do
-        tables << Tag.where(name: tag).pluck(:listing_id)
-      end
-      ids = tables.inject(:&)
-      @listings = @analysis.listings.where("id IN (?)", ids).order(:u_id).includes(:tags).page(params[:page]).per(50)
-
-      all_listings = @analysis.listings.where("id IN (?)", ids).order(:u_id).includes(:tags)
-      @overview = @analysis.get_segment_with_listings(all_listings) if all_listings.length > 0
-    else
-      @listings = Listing.order(:price).includes(:tags).page(params[:page]).per(50)
+      puts "tags: #{tags}"
+      @listings = @listings.where(:id => ids) 
     end
+    # If bedrooms is set, 
+      # only grab listings with that number of bedrooms
+    if params[:bedrooms].present? and !params[:bedrooms][0].blank?
+      bedrooms = params[:bedrooms][0]
+      puts "bedrooms: #{bedrooms}"
+      @listings = @listings.where(:bedrooms => bedrooms)
+    end
+    # If address is set,
+      # only grab listings within a mile of that address
+    if params[:address].present? and !params[:address][0].blank?
+      address = params[:address][0]
+      puts "address: #{address}"
+      @listings = @listings.near(address, 1)
+    end
+    # Order the listings by price, pull tags, and paginate
+    @listings = @listings.order(:price).includes(:tags).page(params[:page]).per(50)
 
     respond_to do |format|
       format.html { render layout: 'default' }

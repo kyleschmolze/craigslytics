@@ -5,7 +5,11 @@ class Segment
   def initialize(listings)
     @listings = listings
     len = @listings.count
-    @median = (@listings[(len - 1) / 2].price + @listings[len / 2].price) / 2 
+    if len > 0
+      @median = (@listings[(len - 1) / 2].price + @listings[len / 2].price) / 2 
+    else
+      @median = nil
+    end
     @pictures = []
     count = 0
     for listing in @listings do 
