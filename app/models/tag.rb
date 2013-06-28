@@ -111,14 +111,16 @@ class Tag < ActiveRecord::Base
     found = detect_unit('condo', l) if !found
     found = detect_unit('building', l) if !found
     found = detect_unit('townhouse', l) if !found
-    if !found 
-      ListingTag.create({listing_id: l.id, tag_id: self.where(:name => 'apartment').id})
+    if !found and tag = self.where(:name => 'apartment').first
+      ListingTag.create({listing_id: l.id, tag_id: tag.id})
       # assumes there are no bs listings, al undefined are just apartments 
     end
   end
 
-  def detect_unit(u, l)
-    utag = Tag.where(:name => u)
+  def self.detect_unit(u, l)
+    utag = Tag.where(:name => u).first
+    return false if utag.blank?
+
     if u == "building"
       if l.listing_detail.raw_body["body"].match /#{utag.search_term}/i or l.listing_detail.raw_body["body"].match /complex/i
         ListingTag.create({listing_id: l.id, tag_id: utag.id})

@@ -2,14 +2,16 @@ class ListingDetail < ActiveRecord::Base
   attr_accessible :body, :body_type, :source, :raw_body, :user_id, :u_id
   attr_accessor :raw_body
 
-  has_one :listing, :autosave => true
-
   after_initialize :set_raw_body
   before_validation :store_body_and_description
-  before_save :update_listing
-  
+
+  before_validation :update_listing
+  has_one :listing, :autosave => true, :dependent => :destroy
+
   validates_presence_of :body, :u_id
-  validates_uniqueness_of :u_id, scope: 'source'
+
+  validates :u_id, :uniqueness => {:scope => :source}
+
 
   def store_body_and_description
     self.body = Marshal.dump(self.raw_body)

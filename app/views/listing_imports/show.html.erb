@@ -1,0 +1,26 @@
+<p id="notice"><%= notice %></p>
+Created at: <span class='import_created_at'><%= @listing_import.created_at %></span><br>
+Completed at: <span class='import_completed_at'><%= @listing_import.completed_at %></span><br>
+Current anchor: <span class='import_current_anchor'><%= @listing_import.current_anchor %></span><br>
+Current date: <span class='import_current_date'><%= @listing_import.current_date %></span><br>
+New listings: <span class='import_new_listings'><%= @listing_import.new_listings %></span><br>
+Updated listings: <span class='import_updated_listings'><%= @listing_import.updated_listings %></span><br>
+Failed listings: <span class='import_failed_listings'><%= @listing_import.failed_listings %></span><br>
+
+<%= link_to 'Back', listing_imports_path %>
+
+<script>
+  $(function() {
+    App.Helpers.poll("<%= listing_import_path(@listing_import, format: 'json') %>", {
+      success: function(data) {
+        $(".import_completed_at").text(data.listing_import.completed_at)
+        $(".import_current_anchor").text(data.listing_import.current_anchor)
+        $(".import_current_date").text(data.listing_import.current_date)
+        $(".import_new_listings").text(data.listing_import.new_listings)
+        $(".import_updated_listings").text(data.listing_import.updated_listings)
+        $(".import_failed_listings").text(data.listing_import.failed_listings)
+        console.log(data.listing_import.current_date)
+      }
+    })
+  })
+</script>

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130627202311) do
+ActiveRecord::Schema.define(:version => 20130628144419) do
 
   create_table "analyses", :force => true do |t|
     t.float    "latitude"
@@ -64,6 +64,18 @@ ActiveRecord::Schema.define(:version => 20130627202311) do
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
     t.string   "metro"
+  end
+
+  create_table "listing_imports", :force => true do |t|
+    t.datetime "completed_at"
+    t.integer  "listing_importer_id"
+    t.integer  "new_listings",        :default => 0
+    t.integer  "updated_listings",    :default => 0
+    t.integer  "failed_listings",     :default => 0
+    t.string   "current_anchor"
+    t.datetime "current_date"
+    t.datetime "created_at",                         :null => false
+    t.datetime "updated_at",                         :null => false
   end
 
   create_table "listing_tags", :force => true do |t|
