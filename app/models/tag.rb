@@ -58,7 +58,7 @@ class Tag < ActiveRecord::Base
   end
 
   def detect_simple(l)
-    ListingTag.create({listing_id: l.id, tag_id: self.id}) if ( l.listing_detail.raw_body["body"].match /\b#{self.search_term}\b/ )
+    ListingTag.create({listing_id: l.id, tag_id: self.id}) if ( l.listing_detail.raw_body["body"].match /\b#{self.search_term}\b/i )
   end
 
   def detect_medium(l)
