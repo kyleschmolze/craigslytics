@@ -12,7 +12,8 @@ class CraigslistImporter
     self.listing_import = ListingImport.create(listing_importer_id: self.listing_importer.id)
 
     listing = Listing.where(user_id: nil).order('timestamp DESC').first
-    timestamp = listing ? (listing.timestamp - 5.minute.to_i) : DateTime.parse("Jan 1, 2013").to_i
+    timestamp = listing ? (listing.timestamp - 5.minute.to_i) : DateTime.parse("Jun 1, 2013").to_i
+
     anchor = get_anchor(timestamp)
 
 
