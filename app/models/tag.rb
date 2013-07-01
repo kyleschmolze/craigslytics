@@ -47,12 +47,14 @@ class Tag < ActiveRecord::Base
 
   def detect_in_listing(l)
     if l.listing_detail.raw_body.present?
-      if self.complexity == 1        # Validation says complexity must be 1, 2, or 3
-        detect_simple l              # so no funny business 
-      elsif self.complexity == 2
-        detect_medium l 
-      else 
-        detect_complex l
+      if l.listing_detail.raw_body["body"].present?
+        if self.complexity == 1        # Validation says complexity must be 1, 2, or 3
+          detect_simple l              # so no funny business 
+        elsif self.complexity == 2
+          detect_medium l 
+        else 
+          detect_complex l
+        end
       end
     end
   end
@@ -105,14 +107,16 @@ class Tag < ActiveRecord::Base
   # could also be done recursively, the future is wide open
   def self.detect_unit_type(l)
     if l.listing_detail.raw_body.present?
-      found = false
-      found = detect_unit('house', l)
-      found = detect_unit('condo', l) if !found
-      found = detect_unit('building', l) if !found
-      found = detect_unit('townhouse', l) if !found
-      if !found and tag = self.where(:name => 'apartment').first
-        ListingTag.create({listing_id: l.id, tag_id: tag.id})
-        # assumes there are no bs listings, al undefined are just apartments 
+      if l.listing_detail.raw_body["body"].present?
+        found = false
+        found = detect_unit('house', l)
+        found = detect_unit('condo', l) if !found
+        found = detect_unit('building', l) if !found
+        found = detect_unit('townhouse', l) if !found
+        if !found and tag = self.where(:name => 'apartment').first
+          ListingTag.create({listing_id: l.id, tag_id: tag.id})
+          # assumes there are no bs listings, al undefined are just apartments 
+        end
       end
     end
   end

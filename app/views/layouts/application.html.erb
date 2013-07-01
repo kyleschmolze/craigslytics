@@ -39,7 +39,11 @@
     <div class="container-fluid">
       <div class="row-fluid">
         <div class="span12" data-spy="scroll" data-target="#analysis_navbar" data-offset="30">
-          <%= yield %>
+          <% if !notice.blank? %>
+            <div style='margin-top:15px;' class='alert'><%=notice%></div>
+          <% end %>
+        
+        <%= yield %>
         </div>
       </div>
     </div>

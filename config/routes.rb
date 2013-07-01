@@ -1,5 +1,9 @@
 Craigslytics::Application.routes.draw do
-  resources :listing_imports
+  resources :listing_imports do
+    collection do
+      match :poll
+    end
+  end
   resources :listings
   resources :listing_comparisons
   resources :analyses do
