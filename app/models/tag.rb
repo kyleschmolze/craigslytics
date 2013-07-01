@@ -46,7 +46,7 @@ class Tag < ActiveRecord::Base
   ]
 
   def detect_in_listing(l)
-    if l.listing_detail.raw_body["body"].present?
+    if l.listing_detail.raw_body.present?
       if self.complexity == 1        # Validation says complexity must be 1, 2, or 3
         detect_simple l              # so no funny business 
       elsif self.complexity == 2
@@ -104,7 +104,7 @@ class Tag < ActiveRecord::Base
   # validation in listing_tag only allows 1 unit_type
   # could also be done recursively, the future is wide open
   def self.detect_unit_type(l)
-    if l.listing_detail.raw_body["body"].present?
+    if l.listing_detail.raw_body.present?
       found = false
       found = detect_unit('house', l)
       found = detect_unit('condo', l) if !found
