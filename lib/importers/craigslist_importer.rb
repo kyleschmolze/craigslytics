@@ -13,11 +13,19 @@ class CraigslistImporter
 
     listing = Listing.where(user_id: nil).order('timestamp DESC').first
     timestamp = listing ? (listing.timestamp - 5.minute.to_i) : DateTime.parse("Jan 1, 2013").to_i
+
     anchor = get_anchor(timestamp)
+
+    4.times do
+      p "########################"
+    end
+
+    p timestamp
 
 
     response = poll(anchor, metro)
     while response["postings"].present? and response["anchor"].present? do
+      p anchor
       
       self.listing_import.update_column(:current_anchor, anchor)
       postings = response["postings"]
