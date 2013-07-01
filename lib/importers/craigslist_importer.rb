@@ -59,12 +59,16 @@ class CraigslistImporter
     res = Net::HTTP.start(url.host, url.port) {|http|
       http.request(req)
     }
-    response = JSON.parse(res.body)
-    if response["success"]
-      puts "    success!"
-      return response
+    if res.code == "200"   # only covers HTTPOK class.  see http://ruby-doc.org/stdlib-2.0/libdoc/net/http/rdoc/Net/HTTP.html
+      response = JSON.parse(res.body)
+      if response["success"]
+        puts "    success!"
+        return response
+      else
+        throw "In poll: #{response["error"]}"
+      end
     else
-      throw "In poll: #{response["error"]}"
+      throw "In poll: HTTP request unsuccessful"
     end
   end
 
