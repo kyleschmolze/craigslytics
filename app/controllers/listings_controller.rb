@@ -4,47 +4,62 @@ class ListingsController < ApplicationController
   def index
     @listings = Listing
     # If bedrooms is set, 
-      # only grab listings with that number of bedrooms
+    #   only grab listings with that number of bedrooms
     if params[:bedrooms].present? and !params[:bedrooms][0].blank?
       bedrooms = params[:bedrooms][0]
       @listings = @listings.where(:bedrooms => bedrooms)
     end
     # If address is set,
-      # only grab listings within a mile of that address
+    #   only grab listings within a mile of that address
     if params[:address].present? and !params[:address][0].blank?
       address = params[:address][0]
-      @listings = @listings.near(address, 1)
+      @geocoded_address = Geocoder.search(address)[0] 
+      #@listings = @listings.near([@address["location"]["lat"], @address["location"]["lng"]], 1)
+      if @geocoded_address.present?
+        @listings = @listings.near([@geocoded_address.geometry["location"]["lat"], @geocoded_address.geometry["location"]["lng"]], 1) 
+      else
+        @listings = @listings.near(nil, 1)
+      end
     end
     @listings = @listings.where("price IS NOT ?", nil)
     # Building hash of utility medians
     @utilities = {}
     for utility in Tag.where(category: "utility") do 
+      # Build tag lists:
+
       # If there are tags in the parameters,
-        # build a list of the tags in the parameters with and without the current utility
+      #   build a list of the tags in the parameters with the current utility
+      #   and a list of the lasgs in the parameters without the current utility
       if params[:tags].present?
         list_without_current_util = params[:tags].keys - ["#{utility.search_term}"]
         list_with_current_util = (params[:tags].keys + ["#{utility.search_term}"]).uniq
       # Else there are no tags in the parameters,
-        # build a list with just the current tag and with no tags (nil)
+      #   build a list with just the current tag and a list with no tags (nil)
       else
         list_without_current_util = nil
         list_with_current_util = ["#{utility.search_term}"]
       end
-
-      # Determine median of the listings without the current utility
+      # Determine median of the listings without the current utility:
+      
       # If list of tags without current utility is not nil,
-        # grab all listing prices that have the tags in the list of tags
+      #   grab all listing prices that have the tags in the list of tags 
+      #   AND don't have the current utility
       if list_without_current_util.present?
         tables = []
         for tag in list_without_current_util
           tables << Tag.where(search_term: tag).first.listings.map{|l| l.id}
         end
         ids = tables.inject(:&)
+        exclude_util_ids = Tag.where(search_term: utility.search_term).first.listings.map{|l| l.id}
+        ids = ids - exclude_util_ids
         prices = @listings.where(id: ids).reorder(:price).map{|l| l.price} 
       # Else the list of tags is empty,
-        # grab all listing prices
+      #   grab all listing prices that don't have the current utility
       else
-        prices = @listings.reorder(:price).all.map{|l| l.price}
+        ids = @listings.all.map{|l| l.id}
+        exclude_util_ids = Tag.where(search_term: utility.search_term).first.listings.map{|l| l.id}
+        ids = ids - exclude_util_ids
+        prices = @listings.where(id: ids).reorder(:price).all.map{|l| l.price}
       end
       len = prices.count
       if len > 0
@@ -53,8 +68,8 @@ class ListingsController < ApplicationController
         med = "N/A"
       end
       @utilities["without_#{utility.search_term}"] = med
+      # Determine median of the listings with the current utility:
 
-      # Determine median of the listings with the current utility
       tables = []
       for tag in list_with_current_util
         tables << Tag.where(search_term: tag).first.listings.map{|l| l.id}
@@ -70,7 +85,7 @@ class ListingsController < ApplicationController
       @utilities["with_#{utility.search_term}"] = med
     end
     # If tags are set, 
-      # only grab listings that contain all the tags (intersection of all selected tags)
+    #   only grab listings that contain all the tags (intersection of all selected tags)
     if params[:tags].present?
       tags = params[:tags].keys
       tables = []
@@ -80,8 +95,8 @@ class ListingsController < ApplicationController
       ids = tables.inject(:&)
       @listings = @listings.where(:id => ids) 
     end
-    # Order the listings by price, pull tags, and paginate
     @segment = Segment.new(@listings) if @listings.present?
+    # Order the listings by price (will be ordered by [location & price] if address is set), pull tags, and paginate
     @listings = @listings.order(:price).includes(:tags).page(params[:page]).per(50)
 
 

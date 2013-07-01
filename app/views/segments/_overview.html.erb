@@ -27,6 +27,9 @@
   </div>
   <div class="span6">
     <h3>Location</h3>
+    <p>
+      <%= geocoded_address.formatted_address if geocoded_address.present? %>
+    </p>
     <div id="map_canvas_<%= segment.unique_id %>" style="height:300px;text-align:center;">
       <%= image_tag 'loading.gif' %>
     </div>
@@ -93,7 +96,11 @@
 <!-- Google Maps -->
 <script type="text/javascript">
   function initialize() {
-    var center_lat_lng = new google.maps.LatLng(<%= segment.listings.first.latitude %>, <%= segment.listings.first.longitude %>);
+    <% if geocoded_address.present? %>
+      var center_lat_lng = new google.maps.LatLng(<%= geocoded_address.geometry["location"]["lat"] %>, <%= geocoded_address.geometry["location"]["lng"] %>);
+    <% else %>
+      var center_lat_lng = new google.maps.LatLng(<%= segment.listings.first.latitude %>, <%= segment.listings.first.longitude %>);
+    <% end %>
     var mapOptions = {
       scrollwheel: false,
       center: center_lat_lng,
@@ -127,7 +134,24 @@
       });
       map_bounds.extend(pos);
     <% end %>
-    
+
+    <% if geocoded_address.present? %>
+      var address_image = new google.maps.MarkerImage(
+        'http://maps.google.com/mapfiles/ms/micons/red.png',
+        new google.maps.Size(32, 32), // size
+        new google.maps.Point(0,0), // origin
+        new google.maps.Point(16, 32) // anchor
+      );
+      var marker = new google.maps.Marker({
+        position: center_lat_lng,
+        map: map,
+        icon: address_image,
+        zIndex: 1000,
+        shadow: shadow
+      });
+      map_bounds.extend(pos);
+    <% end %>
+
     map.fitBounds(map_bounds);
   }
   google.maps.event.addDomListener(window, 'load', initialize);

@@ -29,7 +29,7 @@
 </div>
 <% if @listings.present? %>
   
-  <%= render partial: "segments/overview", locals: {segment: @segment, utilities: @utilities} %>
+  <%= render partial: "segments/overview", locals: {segment: @segment, utilities: @utilities, geocoded_address: @geocoded_address.present? ? @geocoded_address : nil} %>
   <br>
 
   <h3>Listings</h3>
@@ -45,14 +45,14 @@
   <%= paginate @listings %>
 
   <% for listing in @listings do%>
-    <%= render partial: "show", locals: {listing: listing, median: @segment ? @segment.median : nil} %>
+    <%= render partial: "show", locals: {listing: listing, median: @segment.present? ? @segment.median : nil} %>
   <% end %>
 <% else %>
   <h3>
     <i class='icon-warning-sign'></i> No results!
   </h3>
   Unfortunately, we weren't able to find any comparable listings.
-  Consider searching again with fewer options.
+  Consider searching again with different options.
 <% end %>
 
 <script type="text/javascript">
