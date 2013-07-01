@@ -20,9 +20,11 @@ class ListingImporter < ActiveRecord::Base
       end
 
     rescue => e
-      #sleep 60
-      Resque.enqueue self, listing_importer_id if Rails.env.production?
-      throw e 
+      if Rails.env.production?
+        sleep 60
+        Resque.enqueue self, listing_importer_id 
+      end
+      raise
     end
   end
 

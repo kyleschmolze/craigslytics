@@ -16,16 +16,9 @@ class CraigslistImporter
 
     anchor = get_anchor(timestamp)
 
-    4.times do
-      p "########################"
-    end
-
-    p timestamp
-
 
     response = poll(anchor, metro)
     while response["postings"].present? and response["anchor"].present? do
-      p anchor
       
       self.listing_import.update_column(:current_anchor, anchor)
       postings = response["postings"]
