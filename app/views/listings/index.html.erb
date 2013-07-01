@@ -1,40 +1,37 @@
 <br>
-<% if @analysis %>
-  <h2>
-    <%= @analysis.address %>
-    <small>
-      <%= pluralize @analysis.bedrooms, 'bedroom' %>
-      <% for tag in @analysis.tags.split(',') %>
-        <span class="badge badge-info"><%= tag %></span>
-      <% end %>
-    </small>
-  </h2>
-  <%= link_to root_path do %>
-    <i class='icon-arrow-left'></i> Run another analysis
+<div style="text-align:center">
+  <%= form_tag listings_path, method: "GET", class: "form-inline" do %>
+    
+    <%= text_field "address", nil, placeholder:"Address", value: "#{params[:address][0] if params[:address].present?}" %>
+    <%= number_field "bedrooms", nil, placeholder:"Number of Bedrooms", value: "#{params[:bedrooms][0] if params[:bedrooms].present?}" %>
+    <%= submit_tag "GO", class: "btn btn-danger" %>
+    <br>
+    <label class='checkbox'>
+      <%= check_box_tag "tags[water]", 1, (params[:tags].present? and params[:tags]["water"]) %> Water Included
+    </label>
+    <label class='checkbox'>
+      <%= check_box_tag "tags[electric]", 1, (params[:tags].present? and params[:tags]["electric"]) %> Electricity Included
+    </label>
+    <label class='checkbox'>
+      <%= check_box_tag "tags[gas]", 1, (params[:tags].present? and params[:tags]["gas"]) %> Gas Included
+    </label>
+    <br>
+    <label class='checkbox'>
+      <%= check_box_tag "tags[hardwood]", 1, (params[:tags].present? and params[:tags]["hardwood"]) %> Hardwood Floors
+    </label>
+    <label class='checkbox'>
+      <%= check_box_tag "tags[patio]", 1, (params[:tags].present? and params[:tags]["patio"]) %> Has a Patio
+    </label>
+    <label class='checkbox'>
+      <%= check_box_tag "tags[fireplace]", 1, (params[:tags].present? and params[:tags]["fireplace"]) %> Has a Fireplace
+    </label>
   <% end %>
-  <br>
+</div>
+<% if @listings.present? %>
+  
+  <%= render partial: "segments/overview", locals: {segment: @segment, utilities: @utilities, geocoded_address: @geocoded_address.present? ? @geocoded_address : nil} %>
   <br>
 
-  <% if @overview %>
-    <%= render partial: "overview", locals: {analysis: @analysis, segment: @overview} %>
-  <% else %>
-    <h3>
-      <i class='icon-warning-sign'></i> No results!
-    </h3>
-    Unfortunately, we weren't able to find any comparable listings.
-    Consider <%= link_to "running another analysis ", root_path %> with fewer options.
-  <% end %>
-  <br>
-<% else %>
-  <div style="text-align:center">
-    <%= form_tag listings_path, method: "GET", class: "form-inline" do %>
-      
-      <%= search_field_tag "tags", @tags, placeholder: "Filter by Tags" %>
-      <%= submit_tag "GO", class: "btn btn-danger" %>
-    <% end %>
-  </div>
-<% end %>
-<% if @listings.present? %>
   <h3>Listings</h3>
 
   <!-- Image Load Error -->
@@ -48,8 +45,14 @@
   <%= paginate @listings %>
 
   <% for listing in @listings do%>
-    <%= render partial: "show", locals: {listing: listing, median: @overview ? @overview.median : nil} %>
+    <%= render partial: "show", locals: {listing: listing, median: @segment.present? ? @segment.median : nil} %>
   <% end %>
+<% else %>
+  <h3>
+    <i class='icon-warning-sign'></i> No results!
+  </h3>
+  Unfortunately, we weren't able to find any comparable listings.
+  Consider searching again with different options.
 <% end %>
 
 <script type="text/javascript">

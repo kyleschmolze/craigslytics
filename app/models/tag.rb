@@ -101,8 +101,6 @@ class Tag < ActiveRecord::Base
     end
   end
 
-
-
   # validation in listing_tag only allows 1 unit_type
   # could also be done recursively, the future is wide open
   def self.detect_unit_type(l)
