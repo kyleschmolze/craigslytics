@@ -1,12 +1,12 @@
 class Listing < ActiveRecord::Base
   attr_accessible :address, :bedrooms, :latitude, :longitude, :price, :analysis_id, 
-                  :dogs, :cats, :u_id, :listing_detail_id, :user_id, :timestamp
+                  :dogs, :cats, :listing_detail_id, :user_id, :timestamp, :expired_at
 
   has_many :listing_tags 
   has_many :tags, through: :listing_tags
   has_and_belongs_to_many :analyses
   belongs_to :listing_detail
-  validates_presence_of :price, :bedrooms, :latitude, :longitude, :u_id
+  validates_presence_of :price, :bedrooms, :latitude, :longitude
   geocoded_by :address
 
   after_create :generate_tags
@@ -60,9 +60,14 @@ class Listing < ActiveRecord::Base
     Listing.generate_all
   end
 
-  def generate_tags
+  def generate_tags 
+    Tag.detect_unit_type self if self.listing_detail.source == "craigslist"
     Tag.all.each do |t|
-      t.detect_in_listing self
+      if self.listing_detail.source == "craigslist"
+        t.detect_in_listing self
+      elsif self.listing_detail.source == "zillow"
+        t.extract_field self
+      end
     end
   end
 

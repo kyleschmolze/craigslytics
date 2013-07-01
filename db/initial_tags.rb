@@ -4,4 +4,9 @@ Tag.create({name:'patio', display:'patio', search_term:'patio', complexity:'1', 
 Tag.create({name:'hardwood', display:'hardwood', search_term:'hardwood', complexity:'1', category:'amenity'})
 Tag.create({name:'gas', display:'gas', search_term:'gas', complexity:'3', category:'utility'})
 Tag.create({name:'fireplace', display:'fireplace', search_term:'fireplace', complexity:'1', category:'amenity'})
+Tag.create({name:'house', display:'house', search_term:'single family', complexity:'3', category:'unit_type'})
+Tag.create({name:'condo', display:'condo', search_term:'condo', complexity:'3', category:'unit_type'})
+Tag.create({name:'building', display:'apartment (in complex)', search_term:'building', complexity:'3', category:'unit_type'})
+Tag.create({name:'apartment', display:'apartment', search_term:'', complexity:'3', category:'unit_type'})
+Tag.create({name:'townhouse', display:'townhouse/brownstone', search_term:'townhouse', complexity:'3', category:'unit_type'})
 

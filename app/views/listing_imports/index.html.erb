@@ -1,0 +1,23 @@
+<h1 class='page-header'>Listing Imports</h1>
+
+<table class='table'>
+  <tr>
+    <th>Created at</th>
+    <th>Completed at</th>
+    <th>New listings</th>
+    <th>Updated listings</th>
+    <th>Failed listings</th>
+    <th></th>
+  </tr>
+
+<% @listing_imports.each do |import| %>
+  <tr>
+    <td><%= import.created_at %></td>
+    <td><%= import.completed_at %></td>
+    <td><%= import.new_listings %></td>
+    <td><%= import.updated_listings %></td>
+    <td><%= import.failed_listings %></td>
+    <td><%= link_to 'Show', import %></td>
+  </tr>
+<% end %>
+</table>
