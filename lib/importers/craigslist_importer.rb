@@ -12,12 +12,12 @@ class CraigslistImporter
     self.listing_import = ListingImport.create(listing_importer_id: self.listing_importer.id)
 
     listing = Listing.where(user_id: nil).order('timestamp DESC').first
-    timestamp = listing ? (listing.timestamp - 1.hour.to_i) : DateTime.parse("Jan 1, 2013").to_i
+    timestamp = listing ? (listing.timestamp - 5.minute.to_i) : DateTime.parse("Jan 1, 2013").to_i
     anchor = get_anchor(timestamp)
 
 
     response = poll(anchor, metro)
-    while response["postings"].present? do
+    while response["postings"].present? and response["anchor"].present? do
       
       self.listing_import.update_column(:current_anchor, anchor)
       postings = response["postings"]
@@ -68,7 +68,7 @@ class CraigslistImporter
         throw "In poll: #{response["error"]}"
       end
     else
-      throw "In poll: HTTP request unsuccessful"
+      throw "In poll: HTTP code: #{res.code}"
     end
   end
 

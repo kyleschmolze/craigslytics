@@ -74,7 +74,7 @@ class Tag < ActiveRecord::Base
     range = 40 
 
     if self.category == "unit_type" 
-      detect_unit_type l
+      Tag.detect_unit_type l
 
     elsif self.name == "gas" 
       m1 = (l.listing_detail.raw_body["body"].match /\binclud.{0,#{range}}\b#{self.search_term}\b/i)
@@ -106,14 +106,16 @@ class Tag < ActiveRecord::Base
   # validation in listing_tag only allows 1 unit_type
   # could also be done recursively, the future is wide open
   def self.detect_unit_type(l)
-    found = false
-    found = detect_unit('house', l)
-    found = detect_unit('condo', l) if !found
-    found = detect_unit('building', l) if !found
-    found = detect_unit('townhouse', l) if !found
-    if !found and tag = self.where(:name => 'apartment').first
-      ListingTag.create({listing_id: l.id, tag_id: tag.id})
-      # assumes there are no bs listings, al undefined are just apartments 
+    if l.listing_detail.raw_body["body"].present?
+      found = false
+      found = detect_unit('house', l)
+      found = detect_unit('condo', l) if !found
+      found = detect_unit('building', l) if !found
+      found = detect_unit('townhouse', l) if !found
+      if !found and tag = self.where(:name => 'apartment').first
+        ListingTag.create({listing_id: l.id, tag_id: tag.id})
+        # assumes there are no bs listings, al undefined are just apartments 
+      end
     end
   end
 
