@@ -7,6 +7,7 @@ class Listing < ActiveRecord::Base
   has_and_belongs_to_many :analyses
   belongs_to :listing_detail
   validates_presence_of :price, :bedrooms, :latitude, :longitude
+  geocoded_by :address
 
   after_create :generate_tags
 
@@ -17,9 +18,16 @@ class Listing < ActiveRecord::Base
   end
 
   def pictures
-    pics = self.listing_detail.body["images"].map{|p| p["full"]}
-    pics = pics.uniq {|i| i.gsub(/https?:\/\//, '').gsub(/^.*\//, '') }
-    return pics
+    if self.listing_detail.source == "craigslist"
+      pics = self.listing_detail.raw_body["images"][0]
+      if pics.present?
+        pics = pics.map{|p| p["full"]} 
+        pics = pics.uniq {|i| i.gsub(/https?:\/\//, '').gsub(/^.*\//, '') }
+      end
+      return pics
+    else
+      return []
+    end
   end
 
   def self.parse_all
@@ -52,9 +60,14 @@ class Listing < ActiveRecord::Base
     Listing.generate_all
   end
 
-  def generate_tags
+  def generate_tags 
+    Tag.detect_unit_type self if self.listing_detail.source == "craigslist"
     Tag.all.each do |t|
-      t.detect_in_listing self
+      if self.listing_detail.source == "craigslist"
+        t.detect_in_listing self
+      elsif self.listing_detail.source == "zillow"
+        t.extract_field self
+      end
     end
   end
 

@@ -3,20 +3,24 @@ class Segment
     :adjusted_min, :adjusted_max, :unique_id
 
   def initialize(listings)
-    @listings = listings
+    @listings = listings.reorder(:price)
     len = @listings.count
-    @median = (@listings[(len - 1) / 2].price + @listings[len / 2].price) / 2 
-    @pictures = []
-    count = 0
-    for listing in @listings do 
-      if listing.info["images"].present?
-        @pictures << listing.info["images"].sample["full"]
-        count += listing.info["images"].count 
-      end
+    if len > 0
+      @median = (@listings[(len - 1) / 2].price + @listings[len / 2].price) / 2 
+    else
+      @median = nil
     end
-    @pictures = @pictures.uniq {|i| i.gsub(/https?:\/\//, '').gsub(/^.*\//, '') }
-    @average_pictures = count/len 
-    @min_price = @listings.first.price
+    #@pictures = []
+    #count = 0
+    #for listing in @listings do 
+      #if listing.pictures.present?
+        #@pictures << listing.pictures.sample
+        #count += listing.pictures.count 
+      #end
+    #end
+    #@pictures = @pictures.uniq {|i| i.gsub(/https?:\/\//, '').gsub(/^.*\//, '') }
+    #@average_pictures = count/len 
+    @min_price = @listings.first.price ||= 0
     @max_price = @listings.last.price
     @increment = 50
     while (@max_price - @min_price)/@increment > 14
@@ -31,6 +35,36 @@ class Segment
     @listings.select do |listing|
       listing.price >= min and listing.price < max
     end
+  end
+
+  def average_with_util(utility)
+    ids = []
+    ids << Tag.where(search_term: utility).first.listings.map{|l| l.id}
+    ids << self.listings.map{|l| l.id}
+    ids = ids.inject(:&)
+    prices = self.listings.where(id: ids).map{|l| l.price} 
+    len = prices.count
+    if len > 0
+      med = (prices[(len - 1) / 2] + prices[len / 2]) / 2 
+    else
+      med = nil
+    end
+    return med
+  end
+
+  def average_without_util(utility)
+    ids = []
+    ids << Tag.where("search_term IS NOT ?", utility).first.listings.map{|l| l.id}
+    ids << self.listings.map{|l| l.id}
+    ids = ids.inject(:&)
+    prices = self.listings.where(id: ids).map{|l| l.price} 
+    len = prices.count
+    if len > 0
+      med = (prices[(len - 1) / 2] + prices[len / 2]) / 2 
+    else
+      med = nil
+    end
+    return med
   end
 
 end
