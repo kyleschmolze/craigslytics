@@ -103,6 +103,7 @@ class ListingsController < ApplicationController
     respond_to do |format|
       format.html { render layout: 'default' }
       format.json { render json: @listings }
+      format.pdf { 
     end
   end
 
