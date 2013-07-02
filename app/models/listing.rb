@@ -61,7 +61,7 @@ class Listing < ActiveRecord::Base
   end
 
   def generate_tags 
-    Tag.detect_unit_type self if self.listing_detail.source == "craigslist"
+    Tag.assign_unit_type self 
     Tag.all.each do |t|
       if self.listing_detail.source == "craigslist"
         t.detect_in_listing self
