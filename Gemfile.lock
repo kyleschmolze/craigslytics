@@ -156,6 +156,8 @@ GEM
       multi_json (~> 1.0, >= 1.0.2)
     vegas (0.1.11)
       rack (>= 1.0.0)
+    wicked_pdf (0.9.6)
+      rails
 
 PLATFORMS
   ruby
@@ -180,3 +182,4 @@ DEPENDENCIES
   thin
   twitter-bootstrap-rails (>= 2.2.7)
   uglifier (>= 1.0.3)
+  wicked_pdf
