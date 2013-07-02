@@ -24,7 +24,7 @@ class ListingDetail < ActiveRecord::Base
   end
 
   def set_raw_body
-    self.raw_body ||= Marshal.load(self.body) rescue {}
+    self.raw_body ||= Marshal.load(self.body) rescue ""
   end
 
   def update_listing
