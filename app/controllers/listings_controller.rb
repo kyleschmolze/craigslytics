@@ -63,9 +63,9 @@ class ListingsController < ApplicationController
       end
       len = prices.count
       if len > 0
-        med = "$#{(prices[(len - 1) / 2] + prices[len / 2]) / 2}"
+        med = (prices[(len - 1) / 2] + prices[len / 2]) / 2
       else
-        med = "N/A"
+        med = nil
       end
       @utilities["without_#{utility.search_term}"] = med
       # Determine median of the listings with the current utility:
@@ -78,11 +78,27 @@ class ListingsController < ApplicationController
       prices = @listings.where(id: ids).reorder(:price).map{|l| l.price} 
       len = prices.count
       if len > 0
-        med = "$#{(prices[(len - 1) / 2] + prices[len / 2]) / 2}"
+        med = (prices[(len - 1) / 2] + prices[len / 2]) / 2
       else
-        med = "N/A"
+        med = nil
       end
       @utilities["with_#{utility.search_term}"] = med
+
+      without = "without_#{utility.search_term}"
+      with = "with_#{utility.search_term}"
+      if @utilities[without] == nil or @utilities[with] == nil
+        @utilities["value_#{utility.search_term}?"] = nil
+      elsif @utilities[without] == @utilities[with]
+        @utilities["value_#{utility.search_term}?"] = "equal"
+        @utilities["percent_value_#{utility.search_term}"] = 0
+      elsif @utilities[without] < @utilities[with]
+        @utilities["value_#{utility.search_term}?"] = "increased"
+        @utilities["percent_value_#{utility.search_term}"] = (( (@utilities[with] - @utilities[without]) / ( 1.0 * (@utilities[without]) )) * 100).round(2)
+      else
+        @utilities["value_#{utility.search_term}?"] = "decreased"
+        @utilities["percent_value_#{utility.search_term}"] = (( (@utilities[with] - @utilities[without]) / ( 1.0 * (@utilities[without]) )) * -100).round(2)
+      end
+
     end
     # If tags are set, 
     #   only grab listings that contain all the tags (intersection of all selected tags)

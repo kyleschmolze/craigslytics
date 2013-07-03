@@ -1,11 +1,22 @@
 <div class="span12">
   <h3>Utilities Analysis</h3>
-  <table class='table'>
+  <table class='table' style="text-align:center">
     <% for utility in Tag.where(category: "utility") do %>
-      <tr>
-        <td> Median Price without <%= utility.display %>: <%= utilities["without_#{utility.search_term}"] %></td>
-        <td> Median Price with <%= utility.display %>: <%= utilities["with_#{utility.search_term}"] %></td>
-      </tr>
+      <% puts "here!" %> 
+      <% puts "here!" %> 
+      <% puts "here!" %> 
+      <% puts utilities %>
+      <% if !utilities["value_#{utility.search_term}?"].nil? %>
+        <tr>
+          <% if utilities["value_#{utility.search_term}?"] == "increased" %>
+            <td style="color:green"> Apartments with <%= utility.display %> had <i class="icon-arrow-up"></i> <%= utilities["percent_value_#{utility.search_term}"] %>% more value </td>
+          <% elsif utilities["value_#{utility.search_term}?"] == "decreased" %>
+            <td style="color:red"> Apartments with <%= utility.display %> had <i class="icon-arrow-down"></i> <%= utilities["percent_value_#{utility.search_term}"] %>% less value </td>
+          <% elsif utilities["value_#{utility.search_term}?"] == "equal" %>
+            <td> Apartments with <%= utility.display %> included had no change in value</td>
+          <% end %>
+        </tr>
+      <% end %>
     <% end %>
   </table>
 </div>
