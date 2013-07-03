@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%= render partial: 'layouts/head' %>
+  </head>
+  <body class='application-body <%= @body_class %>'> 
+
+    <div class="container">
+      <%= yield %>
+    </div>
+
+  </body>
+</html>

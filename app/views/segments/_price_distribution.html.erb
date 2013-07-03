@@ -1,0 +1,37 @@
+<div class="span12">
+  <h3>Price Distribution</h3>
+  <p>
+    This graph shows the distribution of prices for these listings.
+    Each bar represents a price range, and the size of the bar tells you how many
+    listings we found inside that range.
+  </p>
+  <div id="chart_div_<%= segment.unique_id %>" style="height:300px;text-align:center;">
+    <%= image_tag 'loading.gif' %>
+  </div>
+</div>
+
+<!-- Google Charts -->
+<script type="text/javascript">
+  google.load("visualization", "1", {packages:["corechart"]});
+  google.setOnLoadCallback(drawChart);
+
+  function drawChart() {
+    var data = google.visualization.arrayToDataTable([
+        ['Price', 'Listings'],
+        <% (segment.adjusted_min..segment.adjusted_max+1).step(segment.increment) do |i| %>
+        ["<%= "$#{i} - $#{i+segment.increment-1}" %>", <%= segment.listings.where("price >= ? AND price < ?", i, i+segment.increment).count %>],
+        <% end %>
+        ]);
+
+    var options = {
+      title: 'Number of Listings by Price Range',
+      hAxis: {title: 'Number of Listings', showTextEvery: 1},
+      vAxis: {title: 'Price Range', showTextEvery: 1},
+      legend: {position: 'none'},
+      chartArea:{top:"5%", height:"85%"}
+    };
+
+    var chart = new google.visualization.BarChart(document.getElementById('chart_div_<%= segment.unique_id %>'));
+    chart.draw(data, options);
+  }
+</script>

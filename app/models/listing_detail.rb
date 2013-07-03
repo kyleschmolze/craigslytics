@@ -1,5 +1,5 @@
 class ListingDetail < ActiveRecord::Base
-  attr_accessible :body, :body_type, :source, :raw_body, :user_id, :u_id
+  attr_accessible :body, :body_type, :source, :raw_body, :user_id, :u_id, :description
   attr_accessor :raw_body
 
   after_initialize :set_raw_body

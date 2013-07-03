@@ -1,0 +1,36 @@
+<div class="row-fluid">
+
+  <div class="well well-small span12">
+    <h4><%= listing.address %></h4>
+    <p>
+      <% if listing.bedrooms == nil or listing.bedrooms == 0 %>
+        Studio<br>
+      <% else %>
+        <%= pluralize listing.bedrooms, 'bedroom' %><br>
+      <% end %>
+      <% price = listing.price || 0 %>
+      <% if median %>
+        <% if price < median %>
+          <span class='text-success'>$<%= price %> / month</span>
+        <% elsif price > median %>
+          <span class='text-error'>$<%= price %> / month</span>
+        <% else %>
+          $<%= price %> / month
+        <% end %>
+      <% else %>
+        $<%= price %> / month
+      <% end %>
+    </p>
+
+    <p>
+      <% for tag in listing.tags do %>
+        <span class="badge badge-info"><%= tag.name %></span>
+      <% end %>
+    </p>
+
+    <div class="full-listing">
+      <h4><%= listing.listing_detail.raw_body["heading"] %></h4>
+      <%= listing.listing_detail.raw_body["body"] %>
+    </div>
+  </div>
+</div>

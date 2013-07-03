@@ -22,3 +22,16 @@
     background-image: -o-linear-gradient(top, transparent, black);
   }
 }
+
+#sidebar {
+  padding-left: 10px;
+  padding-right: 10px;
+  height: 101%;
+  box-shadow: 15px 0 8px -8px #ccc , -15px 0 8px -8px #ccc; 
+  -moz-box-shadow: 15px 0 8px -8px #ccc , -15px 0 8px -8px #ccc; 
+  -webkit-box-shadow: 15px 0 8px -8px #ccc , -15px 0 8px -8px #ccc; 
+
+  h5 {
+    margin-bottom: 0px;
+  }
+}

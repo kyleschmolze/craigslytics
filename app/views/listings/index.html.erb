@@ -1,36 +1,69 @@
-<br>
-<div style="text-align:center">
-  <%= form_tag listings_path, method: "GET", class: "form-inline" do %>
-    
-    <%= text_field "address", nil, placeholder:"Address", value: "#{params[:address][0] if params[:address].present?}" %>
-    <%= number_field "bedrooms", nil, placeholder:"Number of Bedrooms", value: "#{params[:bedrooms][0] if params[:bedrooms].present?}" %>
-    <%= submit_tag "GO", class: "btn btn-danger" %>
+<% content_for :sidebar do %>
+  <div id="sidebar" class="affix" style="top:41px">
     <br>
-    <label class='checkbox'>
-      <%= check_box_tag "tags[water]", 1, (params[:tags].present? and params[:tags]["water"]) %> Water Included
-    </label>
-    <label class='checkbox'>
-      <%= check_box_tag "tags[electric]", 1, (params[:tags].present? and params[:tags]["electric"]) %> Electricity Included
-    </label>
-    <label class='checkbox'>
-      <%= check_box_tag "tags[gas]", 1, (params[:tags].present? and params[:tags]["gas"]) %> Gas Included
-    </label>
-    <br>
-    <label class='checkbox'>
-      <%= check_box_tag "tags[hardwood]", 1, (params[:tags].present? and params[:tags]["hardwood"]) %> Hardwood Floors
-    </label>
-    <label class='checkbox'>
-      <%= check_box_tag "tags[patio]", 1, (params[:tags].present? and params[:tags]["patio"]) %> Has a Patio
-    </label>
-    <label class='checkbox'>
-      <%= check_box_tag "tags[fireplace]", 1, (params[:tags].present? and params[:tags]["fireplace"]) %> Has a Fireplace
-    </label>
-  <% end %>
-</div>
+    <div class="row-fluid">
+      <%= form_tag listings_path, method: "GET", class: "form-inline", style: "margin-bottom:0" do %>
+        <% value = nil %>
+        <% if @geocoded_address.present? %>
+          <% value = @geocoded_address.formatted_address %>
+        <% elsif params[:address].present? %>
+          <% value = params[:address][0] %>
+        <% end %>
+        
+        <%= text_field "address", nil, placeholder:"Address", value: "#{value}", class: "span9" %>
+        <%= number_field "bedrooms", nil, placeholder:"Bedrooms", value: "#{params[:bedrooms][0] if params[:bedrooms].present?}", class: "span3" %>
+        <br>
+        <h5>Utilities:</h5>
+        <label class='checkbox'>
+          <%= check_box_tag "tags[water]", 1, (params[:tags].present? and params[:tags]["water"]) %> Water Included
+        </label>
+        <label class='checkbox'>
+          <%= check_box_tag "tags[electric]", 1, (params[:tags].present? and params[:tags]["electric"]) %> Electricity Included
+        </label>
+        <label class='checkbox'>
+          <%= check_box_tag "tags[gas]", 1, (params[:tags].present? and params[:tags]["gas"]) %> Gas Included
+        </label>
+        <br>
+        <h5>Amenities:</h5>
+        <label class='checkbox'>
+          <%= check_box_tag "tags[hardwood]", 1, (params[:tags].present? and params[:tags]["hardwood"]) %> Hardwood Floors
+        </label>
+        <label class='checkbox'>
+          <%= check_box_tag "tags[patio]", 1, (params[:tags].present? and params[:tags]["patio"]) %> Has a Patio
+        </label>
+        <label class='checkbox'>
+          <%= check_box_tag "tags[fireplace]", 1, (params[:tags].present? and params[:tags]["fireplace"]) %> Has a Fireplace
+        </label>
+        <br>
+        <br>
+        <%= submit_tag "GO", class: "btn btn-danger submit-button", style: "width: 100%" %>
+        <br>
+        <br>
+      <% end %>
+    </div>
+    <% if @listings.present? %>
+      <div class="row-fluid">
+        <%= render partial: "segments/location", locals: {listings: @listings, segment: @segment, geocoded_address: @geocoded_address} %>
+      </div>
+    <% end %>
+  </div>
+<% end %>
+
 <% if @listings.present? %>
   
-  <%= render partial: "segments/overview", locals: {segment: @segment, utilities: @utilities, geocoded_address: @geocoded_address.present? ? @geocoded_address : nil} %>
-  <br>
+  <div class="row-fluid">
+    <div class="span6">
+      <div class="row-fluid">
+        <%= render partial: "segments/overview", locals: {segment: @segment} %>
+      </div>
+      <div class="row-fluid">
+        <%= render partial: "segments/utilities_analysis", locals: {utilities: @utilities} %>
+      </div>
+    </div>
+    <div class="span6">
+      <%= render partial: "segments/price_distribution", locals: {segment: @segment} %>
+    </div>
+  </div>
 
   <h3>Listings</h3>
 
@@ -38,7 +71,6 @@
   <script type="text/javascript">
     function imgerror(element) {
       $(element).closest('li').remove();
-      console.log('removing failed');
     }
   </script>
 
@@ -66,7 +98,6 @@
         pic_real_height = this.height; // work for in memory images.
         if((pic_real_width < 250) || (pic_real_height < 250)) {
           $(img).parent().remove();
-          console.log('removing');
         }
       })
     })

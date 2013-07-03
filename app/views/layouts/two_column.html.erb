@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%= render partial: 'layouts/head' %>
+    <script>
+      function resize_sidebar(){
+        var new_width = $("#s4").width() - 20;
+        $("#sidebar").css({"width": new_width + "px"});
+      }
+
+      function check_sidebar_height(){
+        if ($(document).scrollTop() > $("#analysis_navbar").height()){
+          $("#sidebar").css({"top": 0});
+        }
+        else if ($(document).scrollTop() > 0){
+          top_height = $("#analysis_navbar").height() - $(document).scrollTop()
+          $("#sidebar").css({"top": top_height});
+        }
+        else{
+          top_height = $("#analysis_navbar").height()
+          $("#sidebar").css({"top": top_height});
+        }
+      }
+
+      $(document).ready(function(){
+        resize_sidebar();
+        check_sidebar_height();
+      });
+    </script>
+  </head>
+  <body class='application-body <%= @body_class %>' onresize="resize_sidebar()" onscroll="check_sidebar_height()"> 
+
+    <div class="navbar navbar-static-top navbar-inverse" id="analysis_navbar">
+      <div class="navbar-inner">
+        <div class="container-fluid">
+          <a class="brand" href="/">Rentalyzer</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-fluid">
+      <div class="row-fluid">
+        <div class="span4" id="s4">
+          <%= yield :sidebar %>
+        </div>
+        <div class="span8">
+          <%= yield %>
+        </div>
+      </div>
+    </div>
+
+  </body>
+</html>

@@ -1,0 +1,11 @@
+<div class="span12">
+  <h3>Utilities Analysis</h3>
+  <table class='table'>
+    <% for utility in Tag.where(category: "utility") do %>
+      <tr>
+        <td> Median Price without <%= utility.display %>: <%= utilities["without_#{utility.search_term}"] %></td>
+        <td> Median Price with <%= utility.display %>: <%= utilities["with_#{utility.search_term}"] %></td>
+      </tr>
+    <% end %>
+  </table>
+</div>
