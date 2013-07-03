@@ -1,0 +1,25 @@
+
+<%= form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f| %>
+  <div class='row-fluid'>
+    <div class='span8 offset2' style='text-align:center; margin-top:5%;'>
+      <div class='span8 offset2' style='background-color:white; border-style:solid; border-width:2px; border-radius:10px; border-color:black;'>
+        <div style='border-top-left-radius:9px; border-top-right-radius:9px; background-color:#4D70B8;'>
+          <h3 style='color:white; margin-top:0;'> Sign In</h3>
+        </div>
+        <div><%= f.label :email %>
+          <%= f.email_field :email, :autofocus => true %></div>
+        <div><%= f.label :password %>
+          <%= f.password_field :password %></div>
+        <% if devise_mapping.rememberable? -%>
+          <div>Remember Me? <%= f.check_box :remember_me, style: 'margin-left:10px; vertical-align:top;' %></div>
+        <% end -%>
+        <br />
+        <div><%= f.submit "Sign in", class: 'btn'%></div>
+        <br />
+      </div>
+    </div>
+  </div>
+<% end %>
+<div class='row-fluid'>
+  <%= render "devise/shared/links" %>
+</div>

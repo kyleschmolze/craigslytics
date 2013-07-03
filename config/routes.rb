@@ -1,4 +1,8 @@
 Craigslytics::Application.routes.draw do
+  get "users/login"
+
+  devise_for :users
+
   resources :listing_imports do
     collection do
       match :poll

@@ -1,5 +1,5 @@
 class ListingDetail < ActiveRecord::Base
-  attr_accessible :body, :body_type, :source, :raw_body, :user_id, :u_id
+  attr_accessible :body, :body_type, :source, :raw_body, :user_id, :u_id, :description
   attr_accessor :raw_body
 
   after_initialize :set_raw_body
@@ -19,7 +19,7 @@ class ListingDetail < ActiveRecord::Base
       self.description = self.raw_body["body"]
     elsif source == "zillow"
       noko = Nokogiri::XML(self.raw_body)
-      self.description = noko.css("description").text
+      self.description = noko.css("received_description").text
     end
   end
 

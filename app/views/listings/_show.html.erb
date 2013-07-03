@@ -82,8 +82,13 @@
       <%= link_to 'Show Full Listing', 'javascript:void(0);', class: 'btn span12 show-full-listing', style: "text-align:center;" %>
     </div>
     <div class="hide full-listing">
-      <h4><%= listing.listing_detail.raw_body["heading"] %></h4>
-      <%= listing.listing_detail.raw_body["body"] %>
+      <% if listing.listing_detail.source == "craigslist" %>
+        <h4><%= listing.listing_detail.raw_body["heading"] %></h4>
+      <% else %>
+        <h4>Description:</h4>
+      <% end %>
+      <%= listing.listing_detail.description %>
+
     </div>
   </div>
 </div>

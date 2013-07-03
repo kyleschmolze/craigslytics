@@ -2,7 +2,7 @@ class ListingsController < ApplicationController
   # GET /listings
   # GET /listings.json
   def index
-    @listings = Listing
+    @listings = Listing.where(user_id: 1)
     # If bedrooms is set, 
     #   only grab listings with that number of bedrooms
     if params[:bedrooms].present? and !params[:bedrooms][0].blank?
