@@ -2,10 +2,6 @@
   <h3>Utilities Analysis</h3>
   <table class='table' style="text-align:center">
     <% for utility in Tag.where(category: "utility") do %>
-      <% puts "here!" %> 
-      <% puts "here!" %> 
-      <% puts "here!" %> 
-      <% puts utilities %>
       <% if !utilities["value_#{utility.search_term}?"].nil? %>
         <tr>
           <% if utilities["value_#{utility.search_term}?"] == "increased" %>

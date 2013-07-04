@@ -2,7 +2,7 @@ class ListingsController < ApplicationController
   # GET /listings
   # GET /listings.json
   def index
-    @listings = Listing
+    @listings = Listing.where("price IS NOT ?", nil)
     @geocoded_address = nil
     # If bedrooms is set, 
     #   only grab listings with that number of bedrooms
@@ -21,7 +21,6 @@ class ListingsController < ApplicationController
         @listings = @listings.near(nil, 1)
       end
     end
-    @listings = @listings.where("price IS NOT ?", nil)
     # Building hash of utility medians
     @utilities = {}
     for utility in Tag.where(category: "utility") do 
@@ -114,6 +113,7 @@ class ListingsController < ApplicationController
     @segment = Segment.new(@listings) if @listings.present?
     # Order the listings by price (will be ordered by [location & price] if address is set), pull tags, and paginate
     @listings = @listings.order(:price).includes(:tags).page(params[:page]).per(50)
+    puts @listings.first(50)
 
 
     respond_to do |format|
