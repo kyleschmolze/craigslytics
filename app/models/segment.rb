@@ -27,7 +27,7 @@ class Segment
       @increment += 50
     end
     @adjusted_min = @min_price - (@min_price % @increment)
-    @adjusted_max = @max_price + (@max_price % @increment)
+    @adjusted_max = @max_price - (@max_price % @increment) + @increment
     @unique_id = SecureRandom.uuid
   end
 

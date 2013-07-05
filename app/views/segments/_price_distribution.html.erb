@@ -18,8 +18,12 @@
   function drawChart() {
     var data = google.visualization.arrayToDataTable([
         ['Price', 'Listings'],
-        <% (segment.adjusted_min..segment.adjusted_max+1).step(segment.increment) do |i| %>
-        ["<%= "$#{i} - $#{i+segment.increment-1}" %>", <%= segment.listings.where("price >= ? AND price < ?", i, i+segment.increment).count %>],
+        <% (segment.adjusted_min..segment.adjusted_max).step(segment.increment) do |i| %>
+          <% if i == (segment.adjusted_max) %>
+            ["<%= "$#{i} - $#{i+segment.increment-1}" %>", <%= segment.listings.where("price >= ? AND price < ?", i, i+segment.increment).count %>]
+          <% else %>
+            ["<%= "$#{i} - $#{i+segment.increment-1}" %>", <%= segment.listings.where("price >= ? AND price < ?", i, i+segment.increment).count %>],
+          <% end %>
         <% end %>
         ]);
 

@@ -113,8 +113,6 @@ class ListingsController < ApplicationController
     @segment = Segment.new(@listings) if @listings.present?
     # Order the listings by price (will be ordered by [location & price] if address is set), pull tags, and paginate
     @listings = @listings.order(:price).includes(:tags).page(params[:page]).per(50)
-    puts @listings.first(50)
-
 
     respond_to do |format|
       format.html { render layout: 'two_column' }
