@@ -1,5 +1,4 @@
 Craigslytics::Application.routes.draw do
-  get "users/login"
 
   devise_for :users
 
@@ -16,6 +15,6 @@ Craigslytics::Application.routes.draw do
     end
   end
 
-  root :to => 'analyses#home'
+  root :to => 'listings#index'
   mount Resque::Server, :at => "/resque"
 end
