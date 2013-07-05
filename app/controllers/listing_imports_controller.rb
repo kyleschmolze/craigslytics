@@ -75,6 +75,16 @@ class ListingImportsController < ApplicationController
     end
   end
 
+  def poll
+    if Rails.env.production?
+      Resque.enqueue ListingImporter, (ListingImporter.where(:source => 'craigslist').first.id)
+    end
+    respond_to do |format|
+      format.html { redirect_to listing_imports_path, notice: 'Polling Job Enqueued.' }
+      format.json { head :no_content }
+    end
+  end
+
   # DELETE /listing_imports/1
   # DELETE /listing_imports/1.json
   def destroy

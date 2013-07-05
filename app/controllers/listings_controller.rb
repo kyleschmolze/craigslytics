@@ -2,7 +2,7 @@ class ListingsController < ApplicationController
   # GET /listings
   # GET /listings.json
   def index
-    @listings = Listing.where("price IS NOT ?", nil)
+    @listings = Listing.where(user_id: 1)
     @geocoded_address = nil
     # If bedrooms is set, 
     #   only grab listings with that number of bedrooms
@@ -119,8 +119,7 @@ class ListingsController < ApplicationController
       format.json { render json: @listings }
       format.pdf { 
           render pdf: 'index',
-                 layout: 'default',  
-                 :show_as_html => params[:debug]
+                 layout: 'default'
       }
     end
   end

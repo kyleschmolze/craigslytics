@@ -18,7 +18,7 @@ class CraigslistImporter
 
 
     response = poll(anchor, metro)
-    while response["postings"].present? and response["anchor"].present? do
+    while response["anchor"].present? do
       
       self.listing_import.update_column(:current_anchor, anchor)
       postings = response["postings"]

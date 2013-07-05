@@ -4,7 +4,7 @@ class ListingTag < ActiveRecord::Base
   belongs_to :listing
 
   validate do |lt| 
-    if ListingTag.where(listing_id:lt.listing_id, tag_id:lt.tag_id).exists?
+    if ListingTag.where(listing_id: lt.listing_id, tag_id: lt.tag_id).exists?
       lt.errors[:base] << "ListingTag associations are unique"
     end
 
@@ -12,8 +12,8 @@ class ListingTag < ActiveRecord::Base
     if lt.new_record? 
       if Tag.find(lt.tag_id).category == "unit_type"
         found = false
-        ListingTag.where(listing_id:lt.listing_id).each do |i|
-          found = true if i.tag.category == "unit_type"
+        ListingTag.where(listing_id: lt.listing_id).each do |i|
+          found = true if i.tag.category == "unit_type" if i.tag
         end
         lt.errors[:tag] << "Listings can only have one unit_type" if found
       end

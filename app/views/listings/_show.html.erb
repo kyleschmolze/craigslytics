@@ -49,6 +49,8 @@
     <div class="hide full-listing">
       <% if listing.listing_detail.source == "craigslist" %>
         <h4><%= listing.listing_detail.raw_body["heading"] %></h4>
+      <% else %>
+        <h4>Description:</h4>
       <% end %>
       <%= listing.listing_detail.description %>
     </div>

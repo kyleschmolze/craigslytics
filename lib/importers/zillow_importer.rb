@@ -14,10 +14,10 @@ class ZillowImporter
         self.feed(:page => page).each do |listing|
           self.save_listing(listing)
 
-          if Rails.env.development? and stats[:total] >= 100 #testing
-            p stats
-            return 
-          end
+          #if Rails.env.development? and stats[:total] >= 100 #testing
+          #  p stats
+          #  return 
+          #end
 
         end
       end

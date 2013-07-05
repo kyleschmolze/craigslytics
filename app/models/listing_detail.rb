@@ -19,7 +19,7 @@ class ListingDetail < ActiveRecord::Base
       self.description = self.raw_body["body"]
     elsif source == "zillow"
       noko = Nokogiri::XML(self.raw_body)
-      self.description = noko.css("description").text
+      self.description = noko.css("received_description").text
     end
   end
 

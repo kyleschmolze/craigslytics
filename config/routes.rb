@@ -1,5 +1,12 @@
 Craigslytics::Application.routes.draw do
-  resources :listing_imports
+
+  devise_for :users
+
+  resources :listing_imports do
+    collection do
+      match :poll
+    end
+  end
   resources :listings
   resources :listing_comparisons
   resources :analyses do
@@ -8,6 +15,6 @@ Craigslytics::Application.routes.draw do
     end
   end
 
-  root :to => 'analyses#home'
+  root :to => 'listings#index'
   mount Resque::Server, :at => "/resque"
 end
