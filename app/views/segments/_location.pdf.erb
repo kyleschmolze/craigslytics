@@ -1,4 +1,5 @@
-<div class="span12" style="border-style:solid;border-color:black;border-width:1px">
+<div class="span6">
+  <h3>Location</h3>
   <div id="map_canvas_<%= segment.unique_id %>" style="height:300px;text-align:center;">
     <%= image_tag 'loading.gif' %>
   </div>
@@ -71,8 +72,5 @@
 
     map.fitBounds(map_bounds);
   }
-  //google.maps.event.addDomListener(window, 'ready', initialize);
-  $(document).ready(function(){
-    initialize();
-  });
+  google.maps.event.addDomListener(window, 'load', initialize);
 </script>

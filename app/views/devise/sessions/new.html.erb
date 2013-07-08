@@ -2,10 +2,8 @@
 <%= form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f| %>
   <div class='row-fluid'>
     <div class='span8 offset2' style='text-align:center; margin-top:5%;'>
-      <div class='span8 offset2' style='background-color:white; border-style:solid; border-width:2px; border-radius:10px; border-color:black;'>
-        <div style='border-top-left-radius:9px; border-top-right-radius:9px; background-color:#4D70B8;'>
-          <h3 style='color:white; margin-top:0;'> Sign In</h3>
-        </div>
+      <div class='span8 offset2' style='background-color:white; border-style:solid; border-width:2px; border-radius:10px; border-color:black; overflow:hidden'>
+        <h3 style='color:white; margin-top:0; background-color:#4D70B8;'> Sign In</h3>
         <div><%= f.label :email %>
           <%= f.email_field :email, :autofocus => true %></div>
         <div><%= f.label :password %>

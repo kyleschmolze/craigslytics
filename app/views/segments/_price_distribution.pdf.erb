@@ -1,4 +1,4 @@
-<div class="span12">
+<div class="span6">
   <h3>Price Distribution</h3>
   <p>
     This graph shows the distribution of prices for these listings.
@@ -13,7 +13,7 @@
 <!-- Google Charts -->
 <script type="text/javascript">
   google.load("visualization", "1", {packages:["corechart"]});
-  //google.setOnLoadCallback(drawChart);
+  google.setOnLoadCallback(drawChart);
 
   function drawChart() {
     var data = google.visualization.arrayToDataTable([
@@ -38,8 +38,4 @@
     var chart = new google.visualization.BarChart(document.getElementById('chart_div_<%= segment.unique_id %>'));
     chart.draw(data, options);
   }
-
-  $(document).ready(function(){
-    drawChart();
-  });
 </script>

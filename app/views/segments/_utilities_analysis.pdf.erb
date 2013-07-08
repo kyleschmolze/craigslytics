@@ -1,0 +1,18 @@
+<div class="span6">
+  <h3>Utilities Analysis</h3>
+  <table class='table' style="text-align:center">
+    <% for utility in Tag.where(category: "utility") do %>
+      <% if !utilities["value_#{utility.search_term}?"].nil? %>
+        <tr>
+          <% if utilities["value_#{utility.search_term}?"] == "increased" %>
+            <td style="color:green"> Apartments with <%= utility.display %> had <%= utilities["percent_value_#{utility.search_term}"] %>% more value </td>
+          <% elsif utilities["value_#{utility.search_term}?"] == "decreased" %>
+            <td style="color:red"> Apartments with <%= utility.display %> had <%= utilities["percent_value_#{utility.search_term}"] %>% less value </td>
+          <% elsif utilities["value_#{utility.search_term}?"] == "equal" %>
+            <td> Apartments with <%= utility.display %> included had no change in value</td>
+          <% end %>
+        </tr>
+      <% end %>
+    <% end %>
+  </table>
+</div>
