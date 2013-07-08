@@ -30,13 +30,13 @@ class ListingsController < ApplicationController
       #   build a list of the tags in the parameters with the current utility
       #   and a list of the lasgs in the parameters without the current utility
       if params[:tags].present?
-        list_without_current_util = params[:tags].keys - ["#{utility.search_term}"]
-        list_with_current_util = (params[:tags].keys + ["#{utility.search_term}"]).uniq
+        list_without_current_util = params[:tags].keys - ["#{utility.name}"]
+        list_with_current_util = (params[:tags].keys + ["#{utility.name}"]).uniq
       # Else there are no tags in the parameters,
       #   build a list with just the current tag and a list with no tags (nil)
       else
         list_without_current_util = nil
-        list_with_current_util = ["#{utility.search_term}"]
+        list_with_current_util = ["#{utility.name}"]
       end
       # Determine median of the listings without the current utility:
       
@@ -46,17 +46,17 @@ class ListingsController < ApplicationController
       if list_without_current_util.present?
         tables = []
         for tag in list_without_current_util
-          tables << Tag.where(search_term: tag).first.listings.map{|l| l.id}
+          tables << Tag.where(name: tag).first.listings.map{|l| l.id}
         end
         ids = tables.inject(:&)
-        exclude_util_ids = Tag.where(search_term: utility.search_term).first.listings.map{|l| l.id}
+        exclude_util_ids = Tag.where(name: utility.name).first.listings.map{|l| l.id}
         ids = ids - exclude_util_ids
         prices = @listings.where(id: ids).reorder(:price).map{|l| l.price} 
       # Else the list of tags is empty,
       #   grab all listing prices that don't have the current utility
       else
         ids = @listings.all.map{|l| l.id}
-        exclude_util_ids = Tag.where(search_term: utility.search_term).first.listings.map{|l| l.id}
+        exclude_util_ids = Tag.where(name: utility.name).first.listings.map{|l| l.id}
         ids = ids - exclude_util_ids
         prices = @listings.where(id: ids).reorder(:price).all.map{|l| l.price}
       end
@@ -66,12 +66,12 @@ class ListingsController < ApplicationController
       else
         med = nil
       end
-      @utilities["without_#{utility.search_term}"] = med
+      @utilities["without_#{utility.name}"] = med
       # Determine median of the listings with the current utility:
 
       tables = []
       for tag in list_with_current_util
-        tables << Tag.where(search_term: tag).first.listings.map{|l| l.id}
+        tables << Tag.where(name: tag).first.listings.map{|l| l.id}
       end
       ids = tables.inject(:&)
       prices = @listings.where(id: ids).reorder(:price).map{|l| l.price} 
@@ -81,21 +81,21 @@ class ListingsController < ApplicationController
       else
         med = nil
       end
-      @utilities["with_#{utility.search_term}"] = med
+      @utilities["with_#{utility.name}"] = med
 
-      without = "without_#{utility.search_term}"
-      with = "with_#{utility.search_term}"
+      without = "without_#{utility.name}"
+      with = "with_#{utility.name}"
       if @utilities[without] == nil or @utilities[with] == nil
-        @utilities["value_#{utility.search_term}?"] = nil
+        @utilities["value_#{utility.name}?"] = nil
       elsif @utilities[without] == @utilities[with]
-        @utilities["value_#{utility.search_term}?"] = "equal"
-        @utilities["percent_value_#{utility.search_term}"] = 0
+        @utilities["value_#{utility.name}?"] = "equal"
+        @utilities["percent_value_#{utility.name}"] = 0
       elsif @utilities[without] < @utilities[with]
-        @utilities["value_#{utility.search_term}?"] = "increased"
-        @utilities["percent_value_#{utility.search_term}"] = (( (@utilities[with] - @utilities[without]) / ( 1.0 * (@utilities[without]) )) * 100).round(2)
+        @utilities["value_#{utility.name}?"] = "increased"
+        @utilities["percent_value_#{utility.name}"] = (( (@utilities[with] - @utilities[without]) / ( 1.0 * (@utilities[without]) )) * 100).round(2)
       else
-        @utilities["value_#{utility.search_term}?"] = "decreased"
-        @utilities["percent_value_#{utility.search_term}"] = (( (@utilities[with] - @utilities[without]) / ( 1.0 * (@utilities[without]) )) * -100).round(2)
+        @utilities["value_#{utility.name}?"] = "decreased"
+        @utilities["percent_value_#{utility.name}"] = (( (@utilities[with] - @utilities[without]) / ( 1.0 * (@utilities[without]) )) * -100).round(2)
       end
 
     end
@@ -105,7 +105,7 @@ class ListingsController < ApplicationController
       tags = params[:tags].keys
       tables = []
       for tag in tags do
-        tables << Tag.where(search_term: tag).first.listings.map{|l| l.id}
+        tables << Tag.where(name: tag).first.listings.map{|l| l.id}
       end
       ids = tables.inject(:&)
       @listings = @listings.where(:id => ids) 
