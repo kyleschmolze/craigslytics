@@ -1,4 +1,4 @@
-<meta charset="utf-8">
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title><%= content_for?(:title) ? yield(:title) : "Rentalyzer" %></title>
@@ -12,12 +12,16 @@
 <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true&libraries=visualization,drawing"></script>
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 
-<% # stylesheet_link_tag "application", :media => "all" %>
-<% # javascript_include_tag "application" %> 
+<% # stylesheet_link_tag "application", :media => "all", debug: true %>
+<% # javascript_include_tag "application", debug: true %> 
 <%= wicked_pdf_stylesheet_link_tag "application", :media => "all" %>
 <%= wicked_pdf_javascript_include_tag "application" %> 
+<% # stylesheet_link_tag "//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css", media: "all" %>
+<% # stylesheet_link_tag "//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css", media: "all" %>
+<% # javascript_include_tag "//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js" %>
 
 <link href="//netdna.bootstrapcdn.com/font-awesome/3.1.1/css/font-awesome.css" rel="stylesheet">
+
 
 <!-- Google Analytics -->
 <script>

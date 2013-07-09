@@ -5,9 +5,9 @@
       <% if !utilities["value_#{utility.name}?"].nil? %>
         <tr>
           <% if utilities["value_#{utility.name}?"] == "increased" %>
-            <td style="color:green"> Apartments with <%= utility.display %> had <i class="icon-arrow-up"></i> <%= utilities["percent_value_#{utility.name}"] %>% more value </td>
+            <td> Apartments with <%= utility.display %> had <span style="color:green"><i class="icon-arrow-up"></i> <%= utilities["percent_value_#{utility.name}"] %>%</span> more value </td>
           <% elsif utilities["value_#{utility.name}?"] == "decreased" %>
-            <td style="color:red"> Apartments with <%= utility.display %> had <i class="icon-arrow-down"></i> <%= utilities["percent_value_#{utility.name}"] %>% less value </td>
+            <td> Apartments with <%= utility.display %> had <span style="color:red"><i class="icon-arrow-down"></i> <%= utilities["percent_value_#{utility.name}"] %>%</span> less value </td>
           <% elsif utilities["value_#{utility.name}?"] == "equal" %>
             <td> Apartments with <%= utility.display %> included had no change in value</td>
           <% end %>

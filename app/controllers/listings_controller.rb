@@ -2,7 +2,7 @@ class ListingsController < ApplicationController
   # GET /listings
   # GET /listings.json
   def index
-    @listings = Listing.where(user_id: 1)
+    @listings = Listing
     @geocoded_address = nil
     # If bedrooms is set, 
     #   only grab listings with that number of bedrooms
@@ -118,8 +118,16 @@ class ListingsController < ApplicationController
       format.html { render layout: 'two_column' }
       format.json { render json: @listings }
       format.pdf { 
-          render pdf: 'index',
-                 layout: 'default'
+        render pdf: "listing_analysis_at_#{@geocoded_address.formatted_address}",
+               layout: 'default',
+               disposition: 'attachment',
+               margin: { :bottom => 15 },
+               footer: {
+                 html: {
+                   template: 'pdf_footer.pdf.erb'
+                 },
+               },
+               show_as_html: params[:debug].present?
       }
     end
   end

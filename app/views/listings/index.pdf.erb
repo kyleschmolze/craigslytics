@@ -1,18 +1,15 @@
 <div class="row-fluid">
-  <%= render partial: "segments/overview", formats: [:html], locals: {segment: @segment} %>
-  <%= render partial: "segments/location", formats: [:html], locals: {segment: @segment, geocoded_address: @geocoded_address.present? ? @geocoded_address : nil} %>
+  <div class="span12" style="border-style:solid;border-color:black;border-width:1px">
+    <h3 style="text-align:center">Your Company Here</h3>
+  </div>
+</div>
+
+<div class="row-fluid">
+  <%= render partial: "segments/overview", locals: {segment: @segment} %>
+  <%= render partial: "segments/location", locals: {listings: @listings, segment: @segment, geocoded_address: @geocoded_address} %>
 </div>
 <div class="row-fluid">
-  <%= render partial: "segments/price_distribution", formats: [:html], locals: {segment: @segment} %>
-  <%= render partial: "segments/utilities_analysis", formats: [:html], locals: {utilities: @utilities} %>
+  <%= render partial: "segments/price_distribution", locals: {segment: @segment} %>
+  <%= render partial: "segments/utilities_analysis", locals: {utilities: @utilities} %>
 </div>
-
-<!-- 
-<h3>Listings</h3>
-
-<% for listing in @listings.first(10) do%>
-  <div style="page-break-before:always;"></div>
-  <%= render partial: "show", locals: {listing: listing, median: @segment.present? ? @segment.median : nil} %>
-<% end %>
--->
 

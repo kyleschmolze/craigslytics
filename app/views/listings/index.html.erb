@@ -65,6 +65,10 @@
     </div>
   </div>
 
+  <% if @geocoded_address.present? %>
+    <a href="/listings.pdf?<%= params.to_query %>" class="btn btn-danger">Export As PDF</a>
+  <% end %>
+
   <h3>Listings</h3>
 
   <!-- Image Load Error -->

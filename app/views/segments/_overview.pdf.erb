@@ -1,0 +1,26 @@
+<div class="span6">
+  <h3>Overview</h3>
+  <p>
+    There are <strong><%= segment.listings.count %> similar listings</strong>. 
+    You can see them on the map.<br>
+    Here are a few quick facts about these listings:
+  </p>
+  <table class='table'>
+    <tr>
+      <td> Number of listings </td>
+      <td> <%= segment.listings.count %> </td>
+    </tr>
+    <tr>
+      <td> Lowest price </td>
+      <td> $<%= segment.min_price %> / month </td>
+    </tr>
+    <tr>
+      <td> Median price </td>
+      <td> $<%= segment.median %> / month </td>
+    </tr>
+    <tr>
+      <td> Highest price </td>
+      <td> $<%= segment.max_price %> / month </td>
+    </tr>
+  </table>
+</div>
