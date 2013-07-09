@@ -146,12 +146,53 @@ class Tag < ActiveRecord::Base
     end
   end
 
-  def extract_field(l)
+  def ygl_extract_field(l)
+    if l.listing_detail.raw_body.present?
+      noko = Nokogiri::XML(l.listing_detail.raw_body)
+
+      if self.category == "amenity"
+        features = noko.css("Features")
+        features.each do |f|
+          if f.text.match /#{self.search_term}/i
+            ListingTag.create({listing_id: l.id, tag_id: self.id}) 
+          end
+        end
+      elsif self.category == "utility"
+        if self.name == "gas"
+          if t = noko.css("IncludeGas")
+            ListingTag.create({listing_id: l.id, tag_id: self.id}) if t.text.match /1/i
+          end
+        end
+        if self.name == "water"
+          if t = noko.css("IncludeHotWater")
+            ListingTag.create({listing_id: l.id, tag_id: self.id}) if t.text.match /1/i
+          end
+        end
+        if self.name == "heat"
+          if t = noko.css("IncludeHeat")
+            ListingTag.create({listing_id: l.id, tag_id: self.id}) if t.text.match /1/i
+          end
+        end
+        if self.name == "electric"
+          if t = noko.css("IncludeElectricity")
+            ListingTag.create({listing_id: l.id, tag_id: self.id}) if t.text.match /1/i
+          end
+        end
+        if self.name == "cats" or self.name == "dogs"
+          if t = noko.css("Pet")
+            ListingTag.create({listing_id: l.id, tag_id: self.id}) if !t.text.match /No Pet/i
+          end
+        end
+      end
+    end
+  end
+
+  def zillow_extract_field(l)
     if l.listing_detail.raw_body.present?
       noko = Nokogiri::XML(l.listing_detail.raw_body)
 
       # parse for fields we know are there; i.e. parking
-      extract_specific_fields l
+      zillow_extract_specific_fields l
 
       if self.category == "amenity"
         features = noko.css("features")
@@ -169,7 +210,7 @@ class Tag < ActiveRecord::Base
     end
   end
 
-  def extract_specific_fields(l)
+  def zillow_extract_specific_fields(l)
     noko = Nokogiri::XML(l.listing_detail.raw_body)
     # parking
     if self.name == "parking"

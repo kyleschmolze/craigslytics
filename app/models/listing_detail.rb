@@ -20,6 +20,9 @@ class ListingDetail < ActiveRecord::Base
     elsif source == "zillow"
       noko = Nokogiri::XML(self.raw_body)
       self.description = noko.css("received_description").text
+    elsif source == "ygl"
+      noko = Nokogiri::XML(self.raw_body)
+      self.description = "no descripton"
     end
   end
 
@@ -33,6 +36,8 @@ class ListingDetail < ActiveRecord::Base
       self.listing.assign_attributes(self.craigslist_attributes)
     elsif self.source == "zillow" and self.body_type.match(/xml/i)
       self.listing.assign_attributes(self.zillow_attributes)
+    elsif self.source == "ygl" and self.body_type.match(/xml/i)
+      self.listing.assign_attributes(self.ygl_attributes)
     end
   end
 
@@ -75,6 +80,20 @@ class ListingDetail < ActiveRecord::Base
     }
   end
 
+  def ygl_attributes
+    noko = Nokogiri::XML(self.raw_body)
+    expired_at = noko.css("Status").text.match(/onmarket/i) ? 1.day.from_now : 1.minute.ago
+    {
+      :latitude => noko.css("Latitude").text,
+      :longitude => noko.css("Longitude").text,
+      :price => noko.css("Price").text,
+      :bedrooms => noko.css("Beds").text,
+      :address => "#{noko.css("StreetNumber").text} #{noko.css("StreetName").text} #{noko.css("City").text} #{noko.css("State").text} #{noko.css("Zip").text}",
+      :expired_at => expired_at,
+      :user_id => self.user_id
+    }
+  end
+
   def self.del_all
     Listing.delete_all
     ListingTag.delete_all
@@ -82,9 +101,10 @@ class ListingDetail < ActiveRecord::Base
   end
 
   def self.quick_import
-    require 'importers/zillow_importer'; require 'importers/craigslist_importer'
+    require 'importers/zillow_importer'; require 'importers/craigslist_importer'; require 'importers/ygl_importer'
     ZillowImporter.perform 1
     #CraigslistImporter.perform
+    #YglImporter.perform 2
   end
 
   def self.quick_cl

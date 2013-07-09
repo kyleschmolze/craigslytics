@@ -1,5 +1,6 @@
 require 'importers/zillow_importer'
 require 'importers/craigslist_importer'
+require 'importers/ygl_importer'
 
 class ListingImporter < ActiveRecord::Base
   attr_accessible :api_key, :source, :user_id, :metro
@@ -17,6 +18,10 @@ class ListingImporter < ActiveRecord::Base
       elsif listing_importer.source == 'craigslist'
         craigslist_importer = CraigslistImporter.new
         craigslist_importer.import(listing_importer)
+
+      elsif listing_importer.source == 'ygl'
+        ygl_importer = YglImporter.new
+        ygl_importer.import(listing_importer)
       end
 
     rescue => e

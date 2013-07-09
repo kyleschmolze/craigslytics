@@ -66,7 +66,9 @@ class Listing < ActiveRecord::Base
       if self.listing_detail.source == "craigslist"
         t.detect_in_listing self
       elsif self.listing_detail.source == "zillow"
-        t.extract_field self
+        t.zillow_extract_field self
+      elsif self.listing_detail.source == "ygl"
+        t.ygl_extract_field self
       end
     end
   end
