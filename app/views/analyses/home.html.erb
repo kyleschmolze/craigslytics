@@ -5,9 +5,22 @@
 <% content_for :header do %>
 <div class='row-fluid' style='position:relative;'>
     <%= image_tag 'wallpapers/serbia.jpg', class: 'bleed', style: 'height:600px;'%>
-    <div class='span2 offset10'>
-      <%= link_to "login", '/users/sign_in', class: 'btn', style: 'position:absolute; top:10px;' %> 
-    </div>
+      <% if user_signed_in? %>
+        <div class='span4 offset8' style='position:absolute; top:10px;' >
+          <div class='dropdown '>
+            <a href='#' class='btn dropdown-toggle' data-toggle='dropdown'> <%= current_user.email %>  <b class='caret'></b></a>
+            <ul class="dropdown-menu">
+              <li>
+              <%= link_to 'Logout', destroy_user_session_path, method: :delete %>
+              </li>
+            </ul>
+          </div>
+        </div>
+      <% else %>
+        <div class='span2 offset9' style='position:absolute; top:10px;' >
+          <%= link_to "login", '/users/sign_in', class: 'btn' %> 
+        </div>
+      <% end %>
     <div class='span5' style='position:absolute; top:30px; color:white;'>
       <h1 style='font-size:40px;'> Rentalyzer. </h1>
       <h3><span style='font-size:24px;'>Maximize your rental income</span></h3>

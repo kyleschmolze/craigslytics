@@ -18,9 +18,9 @@ class YglImporter
             p stats
             return 
           end
-
         end
       end
+      p stats
     end
 
     Listing.where(user_id: self.listing_importer.user_id).where("updated_at < ?", start).update_all(expired_at: 1.minute.ago)
