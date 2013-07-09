@@ -1,28 +1,65 @@
 <script type="text/javascript">
   mixpanel.track("Home")
 </script>
-<div style="text-align:center;">
-  <h1>Not sure what to charge for your apartment?</h1>
-  <h4>The rentalyzer finds comparable listings to help you figure it out.</h4>
 
-  <div class="analyze-bar">
-    <%= render 'form' %>
+<% content_for :header do %>
+<div class='row-fluid' style='position:relative;'>
+    <%= image_tag 'wallpapers/serbia.jpg', class: 'bleed', style: 'height:600px;'%>
+    <div class='span2 offset10'>
+      <%= link_to "login", '/users/sign_in', class: 'btn', style: 'position:absolute; top:10px;' %> 
+    </div>
+    <div class='span5' style='position:absolute; top:30px; color:white;'>
+      <h1 style='font-size:40px;'> Rentalyzer. </h1>
+      <h3><span style='font-size:24px;'>Maximize your rental income</span></h3>
+      <br />
+      <div class='row-fluid'>
+        <div class='span12 well' id='demobox'>
+          <div class='span8' style='padding:10px;'>
+            <p style='font-size:18px;'>No more guess work.  Intelligent data-driven analysis for property managers and brokerages.</p>
+          </div>
+          <div class='span4'>
+            <!--%= button_to 'Request a Demo!', {controller: 'user', action:'request_demo', form: 'email'}, class: 'pull-right btn btn-large btn-warning' %--> 
+            <form action="/users/request_demo" method="post" accept-charset="UTF-8" data-stoppropagation="true">
+              <ul>
+                <li>
+                  <input class="input-block-level user_email" type="text" name="user[email]" placeholder="email">
+                </li>
+                <li>
+                  <input type="submit" class="input-block-level btn btn-warning" value="Request a Demo">
+                </li>
+              </ul>
+            </form>
+          </div>
+        </div>
+      </div>
+      <br />
+    </div>
   </div>
-  <div class='error hide'>
-    <h4>Both fields are required.</h4>
-  </div>
-</div>
-<script>
-  $(function() {
-    $("form").submit(function() {
-      if($("#analysis_address").val() == "" || $("#analysis_bedrooms").val() == "") {
-        $(".error").show()
-        return false
-      }
-      else {
-        return true
-      }
-    })
-  })
-</script>
+<% end %>
+
+<% @desc_overview = '<h3 style="text-align:center;">Validate What You&#39;re Charging.</h3>
+                     <p><strong>Pricing Analysis</strong> gives you a better understanding of the market-rate for specific listings, based on true comps. Additional insights on the potential for utility and/or amenity bundling enable you to position your listings more competitively, and generate more leads.</p>' %>
+
+                     <% @desc_market_trends = '<h3 style="text-align:center;">Make Sense of the Market.</h3>
+                     <p><strong>Market Gap Analysis</strong> shows you important trends and patterns in the local rental market, both historically and in real time.  Take it a step further with listing integration to know when (and where) to advertise which listings.</p>' %>
+
+                     <% @web_analytics = '<h3 style="text-align:center;">Get the Most Out of Your Website.</h3>
+                     <p><strong>Web Analytics</strong> is a tool that will convert more visitors into customers. We can look at your pipelines, attract more leads, and segment current site traffic.</p>' %>
+
+                     <div style="text-align:center; color:black; font-style:bold;">
+                       <%= render partial: '/layouts/screenshot_description', locals: {
+                         orientation: 'left',
+                         image: 'home/overview.png',
+                         description: @desc_overview }  %>
+
+                         <%= render partial: '/layouts/screenshot_description', locals: {
+                           orientation: 'right',
+                           image: 'home/price_nice.png',
+                           description: @desc_market_trends }  %>
+
+                           <%= render partial: '/layouts/screenshot_description', locals: {
+                             orientation: 'left',
+                             image: 'home/map_bay.png',
+                             description: @web_analytics }  %>
+                           </div>
 

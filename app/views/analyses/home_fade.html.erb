@@ -1,0 +1,35 @@
+<script type="text/javascript">
+  mixpanel.track("Home")
+</script>
+
+<% @desc_overview = '<h3 style="text-align:center;">Validate What You&#39;re Charging.</h3>
+                     <p><strong>Pricing Analysis</strong> gives you a better understanding of the market-rate for specific listings, based on true comps. Additional insights on the potential for utility and/or amenity bundling enable you to position your listings more competitively, and generate more leads.</p>' %>
+
+<% @desc_market_trends = '<h3 style="text-align:center;">Make Sense of the Market.</h3>
+                     <p><strong>Market Gap Analysis</strong> shows you important trends and patterns in the local rental market, both historically and in real time.  Take it a step further with listing integration to know when (and where) to advertise which listings.</p>' %>
+
+<% @web_analytics = '<h3 style="text-align:center;">Get the Most Out of Your Website.</h3>
+                     <p><strong>Web Analytics</strong> is a tool that will convert more visitors into customers. We can look at your pipelines, attract more leads, and segment current site traffic.</p>' %>
+
+<div style="text-align:center; color:black; font-style:bold;">
+  <h1>Rentalyzer. Data-driven intelligence for your business - No more guess work.</h1>
+  <br />
+  <h4>We provide a collection of tools and analyses built on your existing data sources to help
+  make more informed decissions, whether you're a property manager or brokerage.</h4>
+  <br />
+    <%= render partial: '/layouts/screenshot_description', locals: {
+                              orientation: 'left',
+                              image: 'home/overview.png',
+                              description: @desc_overview }  %>
+
+    <%= render partial: '/layouts/screenshot_description', locals: {
+                              orientation: 'right',
+                              image: 'home/price_nice.png',
+                              description: @desc_market_trends }  %>
+  
+    <%= render partial: '/layouts/screenshot_description', locals: {
+                              orientation: 'left',
+                              image: 'home/map_bay.png',
+                              description: @web_analytics }  %>
+</div>
+

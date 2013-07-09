@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<div class="row row-fluid" style='padding:40px;'>
+  <div class='span10 offset1'>
+    <div class='span6' style='text-align:left;'>
+      <% if orientation == 'left' %>
+        <%= image_tag image, style: 'box-shadow: 5px 5px 10px #434343; width:350px; height:225px;' %>
+      <% else %>
+        <div style='font-size:18px; font-weight:400;'>
+          <%= raw description %>
+        </div>
+      <% end %>
+    </div>
+    <div class='span6' style='text-align:right;'>
+      <% if orientation == 'left' %>
+        <div style='font-size:18px; font-weight:400; text-align:left;'>
+          <%= raw description %>
+        </div>
+      <% else %>
+        <%= image_tag image, style: 'box-shadow: 5px 5px 10px #434343; width:350px; height:225px;'%>
+      <% end %>
+    </div>
+  </div>
+</div>

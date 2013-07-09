@@ -1,15 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <%= render partial: 'layouts/head' %>
+    <%= render partial: '/layouts/head_without_uservoice' %>
   </head>
   <body class='<%= @body_class %>'>
-    <%= image_tag 'wallpapers/serbia.jpg', class: 'wallpaper' %>
-
+    <!-- %= image_tag 'wallpapers/sunset.jpg', class: 'wallpaper', style: 'position:fixed;' %-->
+    <%= yield :header %>
     <div class="container">
-      <%= bootstrap_flash %>
       <%= yield %>
     </div>
-
   </body>
 </html>

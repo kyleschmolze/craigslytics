@@ -34,6 +34,18 @@
       <div class="navbar-inner">
         <div class="container-fluid">
           <a class="brand" href="/">Rentalyzer</a>
+              <ul class="nav pull-right">
+                <% if user_signed_in? %>
+                <li class='dropdown'>
+                  <a href='#' class='dropdown-toggle' data-toggle='dropdown'> <%= current_user.email %>  <b class='caret'></b></a>
+                  <ul class="dropdown-menu">
+                    <li>
+                    <%= link_to 'Logout', destroy_user_session_path, method: :delete %>
+                    </li>
+                  </ul>
+                </li>
+                <% end %>
+              </ul>
         </div>
       </div>
     </div>
