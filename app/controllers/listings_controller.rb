@@ -1,9 +1,9 @@
 class ListingsController < ApplicationController
-  before_filter :authenticate_user!
+  # before_filter :authenticate_user!
   # GET /listings
   # GET /listings.json
   def index
-    @listings = Listing.where(user_id: current_user.id)
+    @listings = Listing.where(user_id: 1)
     @geocoded_address = nil
     # If bedrooms is set, 
     #   only grab listings with that number of bedrooms
