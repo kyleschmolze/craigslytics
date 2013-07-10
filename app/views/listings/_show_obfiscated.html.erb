@@ -34,7 +34,7 @@
       <%= link_to 'Show Full Listing', 'javascript:void(0);', class: 'btn span12 show-full-listing', style: "text-align:center;" %>
     </div>
     <div class="hide full-listing">
-      <% if listing.listing_detail.source == "craigslist" %>
+      <% if listing.listing_detail.source == "craigslist" and listing.listing_detail.raw_body.present? %>
         <h4><%= listing.listing_detail.raw_body["heading"] %></h4>
       <% else %>
         <h4>Description:</h4>

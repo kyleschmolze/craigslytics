@@ -41,7 +41,7 @@
         <br>
       <% end %>
     </div>
-    <% if @listings.present? %>
+    <% if @listings.where(user_id: current_user.id).present? %>
       <div class="row-fluid">
         <%= render partial: "segments/location", locals: {listings: @listings.where(user_id: current_user.id), segment: @segment, geocoded_address: @geocoded_address} %>
       </div>

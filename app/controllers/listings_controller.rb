@@ -3,7 +3,7 @@ class ListingsController < ApplicationController
   # GET /listings
   # GET /listings.json
   def index
-    @listings = Listing.where(user_id: 1)
+    @listings = Listing
     @geocoded_address = nil
     # If bedrooms is set, 
     #   only grab listings with that number of bedrooms
