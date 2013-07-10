@@ -25,14 +25,22 @@ class Listing < ActiveRecord::Base
         pics = pics.uniq {|i| i.gsub(/https?:\/\//, '').gsub(/^.*\//, '') }
       end
       return pics
-    #elsif self.listing_detail.source == "ygl"
-    #  noko = Nokogiri::XML(self.listing_detail.raw_body)
-    #  pics = noko.css("Photos")
-   #   if !pics.blank?
-   #     pics = pics.map{|p| p.text}
-   #     pics = pics.uniq {|i| i.gsub(/https?:\/\//, '').gsub(/^.*\//, '') }
-   #   end
-   #   return pics
+    elsif self.listing_detail.source == "ygl"
+      noko = Nokogiri::XML(self.listing_detail.raw_body)
+      pics = noko.css("Photo")
+      if !pics.blank?
+        pics = pics.map{|p| p.text}
+        pics = pics.uniq {|i| i.gsub(/https?:\/\//, '').gsub(/^.*\//, '') }
+      end
+      return pics
+    elsif self.listing_detail.source == "zillow"
+      noko = Nokogiri::XML(self.listing_detail.raw_body)
+      pics = noko.css("original")
+      if !pics.blank?
+        pics = pics.map{|p| p.text}
+        pics = pics.uniq {|i| i.gsub(/https?:\/\//, '').gsub(/^.*\//, '') }
+      end
+      return pics
     else
       return []
     end

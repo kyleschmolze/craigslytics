@@ -152,7 +152,7 @@ class Tag < ActiveRecord::Base
 
       if self.category == "amenity"
         features = noko.css("Features")
-        features.each do |f|
+        features.each do |f|  # suspect there is only one item, checking whole thing
           if f.text.match /#{self.search_term}/i
             ListingTag.create({listing_id: l.id, tag_id: self.id}) 
           end
