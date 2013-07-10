@@ -43,7 +43,7 @@
     </div>
     <% if @listings.present? %>
       <div class="row-fluid">
-        <%= render partial: "segments/location", locals: {listings: @listings, segment: @segment, geocoded_address: @geocoded_address} %>
+        <%= render partial: "segments/location", locals: {listings: @listings.where(user_id: current_user.id), segment: @segment, geocoded_address: @geocoded_address} %>
       </div>
     <% end %>
   </div>
@@ -80,8 +80,9 @@
 
   <%= paginate @listings %>
 
-  <% for listing in @listings do%>
-    <%= render partial: "show", locals: {listing: listing, median: @segment.present? ? @segment.median : nil} %>
+  <% for listing in @listings do %>
+      <%= render partial: "show", locals: {listing: listing, median: @segment.present? ? @segment.median : nil, search_location: @geocoded_address} %>
+      <%=  render partial: "show_obfiscated", locals: {listing: listing, median: @segment.present? ? @segment.median : nil, search_location: @geocoded_address} %>
   <% end %>
 <% else %>
   <h3>

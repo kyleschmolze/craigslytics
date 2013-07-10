@@ -37,6 +37,7 @@
     );
 
     <% for listing in listings %>
+      console.log("here")
       var pos = new google.maps.LatLng(<%= listing.latitude %>, <%= listing.longitude %>);
       var marker = new google.maps.Marker({
         position: new google.maps.LatLng(<%= listing.latitude %>, <%= listing.longitude %>),
@@ -66,7 +67,6 @@
         zIndex: 1000,
         shadow: shadow
       });
-      map_bounds.extend(pos);
     <% end %>
 
     map.fitBounds(map_bounds);

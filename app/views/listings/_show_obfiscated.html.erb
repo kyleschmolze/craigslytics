@@ -2,9 +2,7 @@
 
   <div class="well well-small span12">
     <% if search_location.present? %>
-      <h4><%= listing.address %><span style="float:right"><%= listing.distance_to([search_location.geometry["location"]["lat"], search_location.geometry["location"]["lng"]]).round(1) %> miles away</span></h4>
-    <% else %>
-    <h4><%= listing.address %></h4>
+      <h4 style="text-align:right"><%= listing.distance_to([search_location.geometry["location"]["lat"], search_location.geometry["location"]["lng"]]).round(1) %> miles away</h4>
     <% end %>
     <p>
       <% if listing.bedrooms == nil or listing.bedrooms == 0 %>
@@ -31,18 +29,6 @@
         <span class="badge badge-info"><%= tag.name %></span>
       <% end %>
     </p>
-
-    <% if listing.pictures.present? %>
-      <div class="row-fluid">
-        <div class="span12" style="position:relative; margin:0 auto; overflow: auto;">
-          <ul style="position:relative; left:0; top:0; white-space:nowrap">
-            <% for image in listing.pictures do %>
-              <li style="display:inline; width:100px; height:100px"><img style="width:100px; height:100px" src="<%= image %>" alt="" onError="imgerror(this);" /></li> 
-            <% end %>
-          </ul>
-        </div>
-      </div>
-    <% end %>
 
     <div class="row-fluid">
       <%= link_to 'Show Full Listing', 'javascript:void(0);', class: 'btn span12 show-full-listing', style: "text-align:center;" %>
