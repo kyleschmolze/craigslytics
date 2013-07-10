@@ -81,8 +81,11 @@
   <%= paginate @listings %>
 
   <% for listing in @listings do %>
+    <% if listing.user_id == current_user.id %>
       <%= render partial: "show", locals: {listing: listing, median: @segment.present? ? @segment.median : nil, search_location: @geocoded_address} %>
+    <% else %>
       <%=  render partial: "show_obfiscated", locals: {listing: listing, median: @segment.present? ? @segment.median : nil, search_location: @geocoded_address} %>
+    <% end %>
   <% end %>
 <% else %>
   <h3>
