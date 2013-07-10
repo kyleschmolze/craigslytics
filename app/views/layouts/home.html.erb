@@ -2,12 +2,34 @@
 <html lang="en">
   <head>
     <%= render partial: '/layouts/head_without_uservoice' %>
+    <script>
+      function adjust_height(){
+        if ($(document).scrollTop() > 200){
+        }
+        else if ($(document).scrollTop() > 0){
+          top_height = 200 - $(document).scrollTop()
+          $("#main_container").css({"top": top_height + "px"});
+        }
+        else{
+          $("#main_container").css({"top": '200px'});
+        }
+      }
+
+      $(document).ready(function(){
+        adjust_height();
+      });
+    </script>
   </head>
-  <body class='<%= @body_class %>'>
+  <body class='<%= @body_class %>' onscroll="adjust_height()">
     <!-- %= image_tag 'wallpapers/sunset.jpg', class: 'wallpaper', style: 'position:fixed;' %-->
-    <%= yield :header %>
-    <div class="container">
-      <%= yield %>
+    <%= image_tag 'wallpapers/serbia.jpg', class: 'bleed', style: 'height:600px;position:fixed'%>
+    <div class="container-fluid" style="position:relative;height:400px;">
+      <%= yield :header %>
+    </div>
+    <div id="main_container" style="width:100%;background-color:white;position:relative;top:200px">
+      <div class="container">
+        <%= yield %>
+      </div>
     </div>
   </body>
 </html>
