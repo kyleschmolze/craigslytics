@@ -79,7 +79,9 @@ class YglImporter
     result = Net::HTTP.get_response(URI.parse(self.endpoint))
     page = Nokogiri::XML(result.body)
 
-    @num_pages = page.css("PageCount").first.text.to_i
+    @num_pages = (page.css("Total").first.text.to_i / page.css("PageCount").first.text.to_i) 
+    @num_pages = 1 if @numpages == 0
+
   end
 
   def stats
