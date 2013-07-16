@@ -14,10 +14,10 @@ class YglImporter
         self.feed(:page => page).each do |listing|
           self.save_listing(listing)
 
-          if Rails.env.development? and stats[:total] >= 100 #testing
-            p stats
-            return 
-          end
+          #if Rails.env.development? and stats[:total] >= 100 #testing
+            #p stats
+            #return 
+          #end
         end
       end
       p stats
@@ -79,9 +79,7 @@ class YglImporter
     result = Net::HTTP.get_response(URI.parse(self.endpoint))
     page = Nokogiri::XML(result.body)
 
-    @num_pages = (page.css("Total").first.text.to_i / page.css("PageCount").first.text.to_i) 
-    @num_pages = 1 if @numpages == 0
-
+    @num_pages = ((page.css("Total").first.text.to_i - 1) / page.css("PageCount").first.text.to_i) + 1
   end
 
   def stats

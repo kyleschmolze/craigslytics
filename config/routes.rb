@@ -3,6 +3,7 @@ Craigslytics::Application.routes.draw do
   devise_for :users
 
   post "user/request_demo"
+  get "listings/utilities"
 
   resources :listing_imports do
     collection do

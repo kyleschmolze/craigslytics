@@ -38,6 +38,17 @@ class Listing < ActiveRecord::Base
     end
   end
 
+  def comparable_segments
+    comp_segments = [] 
+    listings = Listing.where(bedrooms: self.bedrooms).near([self.latitude, self.longitude], 1)
+    interval = (self.price * 0.10).round(0)
+    total_segment = Segment.new(listings, {comps: true, interval: interval})
+    (total_segment.adjusted_min..total_segment.adjusted_max).step(total_segment.increment) do |i|
+      comp_segments << Segment.new(listings.where("price >= ? AND price < ?", i, i+total_segment.increment), {comps: true})
+    end
+    return comp_segments
+  end
+
   def self.parse_all
     Listing.find_each do |listing|
       listing.parse

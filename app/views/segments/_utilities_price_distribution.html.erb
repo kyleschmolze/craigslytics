@@ -1,0 +1,45 @@
+<div class="span12">
+  <h4>Distribution</h4>
+  <p>
+    This graph shows the distribution of prices for listings comparable to <%= listing.address %>.
+    Each bar represents a price range, and the size of the bar tells you how many
+    listings we found inside that range.
+  </p>
+  <div id="chart_div_<%= listing.id %>" style="height:200px;text-align:center;">
+    <%= image_tag 'loading.gif' %>
+  </div>
+</div>
+
+<!-- Google Charts -->
+<script type="text/javascript">
+  google.load("visualization", "1", {packages:["corechart"]});
+  //google.setOnLoadCallback(drawChart);
+
+  function drawChart<%= listing.id %>() {
+    var data = google.visualization.arrayToDataTable([
+        ['Price', 'Listings'],
+        <% (segment.adjusted_min..segment.adjusted_max).step(segment.increment) do |i| %>
+          <% if i == (segment.adjusted_max) %>
+            ["<%= "$#{i} - $#{i+segment.increment-1}" %>", <%= segment.listings.where("price >= ? AND price < ?", i, i+segment.increment).count %>]
+          <% else %>
+            ["<%= "$#{i} - $#{i+segment.increment-1}" %>", <%= segment.listings.where("price >= ? AND price < ?", i, i+segment.increment).count %>],
+          <% end %>
+        <% end %>
+        ]);
+
+    var options = {
+      title: 'Number of Listings by Price Range',
+      hAxis: {title: 'Number of Listings', showTextEvery: 1},
+      vAxis: {title: 'Price Range', showTextEvery: 1},
+      legend: {position: 'none'},
+      chartArea:{top:"5%", height:"85%"}
+    };
+
+    var chart = new google.visualization.BarChart(document.getElementById('chart_div_<%= listing.id %>'));
+    chart.draw(data, options);
+  }
+
+  $(document).ready(function(){
+      drawChart<%= listing.id %>();
+  });
+</script>

@@ -1,0 +1,12 @@
+<br />
+<br />
+
+<div class="span6 offset3">
+  <%= paginate @listings %>
+</div>
+
+<% for listing in @listings do %>
+  <% if @utilities["#{listing.id}_value"] %>
+    <%= render partial: "show_utilities", locals: {listing: listing, utilities: @utilities} %>
+  <% end %>
+<% end %>

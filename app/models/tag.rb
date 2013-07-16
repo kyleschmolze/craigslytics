@@ -16,6 +16,69 @@ class Tag < ActiveRecord::Base
     "apartment" 
   ]
 
+  def self.average_with_util(tags, utility, listings)
+    include_tag_list = tags + [utility]
+    include_tag_list = include_tag_list.uniq
+    exclude_tag_list = Tag.where(category: "utility").all - include_tag_list
+
+    ids = []
+    for tag in include_tag_list do
+      ids << tag.listings.map{|l| l.id}
+    end
+    if ids.present?
+      ids = ids.inject(:&)
+    end
+    ids = [ids]
+
+    for tag in exclude_tag_list do
+      ids << tag.listings.map{|l| l.id}
+    end
+    return ids = ids.inject(:-)
+    #puts "ids: #{ids}"
+    
+    prices = listings.where(id: ids).map{|l| l.price} 
+    #puts "prices: #{prices}"
+    len = prices.count
+    if len > 0
+      med = (prices[(len - 1) / 2] + prices[len / 2]) / 2 
+    else
+      med = nil
+    end
+    #puts "average: #{med}"
+    return med
+  end
+
+  def self.average_without_util(tags, utility, listings)
+    include_tag_list = tags - [utility]
+    exclude_tag_list = Tag.where(category: "utility").all - include_tag_list
+
+    ids = []
+    for tag in include_tag_list do
+      ids << tag.listings.map{|l| l.id}
+    end
+    if ids.present?
+      ids = ids.inject(:&)
+    end
+    ids = [ids]
+
+    for tag in exclude_tag_list do
+      ids << tag.listings.map{|l| l.id}
+    end
+    return ids = ids.inject(:-)
+    #puts "ids: #{ids}"
+
+    prices = listings.where(id: ids).map{|l| l.price} 
+    #puts "prices: #{prices}"
+    len = prices.count
+    if len > 0
+      med = (prices[(len - 1) / 2] + prices[len / 2]) / 2 
+    else
+      med = nil
+    end
+    #puts "average: #{med}"
+    return med
+  end
+
   def detect_in_listing(l)
     if l.listing_detail.raw_body.present?
       if l.listing_detail.raw_body["body"].present?

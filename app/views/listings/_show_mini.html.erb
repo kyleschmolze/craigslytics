@@ -1,0 +1,56 @@
+<div class="row-fluid" id="listing<%=listing.id%>">
+
+  <div class="well well-small span12" style="border-color:<%= color if color.present? %>">
+    <h4><%= listing.address %></h4>
+    <p>
+      <% if listing.bedrooms == nil or listing.bedrooms == 0 %>
+        Studio<br>
+      <% else %>
+        <%= pluralize listing.bedrooms, 'bedroom' %><br>
+      <% end %>
+      <% price = listing.price || 0 %>
+      $<%= price %> / month
+    </p>
+
+    <p>
+      <h5>Utilities:</h5>
+      <% for tag in listing.tags.where(category: "utility") do %>
+        <span class="badge badge-warning"><%= tag.name %></span>
+      <% end %>
+    </p>
+
+    <div class="hide full-listing">
+      <p>
+        <h5>Amenities:</h5>
+        <% for tag in listing.tags.where("category IS NOT ?", "utility") do %>
+          <span class="badge badge-info"><%= tag.name %></span>
+        <% end %>
+      </p>
+      <% if listing.listing_detail.source == "craigslist" %>
+        <h4><%= listing.listing_detail.raw_body["heading"] %></h4>
+      <% else %>
+        <h4>Description:</h4>
+      <% end %>
+      <%= listing.listing_detail.description %>
+    </div>
+    <div class="row-fluid">
+      <%= link_to 'Show Full Listing', 'javascript:void(0);', class: 'btn span12 show-full-listing', style: "text-align:center;" %>
+      <%= link_to 'Hide Full Listing', 'javascript:void(0);', class: 'btn span12 hide-full-listing', style: "text-align:center; display:none" %>
+    </div>
+  </div>
+</div>
+
+<script>
+  $(function() {
+    $('.show-full-listing').click(function() {
+      $(this).hide()
+      $(this).closest(".well").find(".hide-full-listing").show()
+      $(this).closest(".well").find(".full-listing").show('blind')
+    })
+    $('.hide-full-listing').click(function() {
+      $(this).hide()
+      $(this).closest(".well").find(".show-full-listing").show()
+      $(this).closest(".well").find(".full-listing").hide('blind')
+    })
+  })
+</script>
