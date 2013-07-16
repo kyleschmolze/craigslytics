@@ -133,6 +133,66 @@ class ListingsController < ApplicationController
     end
   end
 
+  def overview
+    @listings = Listing
+    @geocoded_address = nil
+    # If bedrooms is set, 
+    #   only grab listings with that number of bedrooms
+    if params[:bedrooms].present? and !params[:bedrooms][0].blank?
+      bedrooms = params[:bedrooms][0]
+      @listings = @listings.where(:bedrooms => bedrooms)
+    end
+    # If address is set,
+    #   only grab listings within a mile of that address
+    if params[:address].present? and !params[:address][0].blank?
+      address = params[:address][0]
+      @geocoded_address = Geocoder.search(address)[0] 
+      if @geocoded_address.present?
+        @listings = @listings.near([@geocoded_address.geometry["location"]["lat"], @geocoded_address.geometry["location"]["lng"]], 1) 
+      else
+        @listings = @listings.near(nil, 1)
+      end
+    end
+
+    # If tags are set, 
+    #   only grab listings that contain all the tags (intersection of all selected tags)
+    if params[:tags].present?
+      tags = params[:tags].keys
+      tables = []
+      for tag in tags do
+        tables << Tag.where(name: tag).first.listings.map{|l| l.id}
+      end
+      ids = tables.inject(:&)
+      @listings = @listings.where(:id => ids) 
+    end
+    @segment = Segment.new(@listings) if @listings.present?
+    # Order the listings by price (will be ordered by [location & price] if address is set), pull tags, and paginate
+    @total = @listings
+    @listings = @listings.order(:price).includes(:tags).page(params[:page]).per(50)
+
+
+    respond_to do |format|
+      format.html { render layout: 'all' }
+      format.json { render json: @listings }
+      format.pdf { 
+        render pdf: "listing_analysis_at_#{@geocoded_address.formatted_address}",
+               layout: 'default',
+               disposition: 'attachment',
+               margin: { :bottom => 15 },
+               footer: {
+                 html: {
+                   template: 'pdf_footer.pdf.erb'
+                 },
+               },
+               show_as_html: params[:debug].present?
+      }
+    end
+  end
+
+
+
+
+
   # GET /listings/:id
   # GET /listings/:id.json
   def show

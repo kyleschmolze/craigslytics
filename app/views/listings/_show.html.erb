@@ -1,14 +1,15 @@
-<div class="row-fluid" id="listing<%=listing.id%>">
 
-  <div class="well well-small span12">
-    <% if search_location.present? %>
-      <h4><%= listing.address %><span style="float:right"><%= listing.distance_to([search_location.geometry["location"]["lat"], search_location.geometry["location"]["lng"]]).round(1) %> miles away</span></h4>
-    <% else %>
-    <h4><%= listing.address %></h4>
-    <% end %>
+  <div class="well well-small span6">
+    <h5>
+      <% if search_location.present? %>
+        <%= listing.address %><span style="float:right"><%= listing.distance_to([search_location.geometry["location"]["lat"], search_location.geometry["location"]["lng"]]).round(1) %> miles away</span>
+      <% else %>
+        <%= listing.address %>
+      <% end %>
+    </h5>
     <p>
       <% if listing.bedrooms == nil or listing.bedrooms == 0 %>
-        Studio<br>
+        Studio<br />
       <% else %>
         <%= pluralize listing.bedrooms, 'bedroom' %><br>
       <% end %>
@@ -27,36 +28,80 @@
     </p>
 
     <p>
-      <% for tag in listing.tags do %>
-        <span class="badge badge-info"><%= tag.name %></span>
+      <% if !listing.tags.blank? %>
+        <% for tag in listing.tags do %>
+          <% if tag.category == "unit_type" %>
+            <span class="badge badge-inverse"><%= tag.name %></span>
+          <% end %>
+        <% end %>
+        <% for tag in listing.tags do %>
+          <% if tag.category == "utility" %>
+            <span class="badge badge-warning"><%= tag.name %></span>
+          <% end %>
+        <% end %>
+        <% for tag in listing.tags do %>
+          <% if tag.category == "amenity" %>
+            <span class="badge badge-info"><%= tag.name %></span>
+          <% end %>
+        <% end %>
+      <% else %> 
+        <br /> 
       <% end %>
     </p>
 
-    <% if listing.pictures.present? %>
+      <script>
+        function checkOverflow(el)
+        {
+          var curOverflow = el.style.overflow;
+          if ( !curOverflow || curOverflow === "visible" )
+          el.style.overflow = "hidden";
+
+          var isOverflowing = el.clientWidth < el.scrollWidth 
+          || el.clientHeight < el.scrollHeight;
+
+          el.style.overflow = curOverflow;
+
+          return isOverflowing;
+        }
+
+      </script>
       <div class="row-fluid">
-        <div class="span12" style="position:relative; margin:0 auto; overflow: auto;">
-          <ul style="position:relative; left:0; top:0; white-space:nowrap">
-            <% for image in listing.pictures do %>
-              <li style="display:inline; width:100px; height:100px"><img style="width:100px; height:100px" src="<%= image %>" alt="" onError="imgerror(this);" /></li> 
-            <% end %>
-          </ul>
+        <div class="carousel span12" style="position:relative; margin:0; overflow:auto;">
+          <% if listing.pictures.present? %>
+            <ul style="position:relative; left:0; top:0; margin:none; white-space:nowrap">
+              <% for image in listing.pictures do %>
+                <li style="display:inline; width:100px; height:100px"><img class='check' style="width:100px; height:100px" src="<%= image %>" alt="" onError="imgerror(this);" /></li> 
+              <% end %>
+            </ul>
+          <% else %>
+            <div class='well' style=" padding:0;margin: 0px 0px 10px 0px;text-align:center; height:100px">
+                <h5>No pictures</h5>
+            </div>
+          <% end %>
         </div>
+      </div>
+
+
+    <% if !listing.listing_detail.description.blank? %>
+      <div class="row-fluid">
+        <%= link_to 'Show Full Listing', 'javascript:void(0);', class: 'btn span6 offset3 show-full-listing', style: "text-align:center;" %>
+      </div>
+      <div class="hide full-listing">
+        <% if listing.listing_detail.source == "craigslist" %>
+          <h4><%= listing.listing_detail.raw_body["heading"] %></h4>
+        <% else %>
+          <h4>Description:</h4>
+        <% end %>
+        <%= listing.listing_detail.description %>
+      </div>
+    <% else %>
+      <div class="row-fluid">
+        <a class='btn span6 offset3 disabled' style="text-align:center;">No Description</a>
       </div>
     <% end %>
 
-    <div class="row-fluid">
-      <%= link_to 'Show Full Listing', 'javascript:void(0);', class: 'btn span12 show-full-listing', style: "text-align:center;" %>
-    </div>
-    <div class="hide full-listing">
-      <% if listing.listing_detail.source == "craigslist" %>
-        <h4><%= listing.listing_detail.raw_body["heading"] %></h4>
-      <% else %>
-        <h4>Description:</h4>
-      <% end %>
-      <%= listing.listing_detail.description %>
-    </div>
   </div>
-</div>
+
 
 <script>
   $(function() {

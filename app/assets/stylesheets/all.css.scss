@@ -1,0 +1,58 @@
+
+.static-bar {
+  background-image: image-url("binding_dark.png");
+  height:75px;
+}
+
+body {
+  background-image: image-url("witewall_3.png");
+}
+.static-bar img {
+  padding:10px;
+}
+
+.tag-line {
+  padding-bottom:25px;
+  padding-top:25px;
+}
+
+.tag-line p{
+  color:white;
+  vertical-align:middle;
+  font-size:24px;
+  font-family:georgia, serif;
+}
+
+.navigation {
+  color:white;
+}
+
+transparent {
+  /* IE 8 */
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+
+  /* IE 5-7 */
+  filter: alpha(opacity=0);
+
+  /* Netscape */
+  -moz-opacity: 0;
+
+  /* Safari 1.x */
+  -khtml-opacity: 0;
+
+  /* Good browsers */
+  opacity: 0;
+}
+
+.selector {
+  color:#CCCCCC;
+}
+
+.selector a:hover {
+  color: white;
+  background-color:none;
+}
+.nav li a:hover {
+  color: white;
+  background-color:transparent;
+}
