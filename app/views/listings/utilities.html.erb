@@ -6,7 +6,5 @@
 </div>
 
 <% for listing in @listings do %>
-  <% if @utilities["#{listing.id}_value"] %>
-    <%= render partial: "show_utilities", locals: {listing: listing, utilities: @utilities} %>
-  <% end %>
+  <%= render partial: "show_utilities", locals: {listing: listing} %>
 <% end %>

@@ -1,6 +1,7 @@
 class Tag < ActiveRecord::Base
   attr_accessible  :name, :display, :search_term, :complexity, :category
   has_many :listing_tags 
+  has_many :utility_analyses
   has_many :listings, through: :listing_tags
 
   validate do |t| 

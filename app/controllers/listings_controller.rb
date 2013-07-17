@@ -136,77 +136,11 @@ class ListingsController < ApplicationController
   # GET /listings/utilities
   # GET /listings/utilities
   def utilities
-    #@listings = Listing.where(user_id: current_user.id)
-    #@listings = Listing.page(params[:page]).per(22)
-    @listings = Listing.where(id: [20,21,22,23]).page(params[:page]).per(22)
-
-    # Building hash of utility medians
-    @utilities = {}
-    count = 1
-    for listing in @listings do
-      puts "#{count} / #{@listings.count}"
-      count += 1
-      pricemin = (listing.price - (listing.price*0.1)).round(0)
-      pricemax = (listing.price + (listing.price*0.1)).round(0)
-      comps = Listing.where(bedrooms: listing.bedrooms).where("price >= ? AND price <= ?", pricemin, pricemax).where("id IS NOT ?", listing.id).near([listing.latitude, listing.longitude], 1).reorder(:price)
-      #@utilities["#{listing.id}_comps"] = comps
-      #segments = listing.comparable_segments
-      #differences = []
-      @utilities["#{listing.id}_value"] = false
-      for utility in Tag.where(category: "utility") - listing.tags do 
-        #for segment in segments do
-          #average_with = segment.average_with_util(listing.tags, utility, segment.listings)
-          #average_without = segment.average_without_util(listing.tags, utility, segment.listings)
-          #if !average_with.nil? and !average_without.nil? and (average_with - average_without) > 0
-            #differences << (average_with - average_without)
-          #end
-        #end
-        #differences = differences.sort
-        #len = differences.count
-        #if len > 0
-          #med = (differences[(len - 1) / 2] + differences[len / 2]) / 2
-        #else
-          #med = nil
-        #end
-        #if !med.nil?
-          #@utilities["#{listing.id}_value"] = true
-        #end
-        #@utilities["#{listing.id}_#{utility.name}"] = med
-
-        listing_ids_with = Tag.average_with_util(listing.tags, utility, comps)
-        listings_with = comps.where(id: listing_ids_with)
-        prices_with = listings_with.reorder(:price).map{|l| l.price} 
-        len = prices_with.count
-        if len > 0
-          average_with = (prices_with[(len - 1) / 2] + prices_with[len / 2]) / 2 
-        else
-          average_with = nil
-        end
-
-        listing_ids_without = Tag.average_without_util(listing.tags, utility, comps)
-        listings_without = comps.where(id: listing_ids_without)
-        prices_without = listings_without.reorder(:price).map{|l| l.price} 
-        len = prices_without.count
-        if len > 0
-          average_without = (prices_without[(len - 1) / 2] + prices_without[len / 2]) / 2 
-        else
-          average_without = nil
-        end
-
-        if !average_with.nil? and !average_without.nil? and (average_with - average_without) > 0
-          @utilities["#{listing.id}_value"] = true
-          @utilities["#{listing.id}_#{utility.name}"] = average_with - average_without
-          @utilities["#{listing.id}_with_#{utility.name}"] = average_with 
-          @utilities["#{listing.id}_without_#{utility.name}"] = average_without
-          @utilities["#{listing.id}_listings_with_#{utility.name}"] = listings_with.all ||= []
-          @utilities["#{listing.id}_listings_without_#{utility.name}"] = listings_without.all ||= []
-        end
-      end
-    end
+    @listings = Listing.where(user_id: current_user.id).joins(:utility_analyses).where("price_difference > ?", 0).order("price_difference DESC").page(params[:page]).per(50)
 
     respond_to do |format|
       format.html # show.html.erb
-      format.json { render json: @utilities }
+      format.json { render json: @listings }
     end
   end
 

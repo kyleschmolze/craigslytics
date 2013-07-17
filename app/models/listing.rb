@@ -3,6 +3,7 @@ class Listing < ActiveRecord::Base
                   :dogs, :cats, :listing_detail_id, :user_id, :timestamp, :expired_at
 
   has_many :listing_tags 
+  has_many :utility_analyses, :class_name => 'UtilityAnalysis'
   has_many :tags, through: :listing_tags
   has_and_belongs_to_many :analyses
   belongs_to :listing_detail
@@ -150,8 +151,64 @@ class Listing < ActiveRecord::Base
       end
     end
   end
-
   # tested with 7 listings, should create 7 choose 2 or 21 listing_comparisons, successful
 
+  def generate_listing_analyses()
+    self.utility_analyses.destroy_all
+    pricemin = (self.price - (self.price*0.1)).round(0)
+    pricemax = (self.price + (self.price*0.1)).round(0)
+    comps = Listing.where(bedrooms: self.bedrooms).where("price >= ? AND price <= ?", pricemin, pricemax).where("id IS NOT ?", self.id).near([self.latitude, self.longitude], 1).reorder(:price)
+    for utility in Tag.where(category: "utility") - self.tags do 
+      listing_ids_with = Tag.average_with_util(self.tags, utility, comps)
+      listings_with = comps.where(id: listing_ids_with)
+      prices_with = listings_with.reorder(:price).map{|l| l.price} 
+      len = prices_with.count
+      if len > 0
+        average_with = (prices_with[(len - 1) / 2] + prices_with[len / 2]) / 2 
+      else
+        average_with = nil
+      end
+
+      listing_ids_without = Tag.average_without_util(self.tags, utility, comps)
+      listings_without = comps.where(id: listing_ids_without)
+      prices_without = listings_without.reorder(:price).map{|l| l.price} 
+      len = prices_without.count
+      if len > 0
+        average_without = (prices_without[(len - 1) / 2] + prices_without[len / 2]) / 2 
+      else
+        average_without = nil
+      end
+
+      if !average_with.nil? and !average_without.nil? 
+        price_difference = average_with - average_without
+        listings_with = listings_with.map{|l| l.id}.join(",")
+        listings_without = listings_without.map{|l| l.id}.join(",")
+        listing_id = self.id
+        tag_id = utility.id
+        fresh = true
+        UtilityAnalysis.create(price_difference: price_difference, listings_with: listings_with, listings_without: listings_without, listing_id: listing_id, tag_id: tag_id, fresh: fresh)
+      end
+    end
+  end
+
+  @queue = :listing_queue
+
+  def self.perform(func, arg1)
+    self.send func, arg1
+  end
+
+  def self.generate_listing_analyses_for(listing_id)
+    self.find(listing_id).generate_listing_analyses
+  end
+
+  def self.enqueue(user_id)
+    Listing.where(user_id: user_id).each do |l| 
+      if Rails.env.production?
+        Resque.enqueue(Listing, :generate_listing_analyses_for, l.id)
+      else
+        Listing.generate_listing_analyses_for l.id
+      end
+    end
+  end
 
 end

@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  fresh: false
+  tag_id: 1
+  listing_id: 1
+  listings_with: MyText
+  listings_without: MyText
+
+two:
+  fresh: false
+  tag_id: 1
+  listing_id: 1
+  listings_with: MyText
+  listings_without: MyText

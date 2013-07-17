@@ -1,0 +1,113 @@
+<div class="row-fluid" id="listing<%=listing.id%>">
+  <div class="well well-small span8 offset2">
+    <div class="row-fluid">
+      <div class="span6">
+        <h4><%= listing.address %></h4>
+        <p>
+          <% if listing.bedrooms == nil or listing.bedrooms == 0 %>
+            Studio<br>
+          <% else %>
+            <%= pluralize listing.bedrooms, 'bedroom' %><br>
+          <% end %>
+          <% price = listing.price || 0 %>
+          $<%= price %> / month
+        </p>
+
+        <p>
+          <h5>Utilities:</h5>
+          <% for tag in listing.tags.where(category: "utility") do %>
+            <span class="badge badge-warning"><%= tag.name %></span>
+          <% end %>
+        </p>
+        <p>
+          <h5>Amenities:</h5>
+          <% for tag in listing.tags.where("category IS NOT ?", "utility") do %>
+            <span class="badge badge-info"><%= tag.name %></span>
+          <% end %>
+        </p>
+        <% if listing.pictures.present? %>
+          <div class="row-fluid">
+            <div class="span12" style="position:relative; margin:0 auto; overflow: auto;">
+              <ul style="position:relative; left:0; top:0; white-space:nowrap">
+                <% for image in listing.pictures do %>
+                  <li style="display:inline; width:100px; height:100px"><img style="width:100px; height:100px" src="<%= image %>" alt="" onError="imgerror(this);" /></li> 
+                <% end %>
+              </ul>
+            </div>
+          </div>
+        <% end %>
+      </div>
+      <div class="span6">
+        <h4>Utilities Analysis</h4>
+        The following table shows you how much more you could charge while including the given utility and still remain within the market average price for comparable listings.
+        <table class='table'>
+          <thead>
+            <td class='text-center'> Utility </td>
+            <td class='text-center'> Value </td>
+          </thead>
+          <tbody>
+            <% for utility in Tag.where(category: "utility") - listing.tags do %>
+              <% if !utilities["#{listing.id}_#{utility.name}"].nil? %>
+                <tr>
+                  <td class='text-center'><span class="badge badge-warning"><%= utility.display %></span></td>
+                  <td class='text-center'>$<%= utilities["#{listing.id}_#{utility.name}"] %></td>
+                </tr>
+              <% end %>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+      <% for utility in Tag.where(category: "utility") - listing.tags do %>
+        <% if !utilities["#{listing.id}_#{utility.name}"].nil? %>
+          <div class="row-fluid">
+            <div class="span6">
+              <h4>Listings with <span class="badge badge-warning"><%= utility.display %></span></h4>
+              <% utilities["#{listing.id}_listings_with_#{utility.name}"].each_slice(2) do |row| %>
+                <div class="row-fluid">
+                <% for l in row do %>
+                  <div class="span6">
+                    <%= render partial: "show_mini", locals: {listing: l, color: "#5bb75b"} %>
+                  </div>
+                <% end %>
+                </div>
+              <% end %>
+            </div>
+            <div class="span6">
+              <h4>Listings without <span class="badge badge-warning"><%= utility.display %></span></h4>
+              <% utilities["#{listing.id}_listings_without_#{utility.name}"].each_slice(2) do |row| %>
+                <div class="row-fluid">
+                <% for l in row do %>
+                  <div class="span6">
+                    <%= render partial: "show_mini", locals: {listing: l, color: "#da4f49"} %>
+                  </div>
+                <% end %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<script>
+  $(function() {
+    $('.show-full-listing').click(function() {
+      $(this).closest(".well").find(".full-listing").show('blind')
+      $(this).hide()
+    })
+
+    /*
+       $(".reveal-pic").click(function() {
+      $(this).closest("li").css({
+        'height': 'auto',
+        'max-height': '999px'
+      })
+      $(this).closest(".read-more").remove()
+    })
+    */
+
+  })
+</script>
