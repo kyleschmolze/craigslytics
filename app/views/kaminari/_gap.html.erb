@@ -1,3 +1,9 @@
 <li class="disabled">
-  <%= link_to raw(t 'views.pagination.truncate'), '#' %>
+  <%= link_to raw(t 'views.pagination.truncate'), '#', style: "background-color:white;" %>
 </li>
+
+<script>
+  $('.disabled').click(function(e){
+    e.preventDefault();
+  });
+</script>
