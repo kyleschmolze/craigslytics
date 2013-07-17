@@ -29,10 +29,13 @@
 
     <p>
       <% if !listing.tags.blank? %>
+        <% found_unit_type = false %>
         <% for tag in listing.tags do %>
           <% if tag.category == "unit_type" %>
-            <span class="badge badge-inverse"><%= tag.name %></span>
+            <span class="badge badge-inverse"><%= listing.unit_type %></span>
+            <% found_unit_type  = true %>
           <% end %>
+          <% break if found_unit_type %>
         <% end %>
         <% for tag in listing.tags do %>
           <% if tag.category == "utility" %>

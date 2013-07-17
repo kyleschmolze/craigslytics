@@ -8,14 +8,19 @@ class ListingTag < ActiveRecord::Base
       lt.errors[:base] << "ListingTag associations are unique"
     end
 
-    # A listing can only have one unit_type
+    # listings can only have one unit_type tag of each complexity
+    # if we encounter a tag of same complexity, we delete it and replace with most recent
+    # keeps tree structure, avoids things like house > condo
     if lt.new_record? 
       if Tag.find(lt.tag_id).category == "unit_type"
         found = false
         ListingTag.where(listing_id: lt.listing_id).each do |i|
-          found = true if i.tag.category == "unit_type" if i.tag
+          if i.tag
+            if (i.tag.category == "unit_type" and i.tag.complexity == lt.tag.complexity)    
+              i.delete
+            end
+          end
         end
-        lt.errors[:tag] << "Listings can only have one unit_type" if found
       end
     end
   end

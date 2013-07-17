@@ -1,5 +1,5 @@
 class ListingsController < ApplicationController
-  # before_filter :authenticate_user!
+  before_filter :authenticate_user!
   # GET /listings
   # GET /listings.json
   def index
@@ -168,7 +168,7 @@ class ListingsController < ApplicationController
     @segment = Segment.new(@listings) if @listings.present?
     # Order the listings by price (will be ordered by [location & price] if address is set), pull tags, and paginate
     @total = @listings
-    @listings = @listings.order(:price).includes(:tags).page(params[:page]).per(50)
+    @listings = @listings.order(:price).includes(:tags, :listing_detail).page(params[:page]).per(50)
 
 
     respond_to do |format|

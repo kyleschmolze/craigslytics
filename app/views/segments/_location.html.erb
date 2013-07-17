@@ -9,7 +9,7 @@
   function initialize() {
     <% if geocoded_address.present? %>
       var center_lat_lng = new google.maps.LatLng(<%= geocoded_address.geometry["location"]["lat"] %>, <%= geocoded_address.geometry["location"]["lng"] %>);
-    <% else %>
+    <% elsif listings %>
       var center_lat_lng = new google.maps.LatLng(<%= listings.first.latitude %>, <%= listings.first.longitude %>);
     <% end %>
     var mapOptions = {
