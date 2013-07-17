@@ -2,31 +2,40 @@
 <html lang="en">
   <head>
     <%= render partial: '/layouts/head_without_uservoice' %>
-    <script>
-      function adjust_height(){
-        if ($(document).scrollTop() > 200){
-        }
-        else if ($(document).scrollTop() > 0){
-          top_height = 200 - $(document).scrollTop()
-          $("#main_container").css({"top": top_height + "px"});
-        }
-        else{
-          $("#main_container").css({"top": '200px'});
-        }
-      }
-
-      $(document).ready(function(){
-        adjust_height();
-      });
-    </script>
   </head>
   <body class='<%= @body_class %>' onscroll="adjust_height()">
+    <div class="navbar navbar-fixed-top navbar-inverse" id="analysis_navbar">
+      <div class="navbar-inner" style="background-image:url(/assets/binding_dark.png); border:0">
+        <div class="container-fluid" style="margin-top:10px">
+          <a class="brand bigger" href="/" style="font-size:28px">Rentalyzer</a>
+          <ul class="nav pull-right">
+            <% if user_signed_in? %>
+              <li class="bigger"><a href="/listings/overview">overview</a></li>
+              <li class="bigger"><a href="/listings/utilities">utility analysis</a></li>
+              <li class="divider-vertical"></li>
+              <li class='dropdown'>
+                <a href='#' class='dropdown-toggle' data-toggle='dropdown'> <%= current_user.email %>  <b class='caret'></b></a>
+                <ul class="dropdown-menu">
+                  <li>
+                    <%= link_to 'logout', destroy_user_session_path, method: :delete %>
+                  </li>
+                </ul>
+              </li>
+            <% else %>
+              <li class="bigger">
+                <%= link_to 'login', '/users/sign_in' %>
+              </li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+    </div>
     <!-- %= image_tag 'wallpapers/sunset.jpg', class: 'wallpaper', style: 'position:fixed;' %-->
     <%= image_tag 'wallpapers/serbia.jpg', class: 'bleed', style: 'height:600px;position:fixed'%>
     <div class="container-fluid" style="position:relative;height:400px;">
       <%= yield :header %>
     </div>
-    <div id="main_container" style="width:100%;background-color:white;position:relative;top:200px">
+    <div id="main_container" style="width:100%;background-color:white;position:relative;margin-top:200px">
       <div class="container">
         <%= yield %>
       </div>

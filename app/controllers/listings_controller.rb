@@ -145,6 +145,7 @@ class ListingsController < ApplicationController
   end
 
   def overview
+    puts params[:controller]
     @listings = Listing
     @geocoded_address = nil
     # If bedrooms is set, 
