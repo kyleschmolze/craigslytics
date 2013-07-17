@@ -11,7 +11,11 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
+<<<<<<< HEAD
 ActiveRecord::Schema.define(:version => 20130716175605) do
+=======
+ActiveRecord::Schema.define(:version => 20130717152435) do
+>>>>>>> 22a1f59085404b609a11ede6c053766db519bc2f
 
   create_table "analyses", :force => true do |t|
     t.float    "latitude"
@@ -108,6 +112,7 @@ ActiveRecord::Schema.define(:version => 20130716175605) do
     t.integer  "complexity"
     t.string   "name"
     t.string   "category"
+    t.string   "parent"
   end
 
   create_table "users", :force => true do |t|

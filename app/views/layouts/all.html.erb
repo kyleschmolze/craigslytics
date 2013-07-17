@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%= render partial: 'layouts/head' %>
+    <%= stylesheet_link_tag "all" %>
+  </head>
+  <body class='application-body <%= @body_class %>'> 
+      <div class='row-fluid'>
+        <div class="span12 static-bar">  
+          <div class='span2'>
+              <%= image_tag "logo.png" %>
+          </div>
+          <div class='span4 tag-line'>
+            <p>Maximize your rental income.</p>
+          </div>
+          <div class='span6' >
+          <div class='span10 offset1 navigation'>
+            <ul class="nav nav-pills pull-right" style='padding-top:18px;'>
+              <li><a class='selector' href="overview">overview</a></li>
+              <li><a class='selector' href="feed">feed analysis</a></li>
+              <li><a class='selector' href="channels">channels</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    <% if user_signed_in? %>
+      <div class='span3 offset1' style='float:right; margin-top:20px' >
+        <div class='dropdown '>
+          <a href='#' class='btn dropdown-toggle' data-toggle='dropdown'> <%= current_user.email %>  <b class='caret'></b></a>
+          <ul class="dropdown-menu">
+            <li>
+            <%= link_to 'Logout', destroy_user_session_path, method: :delete %>
+            </li>
+          </ul>
+        </div>
+      </div>
+    <% else %>
+      <div class='span2 offset4' style="margin-top:20px">
+        <%= link_to "login", '/users/sign_in', class: 'btn' %> 
+      </div>
+    <% end %>
+
+    <div class="container-fluid">
+      <div class="row-fluid">
+        <div class="span12" data-spy="scroll" data-target="#analysis_navbar" data-offset="30">
+          <% if !notice.blank? %>
+            <div style='margin-top:15px;' class='alert'><%=notice%></div>
+          <% end %>
+
+          <%= yield %>
+        </div>
+      </div>
+    </div>
+
+  </body>
+</html>

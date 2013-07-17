@@ -4,6 +4,7 @@ Craigslytics::Application.routes.draw do
 
   post "user/request_demo"
   get "listings/utilities"
+  get "listings/overview"
 
   resources :listing_imports do
     collection do
