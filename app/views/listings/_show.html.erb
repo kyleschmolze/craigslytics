@@ -1,5 +1,5 @@
 
-  <div class="well well-small span6">
+<div class="well well-small span6" id= <%= listing.id %>>
     <h5>
       <% if search_location.present? %>
         <%= listing.address %><span style="float:right"><%= listing.distance_to([search_location.geometry["location"]["lat"], search_location.geometry["location"]["lng"]]).round(1) %> miles away</span>
