@@ -259,4 +259,58 @@ class Tag < ActiveRecord::Base
     end
   end
 
+  def self.create_init_tags
+
+    # bundled utilities
+    self.create({name:'water', display:'water', search_term: Marshal.dump('water'), complexity:'2', category:'utility'})
+    self.create({name:'electric', display:'electricity', search_term: Marshal.dump('electric'), complexity:'2', category:'utility'})
+    self.create({name:'gas', display:'gas', search_term: Marshal.dump('gas'), complexity:'3', category:'utility'})
+    self.create({name:'heat', display:'heat', search_term: Marshal.dump('heat'), complexity:'2', category:'utility'})
+    self.create({name:'internet', display:'internet', search_term: Marshal.dump('internet'), complexity:'3', category:'utility'})
+    self.create({name:'cable', display:'cable', search_term: Marshal.dump('cable'), complexity:'3', category:'utility'})
+
+
+    # unit_types
+    self.create({name:'apartment', display:'apartment', search_term: Marshal.dump(''), complexity:'1', category:'unit_type'})
+    self.create({name:'building', display:'apt. complex', search_term: Marshal.dump('complex'), complexity:'2', category:'unit_type', parent:'apartment'})
+    self.create({name:'house', display:'house', search_term: Marshal.dump('family home'), complexity:'2', category:'unit_type', parent:'apartment'})
+    self.create({name:'townhouse', display:'townhouse', search_term: Marshal.dump('town ?house'), complexity:'2', category:'unit_type', parent:'apartment'})
+    self.create({name:'condo', display:'(condo)', search_term: Marshal.dump('condo'), complexity:'3', category:'unit_type', parent:'townhouse'})
+    self.create({name:'luxury', display:'(luxury)', search_term: Marshal.dump('luxury'), complexity:'3', category:'unit_type', parent:'building'})
+    self.create({name:'high rise', display:'(high rise)', search_term: Marshal.dump('high ?rise'), complexity:'3', category:'unit_type', parent:'building'})
+    self.create({name:'brownstone', display:'(brownstone)', search_term: Marshal.dump('brown ?stone'), complexity:'3', category:'unit_type', parent:'townhouse'})
+    self.create({name:'colonial', display:'(colonial)', search_term: Marshal.dump('colonial'), complexity:'3', category:'unit_type', parent:'house'})
+    self.create({name:'victorian', display:'(victorian)', search_term: Marshal.dump('victorian'), complexity:'3', category:'unit_type', parent:'house'})
+
+    # amenities
+    self.create({name:'cats', display:'cats allowed', search_term: Marshal.dump('cat'), complexity:'1', category:'amenity'})
+    self.create({name:'dogs', display:'dogs allowed', search_term: Marshal.dump('dog'), complexity:'1', category:'amenity'})
+    self.create({name:'parking', display:'parking', search_term: Marshal.dump('parking'), complexity:'1', category:'amenity'})
+    self.create({name:'fireplace', display:'fireplace', search_term: Marshal.dump('fire ?place'), complexity:'1', category:'amenity'})
+    self.create({name:'garden', display:'garden', search_term: Marshal.dump('garden'), complexity:'1', category:'amenity'})
+    self.create({name:'stove', display:'stove', search_term: Marshal.dump('stove'), complexity:'1', category:'amenity'})
+    self.create({name:'view', display:'view', search_term: Marshal.dump('view'), complexity:'1', category:'amenity'})
+    self.create({name:'high ceilings', display:'high ceilings', search_term: Marshal.dump('high ceiling'), complexity:'1', category:'amenity'})
+    self.create({name:'carpeted', display:'carpeted', search_term: Marshal.dump('carpet'), complexity:'1', category:'amenity'})
+    self.create({name:'tile floors', display:'tile floors', search_term: Marshal.dump('tile floor'), complexity:'1', category:'amenity'})
+    self.create({name:'granite counters', display:'granite countertops', search_term: Marshal.dump('granite counter'), complexity:'1', category:'amenity'})
+    self.create({name:'marble counters', display:'marble countertops', search_term: Marshal.dump('marble counter'), complexity:'1', category:'amenity'})
+    self.create({name:'recently remodeled', display:'recently remodeled', search_term: Marshal.dump('recently remodeled'), complexity:'1', category:'amenity'})
+    self.create({name:'dishwasher', display:'dishwasher', search_term: Marshal.dump('dish ?washer'), complexity:'1', category:'amenity'})
+    self.create({name:'microwave', display:'microwave', search_term: Marshal.dump('microwave'), complexity:'1', category:'amenity'})
+    self.create({name:'balcony', display:'balcony', search_term: Marshal.dump('balcony'), complexity:'1', category:'amenity'})
+    self.create({name:'garbage disposal', display:'garbage disposal', search_term: Marshal.dump('garbage disposal'), complexity:'1', category:'amenity'})
+    self.create({name:'patio', display:'patio', search_term: Marshal.dump('patio'), complexity:'1', category:'amenity'})
+    self.create({name:'hardwood', display:'hardwood floors', search_term: Marshal.dump('hard ?wood'), complexity:'1', category:'amenity'})
+    self.create({name:'laundry', display:'laundry', search_term: Marshal.dump('laundry'), complexity:'1', category:'amenity'})
+    self.create({name:'roof deck', display:'roof deck', search_term: Marshal.dump('roof ?deck'), complexity:'1', category:'amenity'})
+    self.create({name:'renovated', display:'renovated', search_term: Marshal.dump('renovated'), complexity:'1', category:'amenity'})
+    self.create({name:'air conditioning', display:'air conditioning', search_term: Marshal.dump('air condition'), complexity:'1', category:'amenity'})
+    self.create({name:'doorman', display:'doorman', search_term: Marshal.dump('door ?man'), complexity:'1', category:'amenity'})
+    self.create({name:'concierge', display:'concierge', search_term: Marshal.dump('concierge'), complexity:'1', category:'amenity'})
+    self.create({name:'gym', display:'gym', search_term: Marshal.dump('gym'), complexity:'1', category:'amenity'})
+    self.create({name:'walk-in closet', display:'walk-in closet', search_term: Marshal.dump('walk-? ?in ?-?closet'), complexity:'1', category:'amenity'})
+
+  end
+
 end

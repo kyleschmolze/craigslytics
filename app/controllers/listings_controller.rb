@@ -7,15 +7,15 @@ class ListingsController < ApplicationController
     @geocoded_address = nil
     # If bedrooms is set, 
     #   only grab listings with that number of bedrooms
-    if params[:bedrooms].present? and !params[:bedrooms][0].blank?
-      bedrooms = params[:bedrooms][0]
+    if params[:bedrooms].present? and !params[:bedrooms].blank?
+      bedrooms = params[:bedrooms]
       @listings = @listings.where(:bedrooms => bedrooms)
     end
     # If address is set,
     #   only grab listings within a mile of that address
-    if params[:address].present? and !params[:address][0].blank?
-      address = params[:address][0]
-      @geocoded_address = Geocoder.search(address)[0] 
+    if params[:address].present? and !params[:address].blank?
+      address = params[:address]
+      @geocoded_address = Geocoder.search(address) 
       if @geocoded_address.present?
         @listings = @listings.near([@geocoded_address.geometry["location"]["lat"], @geocoded_address.geometry["location"]["lng"]], 1) 
       else
@@ -136,8 +136,12 @@ class ListingsController < ApplicationController
   # GET /listings/utilities
   # GET /listings/utilities
   def utilities
-    @listings = Listing.where(user_id: current_user.id).joins(:utility_analyses).where("price_difference >= ?", 50).order("price_difference DESC").page(params[:page]).per(50)
-
+    # Demo Account Sees All
+    if current_user.id == 5
+      @listings = Listing.joins(:utility_analyses).where("price_difference > ?", 0).order("price_difference DESC").page(params[:page]).per(50)
+    else 
+      @listings = Listing.where(user_id: current_user.id).joins(:utility_analyses).where("price_difference > ?", 0).order("price_difference DESC").page(params[:page]).per(50)
+    end
     respond_to do |format|
       format.html { render layout: 'all' }
       format.json { render json: @listings }
@@ -149,14 +153,14 @@ class ListingsController < ApplicationController
     @geocoded_address = nil
     # If bedrooms is set, 
     #   only grab listings with that number of bedrooms
-    if params[:bedrooms].present? and !params[:bedrooms][0].blank?
-      bedrooms = params[:bedrooms][0]
+    if params[:bedrooms].present? and !params[:bedrooms].blank?
+      bedrooms = params[:bedrooms]
       @listings = @listings.where(:bedrooms => bedrooms)
     end
     # If address is set,
     #   only grab listings within a mile of that address
-    if params[:address].present? and !params[:address][0].blank?
-      address = params[:address][0]
+    if params[:address].present? and !params[:address].blank?
+      address = params[:address]
       @geocoded_address = Geocoder.search(address)[0] 
       if @geocoded_address.present?
         @listings = @listings.near([@geocoded_address.geometry["location"]["lat"], @geocoded_address.geometry["location"]["lng"]], 1) 
