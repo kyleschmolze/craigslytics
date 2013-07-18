@@ -47,12 +47,12 @@
     $('.show-full-listing').click(function() {
       $(this).hide()
       $(this).closest(".well").find(".hide-full-listing").show()
-      $(this).closest(".well").find(".full-listing").show('blind')
+      $(this).closest(".well").find(".full-listing").slideDown()
     })
     $('.hide-full-listing').click(function() {
       $(this).hide()
       $(this).closest(".well").find(".show-full-listing").show()
-      $(this).closest(".well").find(".full-listing").hide('blind')
+      $(this).closest(".well").find(".full-listing").slideUp()
     })
   })
 </script>

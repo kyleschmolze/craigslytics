@@ -1,113 +1,127 @@
 <div class='span10 offset1' id='main'>
-  <div class='span8 offset2' style="padding-top:20px; padding-bottom:20px;">
-    <h3 style="text-align:center;">We found <span id="big-strong-greg"><%=@total.count %> </span>listings that match your search</h3>
-
-    <%= form_tag listings_overview_path, method: "GET", class: "form-inline" do %>
-      <% if @geocoded_address.present? %>
-        <% value = @geocoded_address.formatted_address %>
-      <% elsif params[:address].present? %>
-        <% value = params[:address][0] %>
-      <% end %>
-      
-      <%= text_field "address", nil, placeholder:"Address", value: "#{value}", class: "span8" %>
-      <%= number_field "bedrooms", nil, placeholder:"Bedrooms", value: "#{params[:bedrooms][0] if params[:bedrooms].present?}", class: "span2" %>
-      <%= submit_tag "GO", class: "btn btn-danger submit-button span2 pull-right" %>
-      <div class='span12' id='checkboxes' style='text-align:center; '>
-        <div class='span4'>
-          <h5>Unit Type</h5>
-          <ul id="unit_types" style='text-align:left'>
-            <% for t in Tag.where(category:'unit_type') %>
-              <li><%= check_box_tag "tags[#{t.name}]", 1, (params[:tags].present? and params[:tags][t.name]), style: 'text-align:left;'%> <%=t.display%>  </li>
-            <% end %>
-          </ul>
-        </div>
-        <div class='span4'>
-          <h5>Utilities</h5>
-          <ul id="utilities" style='text-align:left'>
-            <% for t in Tag.where(category:'utility') %>
-              <li><%= check_box_tag "tags[#{t.name}]", 1, (params[:tags].present? and params[:tags][t.name]), style: 'text-align:left;'%> <%=t.display%>  </li>
-            <% end %>
-          </ul>
-        </div>
-        <div class='span4'>
-          <h5>Amenities</h5>
-          <ul id="amenities" style='text-align:left'>
-            <% for t in Tag.where(category:'amenity') %>
-              <li><%= check_box_tag "tags[#{t.name}]", 1, (params[:tags].present? and params[:tags][t.name]), style: 'text-align:left;'%> <%=t.display%>  </li>
-            <% end %>
-          </ul>
-        </div>
+  <div class="row-fluid">
+    <div class='span8 offset2' style="padding-top:20px; padding-bottom:20px;">
+      <div class="row-fluid">
+        <h3 style="text-align:center;">We found <span id="big-strong-greg"><%=@total.count %> </span>listings that match your search</h3>
       </div>
-    <% end %>
-  </div>
-  <% if @listings.present? %>
-    <br />
-    <br />
-    <div class='span12' style='margin:0px; padding:20px;'>
-      <h3 style='text-align:center;'>Price Distribution</h3>
-    </div>
-    <div class='row-fluid'>
-      <div class="span8 offset2">
-        <div class='span9'>
-          <%= render partial: "segments/price_distribution", locals: {segment: @segment} %>
-        </div>
-        <div class='span3 pull-right' style='text-align:right;'>
-          <%= render partial: "segments/overview", locals: {segment: @segment} %>
-        </div>
-      </div>
-    </div>
-    <div class="row-fluid">
-    <br />
-    <br />
-      <div class='span12' style='margin:0px; padding:20px; padding-top:50px;'>
-        <h3 style='text-align:center;'>Location</h3>
-        <h6 style='text-align:center;'>Click a marker on the map to see the listing below</h6>
-      </div>
-    </div>
-    <div class="row-fluid">
-      <div class='span8 offset2'> 
-          <%= render partial: "segments/location", locals: {listings: @listings.where(user_id: current_user.id), segment: @segment, geocoded_address: @geocoded_address}%>
-      </div>
-    </div>
-
-    <% if @geocoded_address.present? %>
-      <a href="/listings.pdf?<%= params.to_query %>" class="btn btn-danger">Export As PDF</a>
-    <% end %>
-
-
-    <!-- Image Load Error -->
-    <script type="text/javascript">
-      function imgerror(element) {
-        $(element).closest('li').remove();
-      }
-    </script>
-
-
-    <br />
-    <br />
-    <div class='span12' style='margin:0px; padding:20px;'>
-      <h3 style='text-align:center;'>Listings</h3>
-    </div>
-      <%= paginate @listings %>
-
-      <% @listings.each_with_index do |listing, i| %>
-        <% if i % 2 == 0 %>
-                                      <div class="row-fluid" id="listing<%=listing.id%>-<%=listing.id + 1%>">
-          <% if listing.user_id == current_user.id %>
-            <%= render partial: "show", locals: {listing: listing, median: @segment.present? ? @segment.median : nil, search_location: @geocoded_address} %>
-          <% else %>
-            <%=  render partial: "show_obfiscated", locals: {listing: listing, median: @segment.present? ? @segment.median : nil, search_location: @geocoded_address} %>
-          <% end %>
-        <% else %>
-          <% if listing.user_id == current_user.id %>
-            <%= render partial: "show", locals: {listing: listing, median: @segment.present? ? @segment.median : nil, search_location: @geocoded_address} %>
-          <% else %>
-            <%=  render partial: "show_obfiscated", locals:{listing: listing, median: @segment.present? ? @segment.median : nil, search_location: @geocoded_address} %>
-          <% end %>
-                                      </div>
+      <%= form_tag listings_overview_path, method: "GET", class: "form-inline" do %>
+        <% if @geocoded_address.present? %>
+          <% value = @geocoded_address.formatted_address %>
+        <% elsif params[:address].present? %>
+          <% value = params[:address][0] %>
         <% end %>
+        
+        <div class="row-fluid">
+          <%= text_field "address", nil, placeholder:"Address", value: "#{value}", class: "span8" %>
+          <%= number_field "bedrooms", nil, placeholder:"Bedrooms", value: "#{params[:bedrooms][0] if params[:bedrooms].present?}", class: "span2" %>
+          <%= submit_tag "GO", class: "btn btn-danger submit-button span2 pull-right" %>
+        </div>
+        <div class="row-fluid">
+          <div class='hide span12' id='checkboxes' style='text-align:center;'>
+            <div class="row-fluid">
+              <div class='span4'>
+                <h5>Unit Type</h5>
+                <ul id="unit_types" style='text-align:left'>
+                  <% for t in Tag.where(category:'unit_type') %>
+                    <li><%= check_box_tag "tags[#{t.name}]", 1, (params[:tags].present? and params[:tags][t.name]), style: 'text-align:left;'%> <%=t.display%>  </li>
+                  <% end %>
+                </ul>
+              </div>
+              <div class='span4'>
+                <h5>Utilities</h5>
+                <ul id="utilities" style='text-align:left'>
+                  <% for t in Tag.where(category:'utility') %>
+                    <li><%= check_box_tag "tags[#{t.name}]", 1, (params[:tags].present? and params[:tags][t.name]), style: 'text-align:left;'%> <%=t.display%>  </li>
+                  <% end %>
+                </ul>
+              </div>
+              <div class='span4'>
+                <h5>Amenities</h5>
+                <ul id="amenities" style='text-align:left'>
+                  <% for t in Tag.where(category:'amenity') %>
+                    <li><%= check_box_tag "tags[#{t.name}]", 1, (params[:tags].present? and params[:tags][t.name]), style: 'text-align:left;'%> <%=t.display%>  </li>
+                  <% end %>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>  
+        <br>
+        <div class="row-fluid">
+          <a href="javascript:void(0);" class="btn span4 offset4 show-advanced-filters" style="text-align:center; display:block">
+            Show Advanced Filters <span class='badge badge-success'><%= params[:tags].present? ? params[:tags].count : 0%></span>
+          </a>
+          <div class="row-fluid">
+            <%= link_to 'Hide Advanced Filters', 'javascript:void(0);', class: 'btn span4 offset4 hide-advanced-filters', style: "text-align:center; display:none" %>
+          </div>
+        </div>
+        <script>
+          $(function() {
+            $('.show-advanced-filters').click(function() {
+              $(this).hide()
+              $(".hide-advanced-filters").show()
+              $("#checkboxes").slideDown()
+            })
+            $('.hide-advanced-filters').click(function() {
+              $(this).hide()
+              $(".show-advanced-filters").show()
+              $("#checkboxes").slideUp()
+            })
+          })
+        </script>
       <% end %>
+      <% if @listings.present? %>
+        <div class='row-fluid'>
+          <h3 style='text-align:center;'>Price Distribution</h3>
+        </div>
+        <div class='row-fluid'>
+          <div class='span9'>
+            <%= render partial: "segments/price_distribution", locals: {segment: @segment} %>
+          </div>
+          <div class='span3'>
+            <%= render partial: "segments/overview", locals: {segment: @segment} %>
+          </div>
+          <br>
+          <br>
+        </div>
+        <% if @geocoded_address.present? %>
+          <div class="row-fluid">
+            <a href="/listings.pdf?<%= params.to_query %>" class="btn btn-danger span4 offset4">Export As PDF</a>
+          </div>
+        <% end %>
+        <div class="row-fluid">
+          <h3 style='text-align:center;'>Location</h3>
+          <h6 style='text-align:center;'>Click a marker on the map to see the listing below</h6>
+        </div>
+        <div class="row-fluid">
+          <%= render partial: "segments/location", locals: {listings: @listings.select{|l| l.user_id == current_user.id}, segment: @segment, geocoded_address: @geocoded_address}%>
+        </div>
 
+
+        <br />
+        <br />
+        <div class="row-fluid" id="listings">
+          <h3 style='text-align:center;'>Listings</h3>
+        </div>
+      <% end %>
+    </div>
+  </div>
+  
+  <% if @listings.present? %>
+    <div class="row-fluid">
+      <%= paginate @listings %>
+      <% @listings.each_slice(2) do |row| %>
+        <div class="row-fluid">
+          <% for listing in row do %>
+            <% if listing.user_id == current_user.id %>
+              <%= render partial: "show", locals: {listing: listing, median: @segment.present? ? @segment.median : nil, search_location: @geocoded_address} %>
+            <% else %>
+              <%= render partial: "show_obfiscated", locals: {listing: listing, median: @segment.present? ? @segment.median : nil, search_location: @geocoded_address} %>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
   <% end %>
 </div>
 
@@ -127,4 +141,8 @@
       })
     })
   })
+  <!-- Image Load Error -->
+    function imgerror(element) {
+      $(element).closest('li').remove();
+    }
 </script>

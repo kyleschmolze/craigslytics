@@ -2,7 +2,7 @@ Craigslytics::Application.routes.draw do
 
   devise_for :users
 
-  post "user/request_demo"
+  post "users/request_demo"
   get "listings/utilities"
   get "listings/overview"
 

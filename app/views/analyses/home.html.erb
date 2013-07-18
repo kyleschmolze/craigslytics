@@ -4,29 +4,24 @@
 
 <% content_for :header do %>
   <div class='row-fluid' style="position:fixed">
-    <div class='span5 offset1' style='color:white;margin-top:120px'>
-      <h1 style='font-size:40px;'> Rentalyzer. </h1>
-      <h3><span style='font-size:24px;'>Maximize your rental income</span></h3>
+    <div class='span5 offset1' style='color:white;margin-top:160px'>
+      <h1 style='font-size:40px;'> 
+        Maximize your rental income. 
+      </h1>
+      <h4>
+        <span style='font-size:20px;'>
+          Data-driven analytics and solutions for property managers and brokers. 
+          Market insights, without the guesswork.
+        </span>
+      </h4>
       <br />
       <div class='row-fluid'>
-        <div class='span12 well' id='demobox'>
+        <div class='span8 well' id='demobox'>
           <div class='row-fluid'>
-            <div class='span8' style='padding:10px;'>
-              <p style='font-size:18px;'>No more guess work.  Intelligent data-driven analysis for property managers and brokerages.</p>
-            </div>
-            <div class='span4'>
-              <!--%= button_to 'Request a Demo!', {controller: 'user', action:'request_demo', form: 'email'}, class: 'pull-right btn btn-large btn-warning' %--> 
-              <form action="/users/request_demo" method="post" accept-charset="UTF-8" data-stoppropagation="true">
-                <ul>
-                  <li>
-                    <input class="input-block-level user_email" type="text" name="user[email]" placeholder="email">
-                  </li>
-                  <li>
-                    <input type="submit" class="input-block-level btn btn-warning" value="Request a Demo" style="width:100%">
-                  </li>
-                </ul>
-              </form>
-            </div>
+            <form action="/users/request_demo" class="form-inline" method="post" accept-charset="UTF-8" data-stoppropagation="true" style="margin:0">
+              <input class="span7 user_email" type="text" name="user[email]" placeholder="email">
+              <input type="submit" class="span5 btn btn-warning" value="Request a Demo" >
+            </form>
           </div>
         </div>
       </div>
@@ -34,20 +29,25 @@
   </div>
 <% end %>
 
-<% @desc_overview = '<h3 style="text-align:center;">Validate What You&#39;re Charging.</h3>
-                     <p><strong>Pricing Analysis</strong> 
-                     gives you a better understanding of the market-rate for specific listings, based on true comps. 
-                     Additional insights on the potential for utility and/or amenity bundling enable you to position your listings more competitively, and generate more leads.</p>' %>
+<% @desc_overview = "<h3 style='text-align:center;'> Validate what you're charging.</h3>
+                    <p><strong> Get a sense of the market.</strong> We provide the most sophisticated market overviews available. We've aggregated and 
+                    scrubbed data, parsing information such as unit type, utilities, and even amenities. This enables you 
+                    to gain a better understanding of what the market rate is for each of your units based on its 
+                    true comparables.</p>" %>
 
-<% @desc_market_trends = '<h3 style="text-align:center;">Make Sense of the Market.</h3>
-                          <p><strong>Market Gap Analysis</strong> 
-                          shows you important trends and patterns in the local rental market, both historically and in real time.  
-                          Take it a step further with listing integration to know when (and where) to advertise which listings.</p>' %>
+<% @desc_market_trends = "<h3 style='text-align:center;'> Earn more from your listings. </h3>
+                          <p><strong>Utility-bundling done right.</strong> 
+                          We analyze thousands of listings and determine the true value of utilities. 
+                          With these insights, we provide you with alternative ways to 
+                          bundle utilities and maximize rental income.</p>" %>
 
-<% @web_analytics = '<h3 style="text-align:center;">Get the Most Out of Your Website.</h3>
-                     <p><strong>Web Analytics</strong> 
-                     is a tool that will convert more visitors into customers. 
-                     We can look at your pipelines, attract more leads, and segment current site traffic.</p>' %>
+<% @web_analytics = "<h3 style='text-align:center;'>Get smarter with your marketing.</h3>
+                     <p><strong>Efficient lead generation.</strong> 
+                     Our Market Gap tool shows brokers (and agents) the important trends and patterns 
+                     in the market, both historically and in real time. We then take this data a step further, 
+                     identifying opportunistic gaps in the market so you can be more efficient and focused 
+                     about your marketing. We’ll tell you when and where to advertise specific listings in 
+                     your feeds to generate more leads.</p>" %>
 
 <div style="text-align:center; color:black; font-style:bold;">
   <%= render partial: '/layouts/screenshot_description', locals: {
@@ -66,30 +66,32 @@
     description: @web_analytics }  %>
 </div>
 
-<div class='span6 offset3' style='text-align:center'>
-  <h3> 
-    More Information
-  </h3>
-</div>
-<div class='well span6 offset3'>
+<div class="row-fluid">
+  <div class='span4 offset4' style='text-align:center'>
+    <h3> 
+      More Information
+    </h3>
+  </div>
   <div class='row-fluid'>
-    <div class='span6'>
-      <h5 style="text-align:center;">
-        We'd love to show you how we can introduce novel analytics into your business to help you drive profits.
-        So, if our product interests you, request a demo.
-      </h5>
-    </div>
-    <div class='span6' style='margin-top:25px;'>
-      <form action="/users/request_demo" method="post" accept-charset="UTF-8" data-stoppropagation="true">
-        <ul>
-          <li>
-          <input class="input-block-level user_email" type="text" name="user[email]" placeholder="email">
-          </li>
-          <li>
-          <input type="submit" class="input-block-level btn btn-warning" value="Request a Demo" style="width:100%;text-align:center">
-          </li>
-        </ul>
-      </form>
+    <div class='well span4 offset4'>
+      <div class='span6'>
+        <h5 style="text-align:center;">
+          We'd love to show you how we can introduce novel analytics into your business to help you drive profits.
+          So, if our product interests you, request a demo.
+        </h5>
+      </div>
+      <div class='span6' style='margin-top:25px;'>
+        <form action="/users/request_demo" method="post" accept-charset="UTF-8" data-stoppropagation="true">
+          <ul>
+            <li>
+            <input class="input-block-level user_email" type="text" name="user[email]" placeholder="email">
+            </li>
+            <li>
+            <input type="submit" class="input-block-level btn btn-warning" value="Request a Demo" style="width:100%;text-align:center">
+            </li>
+          </ul>
+        </form>
+      </div>
     </div>
   </div>
 </div>

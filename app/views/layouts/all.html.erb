@@ -69,19 +69,16 @@
     <% end %>
     -->
     <div class="container-fluid" style="margin-top: 60px">
-      <div class="row-fluid">
-        <div class="span12" data-spy="scroll" data-target="#analysis_navbar" data-offset="30">
-          <% if !notice.blank? %>
-            <div style='margin-top:15px;' class='alert'>
-              <button type="button" class="close" data-dismiss="alert">&times;</button>
-              <%=notice%>
-            </div>
-          <% end %>
-
-          <%= yield %>
+        <% if !notice.blank? %>
+        <div style='margin-top:15px;' class='alert'>
+          <button type="button" class="close" data-dismiss="alert">&times;</button>
+          <%=notice%>
         </div>
+        <% end %>
+
+      <div class="row-fluid">
+        <%= yield %>
       </div>
     </div>
-
   </body>
 </html>

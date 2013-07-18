@@ -43,15 +43,14 @@ class AnalysesController < ApplicationController
   # GET /analyses/home
   # GET /analyses/home.json
   def home
-    @analysis = Analysis.new
-    @analysis.bedrooms = params[:bedrooms] if params[:bedrooms]
-    @analysis.address = params[:address] if params[:address]
+    if user_signed_in?
+      redirect_to listings_overview_path
+    else
+      @body_class = 'homepage-body'
 
-    @body_class = 'homepage-body'
-
-    respond_to do |format|
-      format.html { render layout: 'home' }
-      format.json { render json: @analysis }
+      respond_to do |format|
+        format.html { render layout: 'home' }
+      end
     end
   end
 

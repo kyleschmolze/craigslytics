@@ -26,7 +26,8 @@
       hAxis: {title: 'Number of Listings', showTextEvery: 1},
       vAxis: {title: 'Price Range', showTextEvery: 1},
       legend: {position: 'none'},
-      chartArea:{top:"5%", height:"85%"}
+      chartArea:{top:"5%", height:"85%"},
+      backgroundColor: {fill:'transparent'}
     };
 
     var chart = new google.visualization.BarChart(document.getElementById('chart_div_<%= segment.unique_id %>'));

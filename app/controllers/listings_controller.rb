@@ -136,7 +136,7 @@ class ListingsController < ApplicationController
   # GET /listings/utilities
   # GET /listings/utilities
   def utilities
-    @listings = Listing.where(user_id: current_user.id).joins(:utility_analyses).where("price_difference > ?", 0).order("price_difference DESC").page(params[:page]).per(50)
+    @listings = Listing.where(user_id: current_user.id).joins(:utility_analyses).where("price_difference >= ?", 50).order("price_difference DESC").page(params[:page]).per(50)
 
     respond_to do |format|
       format.html { render layout: 'all' }
@@ -145,7 +145,6 @@ class ListingsController < ApplicationController
   end
 
   def overview
-    puts params[:controller]
     @listings = Listing
     @geocoded_address = nil
     # If bedrooms is set, 

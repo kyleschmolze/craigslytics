@@ -37,7 +37,6 @@
     );
 
     <% for listing in listings %>
-      console.log("here")
       var pos = new google.maps.LatLng(<%= listing.latitude %>, <%= listing.longitude %>);
       var marker = new google.maps.Marker({
         position: new google.maps.LatLng(<%= listing.latitude %>, <%= listing.longitude %>),
@@ -48,7 +47,7 @@
       map_bounds.extend(pos);
       google.maps.event.addListener(marker, 'click', function() {
         $('html, body').animate({
-          scrollTop: $("<%= "#listing#{listing.id}" %>").offset().top
+          scrollTop: $("<%= "#listing#{listing.id}" %>").offset().top - 60
         });
       });
     <% end %>

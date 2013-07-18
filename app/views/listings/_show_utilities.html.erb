@@ -110,12 +110,12 @@
     $('.show-why').click(function() {
       $(this).hide()
       $(this).closest(".well").find(".hide-why").show()
-      $(this).closest(".well").find(".utility-analyses-details").show('blind')
+      $(this).closest(".well").find(".utility-analyses-details").slideDown()
     })
     $('.hide-why').click(function() {
       $(this).hide()
       $(this).closest(".well").find(".show-why").show()
-      $(this).closest(".well").find(".utility-analyses-details").hide('blind')
+      $(this).closest(".well").find(".utility-analyses-details").slideUp()
     })
   })
 </script>
