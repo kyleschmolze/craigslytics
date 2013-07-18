@@ -15,7 +15,7 @@ class ListingsController < ApplicationController
     #   only grab listings within a mile of that address
     if params[:address].present? and !params[:address].blank?
       address = params[:address]
-      @geocoded_address = Geocoder.search(address) 
+      @geocoded_address = Geocoder.search(address)[0]
       if @geocoded_address.present?
         @listings = @listings.near([@geocoded_address.geometry["location"]["lat"], @geocoded_address.geometry["location"]["lng"]], 1) 
       else

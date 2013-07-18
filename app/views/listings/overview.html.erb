@@ -8,12 +8,12 @@
         <% if @geocoded_address.present? %>
           <% value = @geocoded_address.formatted_address %>
         <% elsif params[:address].present? %>
-          <% value = params[:address][0] %>
+          <% value = params[:address] %>
         <% end %>
         
         <div class="row-fluid">
-          <%= text_field "address", nil, placeholder:"Address", value: "#{value}", class: "span8" %>
-          <%= number_field "bedrooms", nil, placeholder:"Bedrooms", value: "#{params[:bedrooms][0] if params[:bedrooms].present?}", class: "span2" %>
+          <%= text_field_tag "address", nil, placeholder:"Address", value: "#{value}", class: "span8" %>
+          <%= number_field_tag "bedrooms", nil, placeholder:"Bedrooms", value: "#{params[:bedrooms] if params[:bedrooms].present?}", class: "span2" %>
           <%= submit_tag "GO", class: "btn btn-danger submit-button span2 pull-right" %>
         </div>
         <div class="row-fluid">
