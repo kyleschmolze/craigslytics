@@ -148,6 +148,17 @@ class ListingsController < ApplicationController
     end
   end
 
+  # GET /listings/utility/:id
+  # GET /listings/utility/:id.json
+  def utility
+    @listing = Listing.find(params[:id])
+
+    respond_to do |format|
+      format.html { render layout: 'all' }
+      format.json { render json: @listing }
+    end
+  end
+
   def overview
     @listings = Listing
     @geocoded_address = nil
