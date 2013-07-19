@@ -22,7 +22,7 @@
     <div class="hide full-listing">
       <p>
         <h5>Amenities:</h5>
-        <% for tag in listing.tags.where("category IS NOT ?", "utility") do %>
+        <% for tag in listing.tags.where("category <> ?", "utility") do %>
           <span class="badge badge-info"><%= tag.name %></span>
         <% end %>
       </p>
