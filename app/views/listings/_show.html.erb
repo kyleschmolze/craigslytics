@@ -10,6 +10,8 @@
     <p>
       <% if listing.bedrooms == nil or listing.bedrooms == 0 %>
         Studio<br />
+      <% elsif listing.bedrooms == -1 %>
+        Parking Spot<br />
       <% else %>
         <%= pluralize listing.bedrooms, 'bedroom' %><br>
       <% end %>

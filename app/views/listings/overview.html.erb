@@ -91,10 +91,10 @@
         <% end %>
         <div class="row-fluid">
           <h3 style='text-align:center;'>Location</h3>
-          <h6 style='text-align:center;'>Click a marker on the map to see the listing below</h6>
+          <h6 style='text-align:center;'>Blue markers represent your listings on the map. Click on a blue marker to see the listing below</h6>
         </div>
         <div class="row-fluid">
-          <%= render partial: "segments/location", locals: {listings: @listings.select{|l| l.user_id == current_user.id}, segment: @segment, geocoded_address: @geocoded_address}%>
+          <%= render partial: "segments/location", locals: {listings: @listings, segment: @segment, geocoded_address: @geocoded_address}%>
         </div>
         <br />
         <br />

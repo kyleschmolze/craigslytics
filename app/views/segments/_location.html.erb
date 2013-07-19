@@ -9,7 +9,7 @@
   function initialize() {
     <% if geocoded_address.present? %>
       var center_lat_lng = new google.maps.LatLng(<%= geocoded_address.geometry["location"]["lat"] %>, <%= geocoded_address.geometry["location"]["lng"] %>);
-    <% elsif listings %>
+    <% else %>
       var center_lat_lng = new google.maps.LatLng(<%= listings.first.latitude %>, <%= listings.first.longitude %>);
     <% end %>
     var mapOptions = {
@@ -29,6 +29,13 @@
       new google.maps.Point(16, 32) // anchor
     );
 
+    var image_two = new google.maps.MarkerImage(
+      'http://maps.google.com/mapfiles/ms/micons/yellow.png',
+      new google.maps.Size(32, 32), // size
+      new google.maps.Point(0,0), // origin
+      new google.maps.Point(16, 32) // anchor
+    );
+
     var shadow = new google.maps.MarkerImage(
       'http://maps.google.com/mapfiles/ms/micons/msmarker.shadow.png',
       new google.maps.Size(59, 32), // size
@@ -37,19 +44,31 @@
     );
 
     <% for listing in listings %>
-      var pos = new google.maps.LatLng(<%= listing.latitude %>, <%= listing.longitude %>);
-      var marker = new google.maps.Marker({
-        position: new google.maps.LatLng(<%= listing.latitude %>, <%= listing.longitude %>),
-        map: map,
-        icon: image,
-        shadow: shadow
-      });
-      map_bounds.extend(pos);
-      google.maps.event.addListener(marker, 'click', function() {
-        $('html, body').animate({
-          scrollTop: $("<%= "#listing#{listing.id}" %>").offset().top - 60
+      <% if listing.user_id == current_user.id %>
+        var pos = new google.maps.LatLng(<%= listing.latitude %>, <%= listing.longitude %>);
+        var marker = new google.maps.Marker({
+          position: new google.maps.LatLng(<%= listing.latitude %>, <%= listing.longitude %>),
+          map: map,
+          icon: image,
+          shadow: shadow
         });
-      });
+        map_bounds.extend(pos);
+        google.maps.event.addListener(marker, 'click', function() {
+          $('html, body').animate({
+            scrollTop: $("<%= "#listing#{listing.id}" %>").offset().top - 70
+          });
+          $("<%= "#listing#{listing.id}" %>").delay(500).effect("highlight", {color:"#faa732"}, 1000);
+        });
+      <% else %>
+        var pos = new google.maps.LatLng(<%= listing.latitude %>, <%= listing.longitude %>);
+        var marker = new google.maps.Marker({
+          position: new google.maps.LatLng(<%= listing.latitude %>, <%= listing.longitude %>),
+          map: map,
+          icon: image_two,
+          shadow: shadow
+        });
+        map_bounds.extend(pos);
+      <% end %>
     <% end %>
 
     <% if geocoded_address.present? %>
