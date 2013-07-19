@@ -138,9 +138,9 @@ class ListingsController < ApplicationController
   def utilities
     # Demo Account Sees All
     if current_user.id == 5
-      @listings = Listing.joins(:utility_analyses).where("price_difference > ?", 50).order("price_difference DESC").page(params[:page]).per(50)
+      @listings = Listing.joins(:utility_analyses).where("price_difference > ?", 50).order("price_difference DESC").page(params[:page]).per(25)
     else 
-      @listings = Listing.where(user_id: current_user.id).joins(:utility_analyses).where("price_difference > ?", 50).order("price_difference DESC").page(params[:page]).per(50)
+      @listings = Listing.where(user_id: current_user.id).joins(:utility_analyses).where("price_difference > ?", 50).order("price_difference DESC").page(params[:page]).per(25)
     end
     respond_to do |format|
       format.html { render layout: 'all' }
