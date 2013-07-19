@@ -187,7 +187,7 @@ class Listing < ActiveRecord::Base
     self.utility_analyses.destroy_all
     pricemin = (self.price - (self.price*0.1)).round(0)
     pricemax = (self.price + (self.price*0.1)).round(0)
-    comps = Listing.where(bedrooms: self.bedrooms).where("price >= ? AND price <= ?", pricemin, pricemax).where("id IS NOT ?", self.id).near([self.latitude, self.longitude], 1).reorder(:price)
+    comps = Listing.where(bedrooms: self.bedrooms).where("price >= ? AND price <= ?", pricemin, pricemax).where("id <> ?", self.id).near([self.latitude, self.longitude], 1)
     for utility in Tag.where(category: "utility") - self.tags do 
       listing_ids_with = Tag.average_with_util(self.tags, utility, comps)
       listings_with = comps.where(id: listing_ids_with)
