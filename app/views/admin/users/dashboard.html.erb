@@ -1,0 +1,16 @@
+<div class='span10 offset1' id='main'>
+  <div class="row-fluid">
+    <div class='span8 offset2' style="padding-top:20px; padding-bottom:20px;">
+      <h3>User Inquiries Table</h3>
+      <%= render partial: 'user_inquiries/table', locals: { user_inquiries: @user_inquiries } %>
+      <h3>
+        Users Table
+        <%= link_to new_admin_user_path, class: 'btn' do %>
+          <i class='icon-plus'></i>
+          Create New User
+        <% end %>
+      </h3>
+      <%= render partial: 'admin/users/table', locals: { users: @users} %>
+    </div>
+  </div>
+</div>

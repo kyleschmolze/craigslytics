@@ -2,7 +2,18 @@ Craigslytics::Application.routes.draw do
 
   devise_for :users
 
-  post "users/request_demo"
+  post "user_inquiries/request_demo"
+
+  namespace :admin do
+    resources :users do
+      collection do
+        get :dashboard
+      end
+    end
+
+    resources :listing_importers
+  end
+
   get "listings/utilities"
   get "listings/overview"
   get "listings/utilities/:id", to: "listings#utility"

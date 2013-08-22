@@ -3,7 +3,7 @@
 </script>
 
 <% content_for :header do %>
-  <div class='row-fluid' style="position:fixed">
+  <div class='row-fluid' style='position:fixed'>
     <div class='span5 offset1' style='color:white;margin-top:160px'>
       <h1 style='font-size:40px;'> 
         Maximize your rental income. 
@@ -18,10 +18,10 @@
       <div class='row-fluid'>
         <div class='span8 well' id='demobox'>
           <div class='row-fluid'>
-            <form action="/users/request_demo" class="form-inline" method="post" accept-charset="UTF-8" data-stoppropagation="true" style="margin:0">
-              <input class="span7 user_email" type="text" name="user[email]" placeholder="email">
-              <input type="submit" class="span5 btn btn-warning" value="Request a Demo" >
-            </form>
+            <%= form_for :user_inquiry, html: {class: "form-inline", style: "margin:0"}, method: "post", url: "/user_inquiries/request_demo" do |f| %>
+              <%= f.text_field :email, class: "span7 user_email", placeholder: "email" %>
+              <%= f.submit "Request a Demo", class: "span5 btn btn-warning" %>
+            <% end %>
           </div>
         </div>
       </div>
@@ -81,16 +81,10 @@
         </h5>
       </div>
       <div class='span6' style='margin-top:25px;'>
-        <form action="/users/request_demo" method="post" accept-charset="UTF-8" data-stoppropagation="true">
-          <ul>
-            <li>
-            <input class="input-block-level user_email" type="text" name="user[email]" placeholder="email">
-            </li>
-            <li>
-            <input type="submit" class="input-block-level btn btn-warning" value="Request a Demo" style="width:100%;text-align:center">
-            </li>
-          </ul>
-        </form>
+        <%= form_for :user_inquiry, method: "post", url: "/user_inquiries/request_demo" do |f| %>
+          <%= f.text_field :email, class: "input-block-level user_email", placeholder: "email" %>
+          <%= f.submit "Request a Demo", class: "input-block-level btn btn-warning", style: "width:100%;text-align:center" %>
+        <% end %>
       </div>
     </div>
   </div>

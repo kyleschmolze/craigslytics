@@ -1,0 +1,16 @@
+<table class='table'>
+  <thead>
+    <tr>
+      <th>Email</th>
+      <th>Date Created</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% for user_inquiry in user_inquiries %>
+      <tr>
+        <td><%= user_inquiry.email %></td>
+        <td><%= user_inquiry.created_at %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

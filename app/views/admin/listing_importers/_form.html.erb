@@ -1,0 +1,25 @@
+<%= form_for [:admin, @listing_importer] do |f| %>
+  <% if @listing_importer.errors.any? %>
+    <div class="alert alert-danger">
+      <%= pluralize(@listing_importer.errors.count, "error") %> prohibited this email from being saved:
+      <ul>
+        <% @listing_importer.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+  <div>
+    <%= f.label :api_key %>
+    <%= f.text_field :api_key, :autofocus => true %>
+  </div>
+  <div>
+    <%= f.label :source %>
+    <%= f.select :source, options_for_select([["YGL", "ygl"],["ZILLOW", "zillow"]]) %>
+  </div>
+  <div>
+    <%= f.label :user_id %>
+    <%= f.number_field :user_id, :readonly => true %>
+  </div>
+  <%= f.submit %>
+<% end %>

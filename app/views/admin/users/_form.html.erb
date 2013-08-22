@@ -1,0 +1,25 @@
+<%= form_for [:admin, @user] do |f| %>
+  <% if @user.errors.any? %>
+    <div class="alert alert-danger">
+      <%= pluralize(@user.errors.count, "error") %> prohibited this email from being saved:
+      <ul>
+        <% @user.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+  <div>
+    <%= f.label :email %>
+    <%= f.email_field :email, :autofocus => true %>
+  </div>
+  <div>
+    <%= f.label :password %>
+    <%= f.password_field :password %>
+  </div>
+  <div>
+    <%= f.label :password_confirmation %>
+    <%= f.password_field :password_confirmation %>
+  </div>
+  <%= f.submit %>
+<% end %>

@@ -137,7 +137,7 @@ class ListingsController < ApplicationController
   # GET /listings/utilities
   def utilities
     # Demo Account Sees All
-    if current_user.id == 5
+    if current_user.admin?
       @listings = Listing.joins(:utility_analyses).where("price_difference > ?", 50).order("price_difference DESC").page(params[:page]).per(25)
     else 
       @listings = Listing.where(user_id: current_user.id).joins(:utility_analyses).where("price_difference > ?", 50).order("price_difference DESC").page(params[:page]).per(25)

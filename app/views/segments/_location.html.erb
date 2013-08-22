@@ -44,7 +44,7 @@
     );
 
     <% for listing in listings %>
-      <% if listing.user_id == current_user.id %>
+      <% if listing.user_id == current_user.id || current_user.admin? %>
         var pos = new google.maps.LatLng(<%= listing.latitude %>, <%= listing.longitude %>);
         var marker = new google.maps.Marker({
           position: new google.maps.LatLng(<%= listing.latitude %>, <%= listing.longitude %>),

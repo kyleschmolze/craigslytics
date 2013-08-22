@@ -1,0 +1,29 @@
+<table class='table'>
+  <thead>
+    <tr>
+      <th>Email</th>
+      <th>Api Key</th>
+      <th>Source</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% for user in users %>
+      <tr>
+        <td><%= user.email %></td>
+        <% if ListingImporter.where(user_id: user.id).first.present? %>
+          <td><%= ListingImporter.where(user_id: user.id).first.api_key %></td>
+          <td><%= ListingImporter.where(user_id: user.id).first.source %></td>
+          <td>
+            <%= link_to "Edit Importer", edit_admin_listing_importer_path(ListingImporter.where(user_id: user.id).first) %> | 
+            <%= link_to "Delete Importer", admin_listing_importer_path(ListingImporter.where(user_id: user.id).first), method: "DELETE" %>
+          </td>
+        <% else %>
+          <td>N/A</td>
+          <td>N/A</td>
+          <td><%= link_to "Create Importer", new_admin_listing_importer_path(params: {listing_importer: {user_id: user.id}}) %></td>
+        <% end %>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
