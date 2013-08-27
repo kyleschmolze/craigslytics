@@ -29,6 +29,7 @@ class Admin::ListingImportersController < ApplicationController
 
   def edit
     @listing_importer = ListingImporter.find(params[:id])
+    render layout: 'all'
   end
 
   def update
