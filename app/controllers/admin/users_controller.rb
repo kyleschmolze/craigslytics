@@ -24,6 +24,19 @@ class Admin::UsersController < ApplicationController
     end
   end
 
+  def run_listings_importer
+    @user = User.find(params[:id])
+    @importer = ListingImporter.where(user_id: @user.id).first
+    ListingImporter.enqueue @importer.id
+    redirect_to dashboard_admin_users_path, notice: "Enqueued listings importer for #{@user.email}. To monitor activity, go to rentalyzer.com/resque" 
+  end
+
+  def run_utility_analyses
+    @user = User.find(params[:id])
+    Listing.enqueue @user.id
+    redirect_to dashboard_admin_users_path, notice: "Enqueued utility analyses for #{@user.email}. To monitor activity, go to rentalyzer.com/resque" 
+  end
+
   def new
     @user = User.new
 

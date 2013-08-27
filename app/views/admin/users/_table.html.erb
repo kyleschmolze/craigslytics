@@ -4,6 +4,7 @@
       <th>Email</th>
       <th>Api Key</th>
       <th>Source</th>
+      <th>Listings</th>
       <th>Actions</th>
     </tr>
   </thead>
@@ -14,14 +15,39 @@
         <% if ListingImporter.where(user_id: user.id).first.present? %>
           <td><%= ListingImporter.where(user_id: user.id).first.api_key %></td>
           <td><%= ListingImporter.where(user_id: user.id).first.source %></td>
+          <td><%= Listing.where(user_id: user.id).count %></td>
           <td>
-            <%= link_to "Edit Importer", edit_admin_listing_importer_path(ListingImporter.where(user_id: user.id).first) %> | 
-            <%= link_to "Delete Importer", admin_listing_importer_path(ListingImporter.where(user_id: user.id).first), method: "DELETE" %>
+            <div class="btn-group">
+              <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                Actions
+                <span class="caret"></span>
+              </a>
+              <ul class="dropdown-menu">
+                <!-- dropdown menu links -->
+                <li><%= link_to "Run Importer", run_listings_importer_admin_user_path(user.id) %></li>
+                <li><%= link_to "Run Utility Analysis", run_utility_analyses_admin_user_path(user.id) %></li>
+                <li class="divider"></li>
+                <li><%= link_to "Edit Importer", edit_admin_listing_importer_path(ListingImporter.where(user_id: user.id).first) %></li>
+                <li><%= link_to "Delete Importer", admin_listing_importer_path(ListingImporter.where(user_id: user.id).first), method: "DELETE" %></li>
+              </ul>
+            </div>
           </td>
         <% else %>
           <td>N/A</td>
           <td>N/A</td>
-          <td><%= link_to "Create Importer", new_admin_listing_importer_path(params: {listing_importer: {user_id: user.id}}) %></td>
+          <td><%= Listing.where(user_id: user.id).count %></td>
+          <td>
+            <div class="btn-group">
+              <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                Actions
+                <span class="caret"></span>
+              </a>
+              <ul class="dropdown-menu">
+                <!-- dropdown menu links -->
+                <li><%= link_to "Create Importer", new_admin_listing_importer_path(params: {listing_importer: {user_id: user.id}}) %></li>
+              </ul>
+            </div>
+          </td>
         <% end %>
       </tr>
     <% end %>

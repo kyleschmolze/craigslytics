@@ -33,8 +33,6 @@ class YglImporter
       2.times {p "####################"}
     end
 
-
-
     detail = ListingDetail.where(source: 'ygl', u_id: listing.css("ID").text).first_or_initialize
 
     new = detail.new_record?

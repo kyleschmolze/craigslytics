@@ -7,7 +7,7 @@ class ListingImporter < ActiveRecord::Base
 
   @queue = :importing
 
-  def self.perform(listing_importer_id)
+  def self.run_importer(listing_importer_id)
     listing_importer = ListingImporter.find listing_importer_id
     begin
        
@@ -30,6 +30,18 @@ class ListingImporter < ActiveRecord::Base
         Resque.enqueue self, listing_importer_id 
       end
       raise
+    end
+  end
+
+  def self.perform(func, arg1)
+    self.send func, arg1
+  end
+
+  def self.enqueue(importer_id)
+    if Rails.env.production?
+      Resque.enqueue(ListingImporter, :run_importer, importer_id)
+    else
+      ListingImporter.run_importer importer_id
     end
   end
 

@@ -9,6 +9,11 @@ Craigslytics::Application.routes.draw do
       collection do
         get :dashboard
       end
+
+      member do
+        get :run_listings_importer
+        get :run_utility_analyses
+      end
     end
 
     resources :listing_importers

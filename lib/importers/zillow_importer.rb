@@ -33,8 +33,6 @@ class ZillowImporter
       2.times {p "####################"}
     end
 
-
-
     detail = ListingDetail.where(source: 'zillow', u_id: listing.css("rentjuice_id").text).first_or_initialize
 
     new = detail.new_record?
